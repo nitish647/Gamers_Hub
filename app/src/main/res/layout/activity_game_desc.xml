@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    tools:context=".Game_desc">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <FrameLayout
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        <ImageView
+            android:scaleType="fitXY"
+            android:id="@+id/desc_img"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+     android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+           android:padding="7dp"
+            android:contentDescription="TODO">
+
+        </ImageView>
+            <ImageView
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/img_background"
+                android:layout_width="150dp"
+                android:layout_height="150dp">
+
+            </ImageView>
+        </FrameLayout>
+        <TextView
+android:layout_marginStart="20dp"
+            android:id="@+id/desc_text"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+
+            android:layout_marginTop="20dp"
+
+            android:gravity="center"
+            android:textSize="20sp">
+
+        </TextView>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="20dp"
+     android:weightSum="3"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.sackcentury.shinebuttonlib.ShineButton
+       android:layout_weight="1"
+android:id="@+id/fav"
+
+
+android:layout_marginLeft="10dp"
+            app:btn_fill_color="#FF6666"
+            app:allow_random_color="true"
+            app:enable_flashing="true"
+            app:big_shine_color="#FF6666"
+            app:click_animation_duration="200"
+            app:shine_animation_duration="1500"
+            app:shine_turn_angle="5"
+            app:small_shine_offset_angle="10"
+            app:shine_distance_multiple="1.3"
+            app:small_shine_color="#CC9999"
+            app:shine_count="8"
+            android:layout_gravity="start"
+            android:layout_width="10dp"
+            android:layout_height="60dp">
+
+        </com.sackcentury.shinebuttonlib.ShineButton>
+    <Button
+
+        android:layout_weight="1"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/btn_play"
+        android:text="Play"
+        android:layout_marginHorizontal="50dp"
+        android:textColor="@android:color/white"
+        android:background="@color/colorPrimaryDark"
+
+        android:layout_width="50dp"
+        android:layout_height="50dp">
+
+    </Button>
+        <Button
+            android:layout_weight="1"
+android:gravity="end"
+           android:layout_gravity="end"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content">
+
+        </Button>
+    </LinearLayout>
+
+</LinearLayout>

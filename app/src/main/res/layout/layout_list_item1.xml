@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+
+
+    app:cardCornerRadius="15dp"
+    android:layout_height="200dp">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <FrameLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <ImageView
+
+        android:scaleType="fitXY"
+        android:padding="7dp"
+
+            android:id="@+id/game_img"
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+           >
+
+        </ImageView>
+        <ImageView
+            android:src="@drawable/img_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+</RelativeLayout>
+    <TextView
+        android:background="@android:color/transparent"
+        android:textSize="20sp"
+  android:gravity="center"
+        android:layout_gravity="bottom"
+        android:id="@+id/game_name"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+    </TextView>
+
+
+</LinearLayout>

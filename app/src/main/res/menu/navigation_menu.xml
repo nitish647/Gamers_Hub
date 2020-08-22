@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<group>
+    <item android:title="Favourites"
+        android:id="@+id/fav">
+
+    </item>
+    <item android:title="Clear_pref"
+        android:id="@+id/clear_pref">
+
+    </item>
+</group>
+</menu>
