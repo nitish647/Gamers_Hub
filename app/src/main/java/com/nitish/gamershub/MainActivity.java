@@ -17,7 +17,9 @@ import android.util.ArrayMap;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,25 +55,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     HashMap<String, HashMap> hashMap;
     JSONArray jsonArray;
     TextView textView;
-
+    ListView listView;
     //ActionBarDrawerToggle actionBarDrawerToggle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        set_btn();
+
         textView = (TextView) findViewById(R.id.main_text);
-   navigationView =(NavigationView)findViewById(R.id.navigation_view);
-  drawerLayout=(DrawerLayout)findViewById(R.id.drawer);
-        recyclerView = (RecyclerView)findViewById(R.id.main_recycler) ;
-main_context = getApplicationContext();
+        navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
+        set_btn();
+        Set_array_list();
+        setListView();
+        recyclerView = (RecyclerView) findViewById(R.id.main_recycler);
+        main_context = getApplicationContext();
         jsonArray = new JSONArray();
-   actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout,R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-   {
-       @Override
-       public void onDrawerOpened(View drawerView) {
-           super.onDrawerOpened(drawerView);
-       }
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+            }
 
        @Override
        public void onDrawerClosed(View drawerView) {
@@ -88,10 +92,8 @@ setNavigationView();
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
  actionBarDrawerToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        game_link = new ArrayList();
-        game_name = new ArrayList();
-        game_img = new ArrayList();
-        Set_array_list();
+
+
         try {
             jsonlist("Furious Road",R.drawable.furious_road_shotoss,"https://m.shtoss.com/game/furious-road/index.html");
             jsonlist("Rotare",R.drawable.rotare_shotoss,"https://m.shtoss.com/game/rotare/index.html");
@@ -109,8 +111,10 @@ setNavigationView();
         recyclerView.setAdapter(recyclerviewAdapter);
         recyclerView.setLayoutManager(gridLayoutManager);
     }
-    public void Set_array_list()
-    {
+    public void Set_array_list() {
+        game_link = new ArrayList();
+        game_name = new ArrayList();
+        game_img = new ArrayList();
         game_name.add("Color Shape");
         game_name.add("Perfect Piano");
         game_link.add("https://play.famobi.com/color-shape");
@@ -240,12 +244,18 @@ HashMap hashMap4 = null;
 
     public void set_btn() {
         Favourite = (Button) findViewById(R.id.favourites);
-        clear_pref = (Button) findViewById(R.id.clear_pref);
-
-
+        clear_pref = (Button) findViewById(R.id.btn_clear_pref);
         Favourite.setOnClickListener(this);
         clear_pref.setOnClickListener(this);
+        listView = (ListView) findViewById(R.id.list_category);
+
+
     }
 
+    public void setListView() {
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, game_name);
+        listView.setAdapter(arrayAdapter);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
 
+    }
 }
