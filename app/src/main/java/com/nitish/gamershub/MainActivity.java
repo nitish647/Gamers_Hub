@@ -17,6 +17,7 @@ import android.util.ArrayMap;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,25 +39,28 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
-ArrayList game_name;
-ArrayList game_link;
-ArrayList game_img;
-public static Context main_context;
-    ActionBarDrawerToggle  actionBarDrawerToggle;
-RecyclerView recyclerView;
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    ArrayList game_name;
+    ArrayList game_link;
+    ArrayList game_img;
+    Button Favourite, clear_pref;
+    public static Context main_context;
+    ActionBarDrawerToggle actionBarDrawerToggle;
+    RecyclerView recyclerView;
     NavigationView navigationView;
     DrawerLayout drawerLayout;
     ToggleButton toggleButton;
-    HashMap<String,HashMap>  hashMap;
+    HashMap<String, HashMap> hashMap;
     JSONArray jsonArray;
     TextView textView;
+
     //ActionBarDrawerToggle actionBarDrawerToggle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        textView = (TextView)findViewById(R.id.main_text);
+        set_btn();
+        textView = (TextView) findViewById(R.id.main_text);
    navigationView =(NavigationView)findViewById(R.id.navigation_view);
   drawerLayout=(DrawerLayout)findViewById(R.id.drawer);
         recyclerView = (RecyclerView)findViewById(R.id.main_recycler) ;
@@ -122,6 +126,7 @@ setNavigationView();
     }
     public void setNavigationView()
     {
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
@@ -129,32 +134,45 @@ setNavigationView();
                 if(item.getItemId()== R.id.fav)
                 {
                     Toast.makeText(getBaseContext(),"fav",Toast.LENGTH_LONG).show();
-                    startActivity(new Intent(getApplicationContext(),Fav_activity.class));
+
                 }
-                if(item.getItemId()== R.id.clear_pref)
-                {
-                    Toast.makeText(getBaseContext(),"cleared",Toast.LENGTH_LONG).show();
+                if(item.getItemId()== R.id.clear_pref) {
+                    Toast.makeText(getBaseContext(), "cleared", Toast.LENGTH_LONG).show();
                     deleteSharedPreferences(RecyclerviewAdapter.sharedpref_fav);
-                                    }
+                }
                 drawerLayout.closeDrawer(Gravity.LEFT);
                 return false;
             }
         });
     }
 
+//    @Override
+//    protected void onRestart() {
+//
+//
+//        finish();
+//        overridePendingTransition( 0, 0);
+//        startActivity(getIntent());
+//        overridePendingTransition( 0, 0);
+//
+//        super.onRestart();
+//    }
+
     @Override
-    protected void onRestart() {
+    public void onClick(View view) {
+        int id = view.getId();
+        if (id == R.id.favourites) {
+            startActivity(new Intent(getApplicationContext(), Fav_activity.class));
+        }
+        if (id == R.id.btn_clear_pref) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                deleteSharedPreferences(RecyclerviewAdapter.sharedpref_fav);
+                show_Toast("deleted");
+            } else
+                show_Toast("error");
+        }
 
-
-        finish();
-        overridePendingTransition( 0, 0);
-        startActivity(getIntent());
-        overridePendingTransition( 0, 0);
-
-        super.onRestart();
     }
-
-
 
     public  void show_Toast(String message)
     {
@@ -214,10 +232,20 @@ HashMap hashMap4 = null;
         arrayList.addAll(Collections.singleton(jsonArray.getJSONObject(0).getString("name")));
 
 
-
     }
-    public void set_textview(String x)
-    {
+
+    public void set_textview(String x) {
         textView.setText(x);
     }
+
+    public void set_btn() {
+        Favourite = (Button) findViewById(R.id.favourites);
+        clear_pref = (Button) findViewById(R.id.clear_pref);
+
+
+        Favourite.setOnClickListener(this);
+        clear_pref.setOnClickListener(this);
+    }
+
+
 }
