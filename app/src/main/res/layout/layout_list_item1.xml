@@ -2,32 +2,34 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
 
 
     app:cardCornerRadius="15dp"
-    android:layout_height="200dp">
-<RelativeLayout
-    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-
-    <FrameLayout
-
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    <ImageView
 
-        android:scaleType="fitXY"
-        android:padding="7dp"
 
-            android:id="@+id/game_img"
-            android:layout_width="match_parent"
-            android:layout_height="140dp"
-           >
+        <FrameLayout
 
-        </ImageView>
-        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp">
+
+            <ImageView
+
+                android:id="@+id/game_img"
+                android:layout_width="match_parent"
+
+                android:layout_height="match_parent"
+                android:padding="7dp"
+                android:scaleType="fitXY">
+
+            </ImageView>
+
+            <ImageView
             android:src="@drawable/img_background"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
@@ -37,7 +39,7 @@
         android:background="@android:color/transparent"
         android:textColor="#000000"
         android:gravity="center"
-        android:textSize="15sp"
+        android:textSize="12sp"
         android:layout_gravity="bottom"
         android:id="@+id/game_name"
         android:layout_width="match_parent"

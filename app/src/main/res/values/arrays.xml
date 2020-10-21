@@ -1,3 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+     <string name="instruction">
+
+             <br> Once You play the Game , the game will be offline for a while</br>
+        <br>
+      \n  If the blank screen appears then comeback and restart the game with proper internet connection
+        </br>
+     </string>
+
 </resources>

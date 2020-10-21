@@ -6,25 +6,29 @@
     android:orientation="vertical"
     android:layout_height="match_parent"
     tools:context=".Game_desc">
-    <LinearLayout
+    <RelativeLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <FrameLayout
 
+        <FrameLayout
+            android:id="@+id/frame"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="15dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-        <ImageView
-            android:scaleType="fitXY"
-            android:id="@+id/desc_img"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-     android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-           android:padding="7dp"
-            android:contentDescription="TODO">
 
-        </ImageView>
+            <ImageView
+                android:id="@+id/desc_img"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:padding="7dp"
+                android:scaleType="fitXY"
+                android:contentDescription="TODO">
+
+            </ImageView>
 
             <ImageView
                 android:layout_marginTop="10dp"
@@ -36,48 +40,89 @@
             </ImageView>
         </FrameLayout>
 
-        <LinearLayout
+
+        <TextView
+            android:id="@+id/desc_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
 
-            <TextView
-                android:layout_marginStart="20dp"
-                android:id="@+id/desc_text"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
+            android:layout_alignParentTop="true"
 
-                android:layout_marginTop="20dp"
 
-                android:gravity="center"
-                android:textSize="20sp">
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="30dp"
+            android:layout_toEndOf="@+id/frame"
 
-            </TextView>
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_marginStart="40dp"
-                android:background="@drawable/textview_round"
-                android:padding="5dp"
-                android:text="category"
-                android:textColor="#FFFFFF">
+        </TextView>
 
-            </TextView>
-        </LinearLayout>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_marginTop="20dp"
-     android:weightSum="3"
+        <TextView
+            android:id="@+id/text_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="100dp"
+            android:layout_toEndOf="@+id/frame"
+            android:background="@drawable/textview_round"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="Category"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp">
+
+        </TextView>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_marginTop="30dp"
+        android:weightSum="3"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <Button
+
+            android:id="@+id/btn_play"
+            android:layout_width="150dp"
+            android:layout_height="60dp"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginHorizontal="50dp"
+            android:layout_weight="1"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="Start"
+
+
+            android:textColor="@android:color/white"
+            android:textSize="30sp">
+
+        </Button>
+
+        <Button
+            android:id="@+id/btn_report"
+
+            android:layout_width="50dp"
+            android:layout_height="60dp"
+
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="end"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/report_icon">
+
+        </Button>
+
         <com.sackcentury.shinebuttonlib.ShineButton
-       android:layout_weight="1"
-android:id="@+id/fav"
 
-
-android:layout_marginLeft="10dp"
+            android:id="@+id/fav"
+            android:layout_width="60dp"
+            android:layout_alignParentStart="true"
             app:btn_fill_color="#FF6666"
             app:allow_random_color="true"
             app:enable_flashing="true"
@@ -90,32 +135,68 @@ android:layout_marginLeft="10dp"
             app:small_shine_color="#CC9999"
             app:shine_count="8"
             android:layout_gravity="start"
-            android:layout_width="10dp"
+            android:layout_marginStart="5dp"
             android:layout_height="60dp">
 
         </com.sackcentury.shinebuttonlib.ShineButton>
-    <Button
+    </RelativeLayout>
 
-        android:layout_weight="1"
-        android:layout_gravity="center_horizontal"
-        android:id="@+id/btn_play"
-        android:text="Play"
-        android:layout_marginHorizontal="50dp"
-        android:textColor="@android:color/white"
-        android:background="@color/colorPrimaryDark"
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="10dp">
 
-        android:layout_width="50dp"
-        android:layout_height="50dp">
+        <TextView
+            android:id="@+id/instruction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
 
-    </Button>
-        <Button
-            android:layout_weight="1"
-android:gravity="end"
-           android:layout_gravity="end"
-            android:layout_width="50dp"
+
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:padding="10dp"
+            android:textSize="13sp">
+
+        </TextView>
+
+        <TextView
+            android:id="@+id/internet_req"
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content"
+
+            android:layout_below="@+id/instruction"
+            android:layout_margin="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="10dp"
+            android:padding="10dp"
+            android:textSize="13sp">
+
+        </TextView>
+
+        <TextView
+
+            android:layout_width="match_parent"
+            android:layout_above="@+id/google_banner_adView_desc"
+            android:layout_below="@+id/internet_req"
             android:layout_height="wrap_content">
 
-        </Button>
-    </LinearLayout>
+        </TextView>
 
+        <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/google_banner_adView_desc"
+
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="5dp"
+            ads:adSize="BANNER"
+            ads:adUnitId="ca-app-pub-5584279718709862/7324226210">
+
+        </com.google.android.gms.ads.AdView>
+    </RelativeLayout>
 </LinearLayout>

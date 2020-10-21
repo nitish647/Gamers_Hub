@@ -2,4 +2,36 @@
     <string name="app_name">Gamers Hub</string>
     <string name="navigation_drawer_open">Drawer Open</string>
     <string name="navigation_drawer_close">Drawer Closed</string>
+
+    <string name="instrcutions">
+        <br> Once You play the Game , the game will be offline for a while</br>
+        <br>
+        If the blank screen appears then comeback and restart the game with proper internet connection
+        </br>
+    </string>
+    <string name="instrcutions2">
+    </string>
+    <string name="fb_test_inter">
+        IMG_16_9_APP_INSTALL#743235656527656_743236059860949
+    </string>
+    <string name="fb_inter">
+       743235656527656_743236059860949
+    </string>
+    <string name="fb_test_reward">
+        PLAYABLE#743235656527656_744747136376508
+    </string>
+    <string name="fb_reward">
+      743235656527656_744747136376508
+    </string>
+    <string name="admob_inter">
+        ca-app-pub-5584279718709862/1146858340
+    </string>
+    <string name="admob_reward">
+        ca-app-pub-5584279718709862/4033478773
+    </string>
+    <string name="admob_test_reward">
+    ca-app-pub-3940256099942544/5224354917
+     </string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

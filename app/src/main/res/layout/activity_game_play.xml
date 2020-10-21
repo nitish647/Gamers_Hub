@@ -3,13 +3,43 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:orientation="vertical"
+
     android:layout_height="match_parent"
     tools:context=".Game_play">
-<org.adblockplus.libadblockplus.android.webview.AdblockWebView
-    android:id="@+id/webview"
-    android:layout_width="match_parent"
 
-    android:layout_height="match_parent">
+    <com.airbnb.lottie.LottieAnimationView
 
-</org.adblockplus.libadblockplus.android.webview.AdblockWebView>
+        android:id="@+id/lottie_loading"
+        android:layout_width="150dp"
+
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginVertical="140dp"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/loading_4">
+
+    </com.airbnb.lottie.LottieAnimationView>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/no_internet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/no_internet">
+
+    </com.airbnb.lottie.LottieAnimationView>
+
+    <org.adblockplus.libadblockplus.android.webview.AdblockWebView
+        android:id="@+id/webview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
+
+    </org.adblockplus.libadblockplus.android.webview.AdblockWebView>
+
+
 </LinearLayout>
