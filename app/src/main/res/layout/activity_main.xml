@@ -17,33 +17,33 @@
         android:orientation="vertical">
 
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:weightSum="10">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="10">
 
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/main_recycler"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="9"
-                android:layoutAnimation="@anim/layout_anim_fall_down"
-                android:padding="5dp">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/main_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="9"
+        android:layoutAnimation="@anim/layout_anim_fall_down"
+        android:padding="5dp">
 
-            </androidx.recyclerview.widget.RecyclerView>
+    </androidx.recyclerview.widget.RecyclerView>
 
-            <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/main_banner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/main_banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
 
-                android:layout_marginBottom="8dp"
-                android:layout_weight="1"
+        android:layout_marginBottom="8dp"
+        android:layout_weight="1"
 
-                ads:adSize="BANNER"
-                ads:adUnitId="ca-app-pub-5584279718709862/7324226210"></com.google.android.gms.ads.AdView>
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-5584279718709862/7324226210"></com.google.android.gms.ads.AdView>
 
         </LinearLayout>
 
@@ -138,25 +138,24 @@
 
 
         <GridView
-            android:id="@+id/grid_category"
             android:layout_height="wrap_content"
-            android:layout_width="match_parent"
             android:layout_margin="5dp"
+            android:id="@+id/grid_category"
+            android:layout_width="match_parent"
             android:numColumns="2">
 
         </GridView>
 
 
         <GridView
-            android:id="@+id/info"
             android:layout_margin="5dp"
             android:layout_marginTop="40dp"
             android:numColumns="2"
+            android:id="@+id/info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
         </GridView>
-
         <include layout="@layout/header_layout">
 
         </include>

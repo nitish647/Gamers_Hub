@@ -77,8 +77,9 @@ public class Desc_frag extends Fragment {
         google_banner_ad = view.findViewById(R.id.google_banner_adView_desc);
         AdRequest adRequest = new AdRequest.Builder().build();
         google_banner_ad.loadAd(adRequest);
-        if (!this.isVisible())
+        if (!this.isVisible()) {
             google_banner_ad.destroy();
+        }
 
         String img_file = "", name = "", url = "", orientation = "";
 
@@ -219,5 +220,6 @@ public class Desc_frag extends Fragment {
         internet_req_textview.setBackground(Helper_class.set_Colors("#FC3F03", "#F37D0D", (float) 20, GradientDrawable.Orientation.LEFT_RIGHT));
         textview_category.setBackground(Helper_class.set_Colors("#FFA406", "#FFA406", (float) 40, GradientDrawable.Orientation.LEFT_RIGHT));
     }
+
 
 }

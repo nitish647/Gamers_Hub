@@ -13,6 +13,8 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="Welcome"
+        android:layout_gravity="center"
+        android:layout_marginTop="150dp"
         android:textColor="#FFFFFF"
         android:textSize="50sp"
         android:textStyle="bold">
@@ -21,6 +23,7 @@
 
     <TextView
         android:id="@+id/warning"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -34,7 +37,7 @@
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_gravity="center"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="20dp"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/splash_anim4"

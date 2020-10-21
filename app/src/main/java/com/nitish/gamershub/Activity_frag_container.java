@@ -37,6 +37,7 @@ public class Activity_frag_container extends AppCompatActivity {
     static String json_string;
     TextView instruction;
     String url;
+
     Game_play_frag game_play_frag;
     String ads = MainActivity.ads_state;
     AdView google_banner_ad;
@@ -92,7 +93,7 @@ public class Activity_frag_container extends AppCompatActivity {
 
 
         //google ads
-
+        google_banner_ad = findViewById(R.id.google_banner_adView_desc);
         admob_mInterstitialAd = new com.google.android.gms.ads.InterstitialAd(this);
         admob_mInterstitialAd.setAdUnitId(getResources().getString(R.string.admob_inter));
         admob_mInterstitialAd.loadAd(new AdRequest.Builder().build());
@@ -105,6 +106,9 @@ public class Activity_frag_container extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 game_play_visibily = true;
+
+                if (google_banner_ad != null)
+                    google_banner_ad.destroy();
                 if (wv_paused)
                     adblockWebView.onResume();
                 new Handler().postDelayed(new Runnable() {
@@ -228,6 +232,7 @@ public class Activity_frag_container extends AppCompatActivity {
                     wv_paused = true;
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                     game_play_visibily = false;
+
                     onBackPressed();
 
                 }

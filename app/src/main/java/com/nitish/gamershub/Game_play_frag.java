@@ -47,15 +47,14 @@ public class Game_play_frag extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        Activity_frag_container activity_frag_container = new Activity_frag_container();
-        url = activity_frag_container.url;
+
 
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        url = new Activity_frag_container().url;
+
     }
 
     @Override
@@ -68,7 +67,6 @@ public class Game_play_frag extends Fragment {
         no_interent_lottie = view.findViewById(R.id.frag_no_internet);
 
 
-        Bundle bundle = getArguments();
         //    String myValue = bundle.getString("url");
         //     Helper_class.show_toast(getContext(),myValue);
         layoutParams = new LinearLayout.LayoutParams(0, 0);
@@ -107,7 +105,7 @@ public class Game_play_frag extends Fragment {
                     webView.setLayoutParams(layoutParams);
                     loading_lottieAnimationView.setVisibility(View.INVISIBLE);
                     no_interent_lottie.setVisibility(View.VISIBLE);
-                    Helper_class.show_toast(getContext(), "something went wrong ");
+                    Helper_class.show_toast(view.getContext(), "something went wrong ");
                 }
                 super.onReceivedError(view, errorCode, description, failingUrl);
             }
@@ -145,7 +143,6 @@ public class Game_play_frag extends Fragment {
             }
         });
 
-        Activity_frag_container activity_frag_container = (Activity_frag_container) getActivity();
 
         //  webView.loadUrl(url);
 
