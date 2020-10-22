@@ -23,6 +23,62 @@
     android:orientation="vertical"
     android:weightSum="10">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+
+        android:background="#F0740D">
+
+        <RelativeLayout
+
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/navigation_btn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="7dp"
+                android:layout_marginBottom="12dp"
+
+                android:background="@drawable/navigation_icon4"
+                android:gravity="start">
+
+            </Button>
+
+            <TextView
+                android:id="@+id/main_title"
+                android:layout_width="wrap_content"
+                android:layout_height="39dp"
+                android:layout_centerInParent="true"
+                android:fontFamily="sans-serif-condensed"
+                android:gravity="center"
+                android:text="Gamers Hub"
+
+                android:textColor="@android:color/white"
+
+                android:textSize="30sp">
+
+            </TextView>
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/main_searchview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="5dp"
+                android:layout_toEndOf="@+id/main_title"
+                android:visibility="gone">
+
+            </androidx.appcompat.widget.SearchView>
+
+
+        </RelativeLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/main_recycler"
@@ -47,62 +103,6 @@
 
         </LinearLayout>
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-
-            android:background="#F0740D">
-
-            <RelativeLayout
-
-
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <Button
-                    android:id="@+id/navigation_btn"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginStart="7dp"
-                    android:layout_marginBottom="12dp"
-
-                    android:background="@drawable/navigation_icon4"
-                    android:gravity="start">
-
-                </Button>
-
-                <TextView
-                    android:id="@+id/main_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="39dp"
-                    android:layout_centerInParent="true"
-                    android:fontFamily="sans-serif-condensed"
-                    android:gravity="center"
-                    android:text="Gamers Hub"
-
-                    android:textColor="@android:color/white"
-
-                    android:textSize="30sp">
-
-                </TextView>
-
-                <androidx.appcompat.widget.SearchView
-                    android:id="@+id/main_searchview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="5dp"
-                    android:layout_toEndOf="@+id/main_title"
-                    android:visibility="gone">
-
-                </androidx.appcompat.widget.SearchView>
-
-
-            </RelativeLayout>
-        </com.google.android.material.appbar.AppBarLayout>
 
     </LinearLayout>
 <com.google.android.material.navigation.NavigationView
@@ -119,6 +119,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
+        <include layout="@layout/header_layout">
+
+        </include>
 
         <Button
             android:id="@+id/remove_ads"
@@ -156,9 +160,7 @@
             android:layout_height="wrap_content">
 
         </GridView>
-        <include layout="@layout/header_layout">
 
-        </include>
 
     </LinearLayout>
 </com.google.android.material.navigation.NavigationView>
