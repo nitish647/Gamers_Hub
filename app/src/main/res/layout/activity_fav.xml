@@ -8,26 +8,6 @@
     android:layout_height="match_parent"
     tools:context=".Fav_activity">
 
-    <androidx.recyclerview.widget.RecyclerView
-
-        android:id="@+id/fav_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="10">
-
-
-    </androidx.recyclerview.widget.RecyclerView>
-
-    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/fav_banner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_weight="2"
-
-        ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-5584279718709862/7324226210"></com.google.android.gms.ads.AdView>
-
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
@@ -59,10 +39,31 @@
                 android:fontFamily="sans-serif-condensed"
                 android:gravity="center"
                 android:textColor="@android:color/white"
-                android:textSize="30sp">
+                android:textSize="25sp">
 
             </TextView>
         </RelativeLayout>
     </com.google.android.material.appbar.AppBarLayout>
+    <androidx.recyclerview.widget.RecyclerView
+
+        android:id="@+id/fav_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="10">
+
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/fav_banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_weight="2"
+
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-5584279718709862/7324226210"></com.google.android.gms.ads.AdView>
+
+
 
 </LinearLayout>
