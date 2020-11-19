@@ -525,6 +525,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         alertDialog.setTitle("About us");
                         alertDialog.setMessage(Html.fromHtml(get_about_us()));
                     } else
+
                         alertDialog.setView(webView);
                     alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "ok", new android.content.DialogInterface.OnClickListener() {
                         @Override
