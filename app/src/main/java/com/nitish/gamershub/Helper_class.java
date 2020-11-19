@@ -8,7 +8,7 @@ import android.widget.ToggleButton;
 
 public class Helper_class {
     public static GradientDrawable gd;
-
+    String github_test;
     public static void show_toast(Context context, String message) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
