@@ -15,15 +15,15 @@ repositories {
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     defaultConfig {
         applicationId "com.nitish.gamershub"
         apply plugin: 'com.google.gms.google-services'
         minSdkVersion 21
-        targetSdkVersion 29
-        versionCode 11
-        versionName "2.0"
+        targetSdkVersion 30
+        versionCode 13
+        versionName "2.2"
         multiDexEnabled true
         manifestPlaceholders = [
                 onesignal_app_id: 'dea42835-b4ba-4795-92e6-d041bd0b9a03',

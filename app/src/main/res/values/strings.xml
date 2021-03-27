@@ -14,14 +14,20 @@
     <string name="fb_test_inter">
         IMG_16_9_APP_INSTALL#743235656527656_743236059860949
     </string>
-    <string name="fb_inter">
+    <string name="fb_inter_karan">
        743235656527656_743236059860949
+    </string>
+    <string name="fb_inter_nitish">
+       804901923716848_804910687049305
     </string>
     <string name="fb_test_reward">
         PLAYABLE#743235656527656_744747136376508
     </string>
-    <string name="fb_reward">
+    <string name="fb_reward_karan">
       743235656527656_744747136376508
+    </string>
+    <string name="fb_reward_nitish">
+      804901923716848_804909593716081
     </string>
     <string name="admob_inter">
         ca-app-pub-5584279718709862/1146858340

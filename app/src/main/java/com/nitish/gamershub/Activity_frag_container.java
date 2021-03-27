@@ -87,7 +87,7 @@ public class Activity_frag_container extends AppCompatActivity {
 
 
         //facebook ads
-        fb_interstitialAd = new InterstitialAd(this, getResources().getString(R.string.fb_inter));
+        fb_interstitialAd = new InterstitialAd(this, getResources().getString(R.string.fb_inter_nitish));
         setFb_interstitialAd_listner();
         Game_play_frag game_play_frag = new Game_play_frag();
 

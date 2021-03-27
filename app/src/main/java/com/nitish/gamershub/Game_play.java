@@ -101,7 +101,7 @@ public class Game_play extends AppCompatActivity {
         }
 
         //facebook ads
-        fb_interstitialAd = new InterstitialAd(this, getResources().getString(R.string.fb_inter));
+        fb_interstitialAd = new InterstitialAd(this, getResources().getString(R.string.fb_inter_nitish));
         setFb_interstitialAd_listner();
 
 

@@ -70,6 +70,7 @@ import com.google.gson.stream.JsonReader;
 import com.onesignal.OneSignal;
 
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -172,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //facebook ads
         AudienceNetworkAds.initialize(this);
         fb_rewardedVideoAd = new RewardedVideoAd(MainActivity.this,
-                getResources().getString(R.string.fb_reward));
+                getResources().getString(R.string.fb_reward_nitish));
         load_fb_reward_ads();
 
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
@@ -458,10 +459,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void setListView() {
         final ArrayAdapter arrayAdapter = new ArrayAdapter(this, R.layout.category_item, cat_title) {
+            @NotNull
             public View getView(int position, View convertView, ViewGroup container) {
+
                 if (convertView == null) {
-                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.category_item, container, false);
+                    if (container == null)
+                        convertView = LayoutInflater.from(getContext()).inflate(R.layout.category_item, null);
+                    else
+
+                        convertView = LayoutInflater.from(getContext()).inflate(R.layout.category_item, container, false);
                 }
+
                 TextView title = convertView.findViewById(R.id.list_text);
                 title.setTextColor(Color.BLACK);
                 ImageView imageView = convertView.findViewById(R.id.category_img);
@@ -490,8 +498,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final ArrayAdapter arrayAdapter2 = new ArrayAdapter(this, R.layout.category_item, info_title) {
             public View getView(int position, View convertView, ViewGroup container) {
                 if (convertView == null) {
+
                     convertView = LayoutInflater.from(getContext()).inflate(R.layout.category_item, container, false);
-                }
+                } else
+                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.category_item, null);
                 TextView title = convertView.findViewById(R.id.list_text);
                 title.setTextSize(15);
                 title.setTextColor(Color.parseColor("#FFFFFF"));
@@ -503,6 +513,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
         gridView_info.setAdapter(arrayAdapter2);
+
+
         gridView_info.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
