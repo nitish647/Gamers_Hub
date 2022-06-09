@@ -1,36 +1,17 @@
 package com.nitish.gamershub;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.ArrayMap;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
@@ -41,48 +22,41 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.facebook.ads.Ad;
 import com.facebook.ads.AudienceNetworkAds;
-import com.facebook.ads.RewardedAdListener;
 import com.facebook.ads.RewardedVideoAd;
 import com.facebook.ads.RewardedVideoAdListener;
-import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
-import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewarded.RewardedAd;
-import com.google.android.gms.ads.rewarded.RewardedAdCallback;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 import com.google.android.material.navigation.NavigationView;
-import com.google.gson.JsonArray;
-import com.google.gson.stream.JsonReader;
+import com.google.firebase.database.annotations.NotNull;
 import com.onesignal.OneSignal;
 
-
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     ArrayList game_name;
@@ -150,10 +124,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         OneSignal.setLogLevel(OneSignal.LOG_LEVEL.VERBOSE, OneSignal.LOG_LEVEL.NONE);
 
         // OneSignal Initialization
-        OneSignal.startInit(this)
-                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
-                .unsubscribeWhenNotificationsAreDisabled(true)
-                .init();
+
 
 //google ads
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
@@ -166,9 +137,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         main_banner.loadAd(adRequest);
 
         //admob reward
-        admob_rewardedAd = new RewardedAd(this,
-                getResources().getString(R.string.admob_reward));
-        loadAdmob_rewardedAd();
+//        admob_rewardedAd = new RewardedAd(this,
+//                getResources().getString(R.string.admob_reward));
+       // loadAdmob_rewardedAd();
 
         //facebook ads
         AudienceNetworkAds.initialize(this);
@@ -366,13 +337,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 });
                 builder.setButton(DialogInterface.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if (admob_rewardedAd.isLoaded())
-                            show_rewarded_ad();
-                        else if (fb_rewardedVideoAd.isAdLoaded() || !fb_rewardedVideoAd.isAdInvalidated())
-                            fb_rewardedVideoAd.show();
-                        else
-                            show_Toast("ads loading failed , try again later");
+                    public void onClick(DialogInterface dialogInterface, int i)
+
+                    {
+
                         builder.dismiss();
                     }
                 });
@@ -396,34 +364,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onResume();
     }
 
-//    public void setHashMap() throws JSONException {
-//
-//
-//        hashMap = new HashMap();
-//        HashMap hashMap2 = new HashMap();
-//        hashMap2.put("hj", R.drawable.fab_off1);
-//        ArrayMap arrayMap = new ArrayMap();
-//        hashMap.put("this is 1", hashMap2);
-//        hashMap2.values();
-//
-//        JSONArray jsonArray = new JSONArray(hashMap.values());
-//        show_Toast(String.valueOf(jsonArray.getJSONObject(0).getInt("hj")));
-//    }
-//
-//    public void get_hashmap() {
-//
-//
-//        ArrayList arrayList = new ArrayList<>();
-//        HashMap hashMap4 = null;
-//        HashSet hashSet = new HashSet();
-//        hashSet.addAll(hashMap.values());
-//        arrayList.add(hashMap.values());
-//
-//
-//        show_Toast(hashSet.toString());
-//
-//
-//    }
 
     public void jsonlist(String name, int img_file, String url) throws JSONException {
         JSONObject jsonObject = new JSONObject();
@@ -450,7 +390,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         navigation_btn.setOnClickListener(this);
         remove_ads.setOnClickListener(this);
-        remove_ads.setBackground(Helper_class.set_Colors("#E51512", "#E1541F", (float) 20, GradientDrawable.Orientation.LEFT_RIGHT));
+        remove_ads.setBackground(Helper_class.setBackgroundWithGradient("#E51512", "#E1541F", (float) 20, GradientDrawable.Orientation.LEFT_RIGHT));
         gridView = findViewById(R.id.grid_category);
         gridView_info = findViewById(R.id.info);
 
@@ -482,7 +422,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         };
 
         gridView.setAdapter(arrayAdapter);
-        gridView.setBackground(Helper_class.set_Colors("#E9903B", "#E9E93B", (float) 30, GradientDrawable.Orientation.TOP_BOTTOM));
+        gridView.setBackground(Helper_class.setBackgroundWithGradient("#E9903B", "#E9E93B", (float) 30, GradientDrawable.Orientation.TOP_BOTTOM));
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -592,50 +532,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onDestroy();
     }
 
-    public void loadAdmob_rewardedAd() {
-        adLoadCallback = new RewardedAdLoadCallback() {
-            @Override
-            public void onRewardedAdLoaded() {
-                // Ad successfully loaded.
-            }
+//    public void loadAdmob_rewardedAd() {
+//        adLoadCallback = new RewardedAdLoadCallback() {
+//            @Override
+//            public void onRewardedAdLoaded() {
+//                // Ad successfully loaded.
+//            }
+//
+//            @Override
+//            public void onRewardedAdFailedToLoad(LoadAdError adError) {
+//                // Ad failed to load.
+//            }
+//        };
+//        admob_rewardedAd.loadAd(new AdRequest.Builder().build(), adLoadCallback);
+//
+//    }
 
-            @Override
-            public void onRewardedAdFailedToLoad(LoadAdError adError) {
-                // Ad failed to load.
-            }
-        };
-        admob_rewardedAd.loadAd(new AdRequest.Builder().build(), adLoadCallback);
-
-    }
-
-    public void show_rewarded_ad() {
-
-        Activity activityContext = MainActivity.this;
-        RewardedAdCallback adCallback = new RewardedAdCallback() {
-            @Override
-            public void onRewardedAdOpened() {
-                // Ad opened.
-            }
-
-            @Override
-            public void onRewardedAdClosed() {
-                admob_rewardedAd.loadAd(new AdRequest.Builder().build(), adLoadCallback);
-            }
-
-            @Override
-            public void onUserEarnedReward(@NonNull RewardItem reward) {
-                ads_state = "false";
-                show_Toast("ads removed");
-
-            }
-
-            @Override
-            public void onRewardedAdFailedToShow(AdError adError) {
-                // Ad failed to display.
-            }
-        };
-        admob_rewardedAd.show(activityContext, adCallback);
-    }
+//    public void show_rewarded_ad() {
+//
+//        Activity activityContext = MainActivity.this;
+//        RewardedAdCallback adCallback = new RewardedAdCallback() {
+//            @Override
+//            public void onRewardedAdOpened() {
+//                // Ad opened.
+//            }
+//
+//            @Override
+//            public void onRewardedAdClosed() {
+//                admob_rewardedAd.loadAd(new AdRequest.Builder().build(), adLoadCallback);
+//            }
+//
+//            @Override
+//            public void onUserEarnedReward(@NonNull RewardItem reward) {
+//                ads_state = "false";
+//                show_Toast("ads removed");
+//
+//            }
+//
+//            @Override
+//            public void onRewardedAdFailedToShow(AdError adError) {
+//                // Ad failed to display.
+//            }
+//        };
+//        admob_rewardedAd.show(activityContext, adCallback);
+//    }
 
 
     public String get_about_us() {

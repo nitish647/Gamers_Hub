@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_gravity="start"
+tools:openDrawer="start"
+android:background="#FFFFFF"
+android:id="@+id/drawerLayout"
+android:layout_height="match_parent"
+tools:context=".Activities.HomeActivity">
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_above="@+id/googleBannerAdView"
+        android:id="@+id/mainLinear"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="5dp"
+        android:orientation="vertical"
+        android:weightSum="10">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+
+            android:background="#F0740D">
+
+            <RelativeLayout
+
+
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:id="@+id/navigationButton"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="7dp"
+                    android:layout_marginBottom="12dp"
+
+                    android:background="@drawable/navigation_icon4"
+                    android:gravity="start">
+
+                </Button>
+
+                <TextView
+                    android:id="@+id/main_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="39dp"
+                    android:layout_centerInParent="true"
+                    android:fontFamily="sans-serif-condensed"
+
+                    android:gravity="center"
+
+                    android:text="Gamers Hub"
+                    android:textColor="@android:color/white"
+                    android:textSize="30sp">
+
+                </TextView>
+
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/searchView"
+
+                    android:visibility="gone"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="5dp"
+                    android:layout_toEndOf="@+id/main_title"
+                    >
+
+                </androidx.appcompat.widget.SearchView>
+
+
+            </RelativeLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+     <com.google.android.material.tabs.TabLayout
+         android:id="@+id/tabLayout"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content">
+
+     </com.google.android.material.tabs.TabLayout>
+   <androidx.viewpager.widget.ViewPager
+       android:id="@+id/viewPager"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+</androidx.viewpager.widget.ViewPager>
+    </LinearLayout>
+
+    <com.google.android.gms.ads.AdView
+
+
+        android:layout_alignParentBottom="true"
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/googleBannerAdView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_gravity="bottom"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
+    </com.google.android.gms.ads.AdView>
+
+</RelativeLayout>
+<com.google.android.material.navigation.NavigationView
+    android:id="@+id/navigationView"
+
+
+    android:layout_width="300dp"
+    android:layout_gravity="start"
+
+    android:background="#F0740D"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include layout="@layout/header_layout">
+
+        </include>
+
+        <Button
+            android:id="@+id/remove_ads"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginVertical="3dp"
+            android:gravity="center"
+            android:text="Remove ads (Free)"
+
+            android:textColor="@android:color/white"
+
+
+            >
+
+        </Button>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:id="@+id/categoriesRecycler"
+            android:layout_width="match_parent"
+            android:numColumns="2">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+
+        <GridView
+            android:layout_margin="5dp"
+            android:layout_marginTop="40dp"
+            android:numColumns="2"
+            android:id="@+id/info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </GridView>
+
+
+    </LinearLayout>
+</com.google.android.material.navigation.NavigationView>
+
+</androidx.drawerlayout.widget.DrawerLayout>

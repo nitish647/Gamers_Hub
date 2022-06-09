@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nitish.gamershub">
-<!--    android:roundIcon="@mipmap/vector_icon2"-->
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/vector_icon2"
@@ -11,11 +14,25 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Activity_frag_container"
-            android:configChanges="orientation|screenSize">
+            android:name=".Activities.CategoryActivity"
+            android:exported="false" />
 
-        </activity>
-        <activity android:name=".Splash_Screen">
+        <activity
+            android:name=".Activities.GamePlayActivity"
+            android:exported="false" />
+        <activity
+            android:configChanges="orientation|screenSize"
+            android:name=".Activities.GameDetailActivity2"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.HomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity_frag_container"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".Splash_Screen"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,7 +42,9 @@
         <activity android:name=".Game_desc" />
         <activity android:name=".Fav_activity" />
         <activity android:name=".Game_play" />
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -39,9 +58,5 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-5584279718709862~9566427930" />
     </application>
-
-    <uses-permission android:name="android.permission.INTERNET" />
-
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
 </manifest>

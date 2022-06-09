@@ -1,14 +1,13 @@
 package com.nitish.gamershub;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.telephony.CellSignalStrength;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,24 +16,12 @@ import androidx.annotation.NonNull;
 import androidx.collection.ArrayMap;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
-import com.google.android.gms.ads.LoadAdError;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerviewAdapter.Myviewholder> {
     public static String sharedpref_fav = "SHAREDPREF_FAV";
@@ -68,7 +55,7 @@ this.context=context;
     @NonNull
     @Override
     public Myviewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(context).inflate(R.layout.layout_list_item1,parent,false);
+        View v = LayoutInflater.from(context).inflate(R.layout.popular_and_new_layout,parent,false);
 
         return new Myviewholder(v);
     }

@@ -168,7 +168,7 @@
 
         </com.google.android.gms.ads.AdView>
 
-        <com.sackcentury.shinebuttonlib.ShineButton
+        <ImageView
 
             android:id="@+id/desc_frag_fav_btn"
             android:layout_width="60dp"
@@ -177,21 +177,12 @@
             android:layout_gravity="start"
             android:layout_marginStart="16dp"
             android:layout_marginTop="20dp"
-            app:allow_random_color="true"
-            app:big_shine_color="#FF6666"
-            app:btn_fill_color="#FF6666"
-            app:click_animation_duration="200"
-            app:enable_flashing="true"
+
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/desc_frameLayout"
-            app:shine_animation_duration="1500"
-            app:shine_count="8"
-            app:shine_distance_multiple="1.3"
-            app:shine_turn_angle="5"
-            app:small_shine_color="#CC9999"
-            app:small_shine_offset_angle="10">
+           >
 
-        </com.sackcentury.shinebuttonlib.ShineButton>
+        </ImageView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

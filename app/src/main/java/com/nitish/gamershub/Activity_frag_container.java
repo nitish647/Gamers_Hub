@@ -1,35 +1,27 @@
 package com.nitish.gamershub;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.opengl.Visibility;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdError;
 import com.facebook.ads.InterstitialAd;
 import com.facebook.ads.InterstitialAdListener;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.squareup.picasso.Picasso;
 
-import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,21 +34,21 @@ public class Activity_frag_container extends AppCompatActivity {
     String ads = MainActivity.ads_state;
     AdView google_banner_ad;
     FragmentManager fragmentManager = getSupportFragmentManager();
-    AdblockWebView adblockWebView;
+//    AdblockWebView adblockWebView;
     boolean game_play_visibily, wv_paused;
     Button game_play_btn;
     Bundle bundle = new Bundle();
     String name, instrution, img_file, json_obj, orientation;
     String non_stat = "snmsdnfnbsdf";
     private InterstitialAd fb_interstitialAd;
-    private com.google.android.gms.ads.InterstitialAd admob_mInterstitialAd;
+//    private com.google.android.gms.ads.InterstitialAd admob_mInterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_frag_container);
 
-        adblockWebView = findViewById(R.id.frag_webview);
+        //adblockWebView = findViewById(R.id.frag_webview);
         instruction = findViewById(R.id.frag_instr_textview);
         game_play_btn = findViewById(R.id.frag_desc_start_btn);
         instruction.setTextColor(Color.WHITE);
@@ -74,7 +66,7 @@ public class Activity_frag_container extends AppCompatActivity {
             orientation = jsonObject.getString("orientation");
             Bundle bundle = new Bundle();
             bundle.putString("url", url);
-            adblockWebView.loadUrl(url);
+            //adblockWebView.loadUrl(url);
             Game_play_frag game_play_frag = new Game_play_frag();
             game_play_frag.setArguments(bundle);
 // set Fragmentclass Arguments
@@ -94,10 +86,10 @@ public class Activity_frag_container extends AppCompatActivity {
 
         //google ads
         google_banner_ad = findViewById(R.id.google_banner_adView_desc);
-        admob_mInterstitialAd = new com.google.android.gms.ads.InterstitialAd(this);
-        admob_mInterstitialAd.setAdUnitId(getResources().getString(R.string.admob_inter));
-        admob_mInterstitialAd.loadAd(new AdRequest.Builder().build());
-        setAdmob_mInterstitialAd();
+//        admob_mInterstitialAd = new com.google.android.gms.ads.InterstitialAd(this);
+//        admob_mInterstitialAd.setAdUnitId(getResources().getString(R.string.admob_inter));
+//        admob_mInterstitialAd.loadAd(new AdRequest.Builder().build());
+//        setAdmob_mInterstitialAd();
 
 
         final String finalOrientation = orientation;
@@ -109,14 +101,15 @@ public class Activity_frag_container extends AppCompatActivity {
 
                 if (google_banner_ad != null)
                     google_banner_ad.destroy();
-                if (wv_paused)
-                    adblockWebView.onResume();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        show_ads_admob_first();
-                    }
-                }, 2500);
+//                if (wv_paused)
+//                    adblockWebView.onResume();
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        show_ads_admob_first();
+//
+//                    }
+//                }, 2500);
                 if (finalOrientation1.toLowerCase().contains("hori")) {
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
                 }
@@ -166,52 +159,52 @@ public class Activity_frag_container extends AppCompatActivity {
         fb_interstitialAd.loadAd(fb_interstitialAd.buildLoadAdConfig().withAdListener(fb_interstitialAdListener).build());
     }
 
-    public void setAdmob_mInterstitialAd() {
-        admob_mInterstitialAd.setAdListener(new AdListener() {
+//    public void setAdmob_mInterstitialAd() {
+//        admob_mInterstitialAd.setAdListener(new AdListener() {
+//
+//            @Override
+//            public void onAdClosed() {
+//                admob_mInterstitialAd.loadAd(new AdRequest.Builder().build());
+//
+//                // finish();
+//                super.onAdClosed();
+//            }
+//        });
+//    }
 
-            @Override
-            public void onAdClosed() {
-                admob_mInterstitialAd.loadAd(new AdRequest.Builder().build());
+//    public void show_ads_fb_first() {
+//        if (ads.contains("true")) {
+//            if (fb_interstitialAd.isAdLoaded() && !fb_interstitialAd.isAdInvalidated())
+//                fb_interstitialAd.show();
+//            else if (admob_mInterstitialAd.isLoaded())
+//                admob_mInterstitialAd.show();
+//
+//        }
+//    }
+//
+//    public void show_ads_admob_first() {
+//        if (ads.contains("true")) {
+//
+//            if (admob_mInterstitialAd.isLoaded())
+//                admob_mInterstitialAd.show();
+//            else if (fb_interstitialAd.isAdLoaded() && !fb_interstitialAd.isAdInvalidated())
+//                fb_interstitialAd.show();
+//
+//        }
+//    }
 
-                // finish();
-                super.onAdClosed();
-            }
-        });
-    }
-
-    public void show_ads_fb_first() {
-        if (ads.contains("true")) {
-            if (fb_interstitialAd.isAdLoaded() && !fb_interstitialAd.isAdInvalidated())
-                fb_interstitialAd.show();
-            else if (admob_mInterstitialAd.isLoaded())
-                admob_mInterstitialAd.show();
-
-        }
-    }
-
-    public void show_ads_admob_first() {
-        if (ads.contains("true")) {
-
-            if (admob_mInterstitialAd.isLoaded())
-                admob_mInterstitialAd.show();
-            else if (fb_interstitialAd.isAdLoaded() && !fb_interstitialAd.isAdInvalidated())
-                fb_interstitialAd.show();
-
-        }
-    }
-
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        adblockWebView.saveState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        adblockWebView.restoreState(savedInstanceState);
-    }
+//
+//    @Override
+//    protected void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        adblockWebView.saveState(outState);
+//    }
+//
+//    @Override
+//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+//        super.onRestoreInstanceState(savedInstanceState);
+//        adblockWebView.restoreState(savedInstanceState);
+//    }
 
     @Override
     public void onBackPressed() {
@@ -227,9 +220,9 @@ public class Activity_frag_container extends AppCompatActivity {
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    show_ads_admob_first();
-                    adblockWebView.onPause();
-                    wv_paused = true;
+//                    show_ads_admob_first();
+//                    adblockWebView.onPause();
+//                    wv_paused = true;
                     setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                     game_play_visibily = false;
 
@@ -250,7 +243,7 @@ public class Activity_frag_container extends AppCompatActivity {
             );
             params.setMarginStart(10);
             if (positive != null) {
-                positive.setBackground(Helper_class.set_Colors("#FF0303", "#FF0303", (float) 20, GradientDrawable.Orientation.LEFT_RIGHT));
+                positive.setBackground(Helper_class.setBackgroundWithGradient("#FF0303", "#FF0303", (float) 20, GradientDrawable.Orientation.LEFT_RIGHT));
                 positive.setTextColor(Color.WHITE);
                 positive.setGravity(Gravity.CENTER);
                 positive.setLayoutParams(params);
@@ -260,7 +253,7 @@ public class Activity_frag_container extends AppCompatActivity {
                 negative.setTextColor(Color.WHITE);
                 negative.setGravity(Gravity.CENTER);
                 negative.setLayoutParams(params);
-                negative.setBackground(Helper_class.set_Colors("#FF0303", "#FF0303", (float) 20, GradientDrawable.Orientation.LEFT_RIGHT));
+                negative.setBackground(Helper_class.setBackgroundWithGradient("#FF0303", "#FF0303", (float) 20, GradientDrawable.Orientation.LEFT_RIGHT));
             }
 
         } else

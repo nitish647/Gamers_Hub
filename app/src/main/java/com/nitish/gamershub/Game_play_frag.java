@@ -1,19 +1,15 @@
 package com.nitish.gamershub;
 
+import static android.content.Context.CONNECTIVITY_SERVICE;
+
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.http.SslError;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,22 +17,21 @@ import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import com.airbnb.lottie.LottieAnimationView;
-
-import org.adblockplus.libadblockplus.android.webview.AdblockWebView;
-
-import static android.content.Context.CONNECTIVITY_SERVICE;
 
 public class Game_play_frag extends Fragment {
 
     static String url;
-    AdblockWebView webView;
+//    AdblockWebView webView;
     LinearLayout.LayoutParams layoutParams;
     LottieAnimationView loading_lottieAnimationView, no_interent_lottie;
 
@@ -56,44 +51,37 @@ public class Game_play_frag extends Fragment {
         super.onCreate(savedInstanceState);
 
     }
+    WebView webView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_game_frag, container, false);
-        webView = view.findViewById(R.id.frag_webview);
+     webView = view.findViewById(R.id.frag_webview);
         loading_lottieAnimationView = view.findViewById(R.id.frag_lottie_loading);
         no_interent_lottie = view.findViewById(R.id.frag_no_internet);
 
 
-        //    String myValue = bundle.getString("url");
-        //     Helper_class.show_toast(getContext(),myValue);
         layoutParams = new LinearLayout.LayoutParams(0, 0);
         loading_lottieAnimationView.setVisibility(View.VISIBLE);
+//
+//        webView.getSettings().setJavaScriptEnabled(true);
+//        webView.getSettings().setAppCacheEnabled(true);
+//
+//        webView.getSettings().setAllowFileAccess(true);
+//        webView.getSettings().setAppCacheEnabled(true);
+//        webView.getSettings().getCacheMode();
+//        webView.getSettings().setDomStorageEnabled(true);
+//        webView.getSettings().setDatabaseEnabled(true);
+//        webView.setWebChromeClient(new ChromeClient());
 
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setAppCacheEnabled(true);
 
-//        webView.getSettings().setAppCachePath( mypath.toString() );
-
-
-        //    webView.getSettings().setAppCachePath( getApplicationContext().getCacheDir().getAbsolutePath() );
-        webView.getSettings().setAllowFileAccess(true);
-        webView.getSettings().setAppCacheEnabled(true);
-        webView.getSettings().getCacheMode();
-        webView.getSettings().setDomStorageEnabled(true);
-        webView.getSettings().setDatabaseEnabled(true);
-        webView.setWebChromeClient(new ChromeClient());
-
-        //
-
-        //    webView.setWebChromeClient(new WebChromeClient());
-        webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT); // load online by default
-
-        if (!isNetworkAvailable()) { // loading offline
-            webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        }
+//        webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT); // load online by default
+//
+//        if (!isNetworkAvailable()) { // loading offline
+//            webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+//        }
 
 
         webView.setWebViewClient(new WebViewClient() {
@@ -144,7 +132,6 @@ public class Game_play_frag extends Fragment {
         });
 
 
-        //  webView.loadUrl(url);
 
         return view;
 

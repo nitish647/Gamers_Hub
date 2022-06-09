@@ -1,15 +1,13 @@
 package com.nitish.gamershub;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,18 +16,16 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.snackbar.Snackbar;
-import com.sackcentury.shinebuttonlib.ShineButton;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Objects;
-
-import static android.content.Context.MODE_PRIVATE;
 
 
 public class Desc_frag extends Fragment {
@@ -41,7 +37,7 @@ public class Desc_frag extends Fragment {
     SharedPreferences.Editor editor;
     String name, instrution, img_file, json_obj;
     Button game_play_btn, report_btn;
-    ShineButton fav_btn;
+    ImageView fav_btn;
 
     public Desc_frag() {
         // Required empty public constructor
@@ -66,12 +62,12 @@ public class Desc_frag extends Fragment {
 
 
         json_obj = RecyclerviewAdapter.recycler_json;
-        sharedPreferences = Objects.requireNonNull(getActivity()).getSharedPreferences(RecyclerviewAdapter.sharedpref_fav, MODE_PRIVATE);
+        sharedPreferences = requireActivity().getSharedPreferences(RecyclerviewAdapter.sharedpref_fav, MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
 
         instruction.setText(Html.fromHtml(getInstrution()));
-        instruction.setBackground(Helper_class.set_Colors("#22BCF6", "#0D52F0", (float) 30, GradientDrawable.Orientation.LEFT_RIGHT));
+        instruction.setBackground(Helper_class.setBackgroundWithGradient("#22BCF6", "#0D52F0", (float) 30, GradientDrawable.Orientation.LEFT_RIGHT));
 
 //google ads
         google_banner_ad = view.findViewById(R.id.google_banner_adView_desc);
@@ -189,7 +185,7 @@ public class Desc_frag extends Fragment {
                 snackbar.setActionTextColor(Color.BLUE);
                 View snackBarView = snackbar.getView();
 
-                snackBarView.setBackground(Helper_class.set_Colors("#23C734", "#16EC2C", (float) 10, GradientDrawable.Orientation.LEFT_RIGHT));
+                snackBarView.setBackground(Helper_class.setBackgroundWithGradient("#23C734", "#16EC2C", (float) 10, GradientDrawable.Orientation.LEFT_RIGHT));
                 //   snackBarView.setBackgroundColor(Color.RED);
                 snackbar.show();
             }
@@ -216,9 +212,9 @@ public class Desc_frag extends Fragment {
     }
 
     public void design() {
-        game_play_btn.setBackground(Helper_class.set_Colors("#FC3F03", "#F37D0D", (float) 20, GradientDrawable.Orientation.LEFT_RIGHT));
-        internet_req_textview.setBackground(Helper_class.set_Colors("#FC3F03", "#F37D0D", (float) 20, GradientDrawable.Orientation.LEFT_RIGHT));
-        textview_category.setBackground(Helper_class.set_Colors("#FFA406", "#FFA406", (float) 40, GradientDrawable.Orientation.LEFT_RIGHT));
+        game_play_btn.setBackground(Helper_class.setBackgroundWithGradient("#FC3F03", "#F37D0D", (float) 20, GradientDrawable.Orientation.LEFT_RIGHT));
+        internet_req_textview.setBackground(Helper_class.setBackgroundWithGradient("#FC3F03", "#F37D0D", (float) 20, GradientDrawable.Orientation.LEFT_RIGHT));
+        textview_category.setBackground(Helper_class.setBackgroundWithGradient("#FFA406", "#FFA406", (float) 40, GradientDrawable.Orientation.LEFT_RIGHT));
     }
 
 

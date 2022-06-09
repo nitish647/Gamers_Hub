@@ -1,14 +1,9 @@
 package com.nitish.gamershub;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.Html;
@@ -16,28 +11,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.google.android.gms.ads.AdListener;
+import com.facebook.ads.InterstitialAd;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.InterstitialAd;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.JsonObject;
-import com.sackcentury.shinebuttonlib.ShineButton;
 import com.squareup.picasso.Picasso;
 
-import org.adblockplus.libadblockplus.android.AdblockEngineProvider;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 public class Game_desc extends AppCompatActivity {
     ImageView imageView;
@@ -45,7 +34,7 @@ public class Game_desc extends AppCompatActivity {
     TextView textView, instruction;
     Button report_btn;
     Button play_button;
-    ShineButton fav;
+    ImageView fav;
 
     Intent intent1;
     AdView google_banner_ad;
@@ -99,10 +88,10 @@ public class Game_desc extends AppCompatActivity {
         AdRequest adRequest = new AdRequest.Builder().build();
         google_banner_ad.loadAd(adRequest);
 
-        admob_mInterstitialAd = new InterstitialAd(this);
-        admob_mInterstitialAd.setAdUnitId(getResources().getString(R.string.admob_inter));
-        admob_mInterstitialAd.loadAd(new AdRequest.Builder().build());
-        setAdmob_mInterstitialAd();
+//        admob_mInterstitialAd = new InterstitialAd(this);
+//        admob_mInterstitialAd.setAdUnitId(getResources().getString(R.string.admob_inter));
+//        admob_mInterstitialAd.loadAd(new AdRequest.Builder().build());
+    //    setAdmob_mInterstitialAd();
 
         //copy of variable
         final String finalName = name;
@@ -186,7 +175,7 @@ public class Game_desc extends AppCompatActivity {
                 snackbar.setActionTextColor(Color.BLUE);
                 View snackBarView = snackbar.getView();
 
-                snackBarView.setBackground(Helper_class.set_Colors("#23C734", "#16EC2C", (float) 10, GradientDrawable.Orientation.LEFT_RIGHT));
+                snackBarView.setBackground(Helper_class.setBackgroundWithGradient("#23C734", "#16EC2C", (float) 10, GradientDrawable.Orientation.LEFT_RIGHT));
                 //   snackBarView.setBackgroundColor(Color.RED);
                 snackbar.show();
             }
@@ -204,14 +193,14 @@ public class Game_desc extends AppCompatActivity {
         instruction = findViewById(R.id.instruction);
 
         internet_req = findViewById(R.id.internet_req);
-        gradientDrawable = Helper_class.set_Colors("#FF2525", "#FF7E20", (float) 40, GradientDrawable.Orientation.LEFT_RIGHT);
+        gradientDrawable = Helper_class.setBackgroundWithGradient("#FF2525", "#FF7E20", (float) 40, GradientDrawable.Orientation.LEFT_RIGHT);
 
-        btn_play_gd = Helper_class.set_Colors("#FC3F03", "#F37D0D", (float) 20, GradientDrawable.Orientation.LEFT_RIGHT);
+        btn_play_gd = Helper_class.setBackgroundWithGradient("#FC3F03", "#F37D0D", (float) 20, GradientDrawable.Orientation.LEFT_RIGHT);
         play_button.setBackground(btn_play_gd);
         category.setBackground(gradientDrawable);
 //btn_play_gd = Helper_class.set_Colors("#0D52F0","0D52F0", (float) 30, GradientDrawable.Orientation.LEFT_RIGHT);
         GradientDrawable gd2;
-        gd2 = Helper_class.set_Colors("#22BCF6", "#0D52F0", (float) 30, GradientDrawable.Orientation.LEFT_RIGHT);
+        gd2 = Helper_class.setBackgroundWithGradient("#22BCF6", "#0D52F0", (float) 30, GradientDrawable.Orientation.LEFT_RIGHT);
         ArrayList arrayList = new ArrayList();
         arrayList.add(getResources().getString(R.string.instruction));
         String x = arrayList.get(0).toString();
@@ -223,7 +212,7 @@ public class Game_desc extends AppCompatActivity {
         instruction.setTextColor(Color.parseColor("#FFFFFF"));
         instruction.setBackground(gd2);
 
-        gd2 = Helper_class.set_Colors("#FF0000", "#F5570D", (float) 30, GradientDrawable.Orientation.LEFT_RIGHT);
+        gd2 = Helper_class.setBackgroundWithGradient("#FF0000", "#F5570D", (float) 30, GradientDrawable.Orientation.LEFT_RIGHT);
         internet_req.setBackground(gd2);
         internet_req.setTextColor(Color.parseColor("#FFFFFF"));
 
@@ -237,7 +226,7 @@ public class Game_desc extends AppCompatActivity {
     }
 
     public GradientDrawable single_color_grad(String color, Float radius) {
-        return Helper_class.set_Colors(color, color, radius, GradientDrawable.Orientation.LEFT_RIGHT);
+        return Helper_class.setBackgroundWithGradient(color, color, radius, GradientDrawable.Orientation.LEFT_RIGHT);
     }
 
     public String getInstrution() {
@@ -251,27 +240,27 @@ public class Game_desc extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (MainActivity.ads_state.contains("true")) {
-            if (admob_mInterstitialAd.isLoaded())
-                admob_mInterstitialAd.show();
-            else
-                super.onBackPressed();
+//            if (admob_mInterstitialAd.isLoaded())
+//                admob_mInterstitialAd.show();
+//            else
+//                super.onBackPressed();
         } else
             super.onBackPressed();
     }
 
-    public void setAdmob_mInterstitialAd() {
-        admob_mInterstitialAd.setAdListener(new AdListener() {
-
-            @Override
-            public void onAdClosed() {
-                admob_mInterstitialAd.loadAd(new AdRequest.Builder().build());
-                onBackPressed();
-                super.onAdClosed();
-            }
-        });
-
-
-    }
+//    public void setAdmob_mInterstitialAd() {
+//        admob_mInterstitialAd.setAdListener(new AdListener() {
+//
+//            @Override
+//            public void onAdClosed() {
+//                admob_mInterstitialAd.loadAd(new AdRequest.Builder().build());
+//                onBackPressed();
+//                super.onAdClosed();
+//            }
+//        });
+//
+//
+//    }
 
 
 }

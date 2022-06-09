@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.GameDetailActivity2">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <Button
+            android:visibility="gone"
+            android:id="@+id/checkVisibilityButton"
+            android:text="Check Visibility"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </Button>
+
+        <fragment
+
+
+            android:id="@+id/gameDescFrag"
+            android:name="com.nitish.gamershub.Fragments.GameDetailsFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </fragment>
+
+        <fragment
+
+            android:id="@+id/gamePlayFrag"
+            android:name="com.nitish.gamershub.Fragments.GamePlayFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </fragment>
+    </LinearLayout>
+</RelativeLayout>
