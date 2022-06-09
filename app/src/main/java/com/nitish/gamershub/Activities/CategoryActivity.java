@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.R;
@@ -24,6 +26,7 @@ public class CategoryActivity extends AppCompatActivity {
     RecyclerView categoriesRecycler;
     List<AllGamesItems> categoryGamesList;
 
+    AdView googleBannerAdView;
     ArrayList <AllGamesItems> popularGamesList , newGamesList, mainGamesList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,13 +37,14 @@ public class CategoryActivity extends AppCompatActivity {
         categoryNameTextview =findViewById(R.id.categoryNameTextview);
         backButton = findViewById(R.id.backButton);
         categoryGamesList = new ArrayList<>();
-
+        googleBannerAdView = findViewById(R.id.googleBannerAdView);
         popularGamesList = Paper.book().read(HomeActivity.PopularGamesList);
         newGamesList = Paper.book().read(HomeActivity.NewGamesList);
         mainGamesList = Paper.book().read(HomeActivity.MainGamesList);
 
         categoriesRecycler.setLayoutManager(new GridLayoutManager(this,4));
 
+        setUpBannerAd();
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,10 +79,38 @@ public class CategoryActivity extends AppCompatActivity {
 
         }
     }
-    public void setCategoriesRecycler()
+    public void setUpBannerAd()
     {
 
+        AdRequest adRequest = new AdRequest.Builder().build();
+        googleBannerAdView.loadAd(adRequest);
 
+    }
 
+    /** Called when leaving the activity */
+    @Override
+    public void onPause() {
+        if (googleBannerAdView != null) {
+            googleBannerAdView.pause();
+        }
+        super.onPause();
+    }
+
+    /** Called when returning to the activity */
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (googleBannerAdView != null) {
+            googleBannerAdView.resume();
+        }
+    }
+
+    /** Called before the activity is destroyed */
+    @Override
+    public void onDestroy() {
+        if (googleBannerAdView != null) {
+            googleBannerAdView.destroy();
+        }
+        super.onDestroy();
     }
 }
