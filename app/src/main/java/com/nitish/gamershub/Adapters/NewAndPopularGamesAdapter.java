@@ -9,11 +9,14 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.nitish.gamershub.Activities.CategoryActivity;
 import com.nitish.gamershub.Activities.GameDetailActivity2;
+import com.nitish.gamershub.Activities.HomeActivity;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.R;
 import com.squareup.picasso.Picasso;
@@ -27,6 +30,7 @@ public class NewAndPopularGamesAdapter  extends RecyclerView.Adapter<NewAndPopul
     Context context;
     List<AllGamesItems> allGamesItemsList ;
     List<AllGamesItems> allGamesItemsListFull;
+    public static  AllGamesItems SelectedGameObject ;
     public NewAndPopularGamesAdapter(Context context, List<AllGamesItems> allGamesItemsList) {
         this.context = context;
         this.allGamesItemsList = allGamesItemsList;
@@ -51,9 +55,18 @@ public class NewAndPopularGamesAdapter  extends RecyclerView.Adapter<NewAndPopul
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, GameDetailActivity2.class);
-                intent.putExtra(gameDataObject,allGamesItems);
-                context.startActivity(intent);
+
+                SelectedGameObject = allGamesItems;
+                if(context.getClass()== HomeActivity.class)
+                {
+
+
+                    ((HomeActivity)context).startIntent();
+                }
+                else {
+                    ((CategoryActivity)context).startIntent();
+                }
+
             }
         });
 

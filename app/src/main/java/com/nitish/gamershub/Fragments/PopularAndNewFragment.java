@@ -76,26 +76,16 @@ public class PopularAndNewFragment extends Fragment {
             title = getArguments().getString("title");
             gameData  = getArguments().getString("data");
 
-            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String query) {
-                    newAndPopularGamesAdapter.searchFilter.filter(query.toLowerCase().toString());
-                    return true;
-                }
 
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    return false;
-                }
-            });
-            if(title.toLowerCase().contains("favourites"))
+            if(title.toLowerCase().contains("all"))
             {
 
-                setFavouritesRecycler();
+                setNewPopularRecycler(gameData);
             }
             else {
 
-                setNewPopularRecycler(gameData);
+                setFavouritesRecycler();
+
             }
 
 
@@ -112,6 +102,7 @@ public class PopularAndNewFragment extends Fragment {
         super.onResume();
     }
 
+
     public void setFavouritesRecycler()
     {
 
@@ -121,17 +112,18 @@ public class PopularAndNewFragment extends Fragment {
 
            allGamesItemsList.addAll(favlist2);
 
-           if(allGamesItemsList!=null&&allGamesItemsList.size()>0)
-           {
-
-               Log.d("allGamesItemsList",allGamesItemsList.get(0).getName()+" size "+allGamesItemsList.size());
-           }
 
             newAndPopularGamesAdapter.notifyDataSetChanged();
 
     }
+    public void setSetSearchFilter(String searchQuery)
+    {
+        newAndPopularGamesAdapter.searchFilter.filter(searchQuery);
+
+    }
     public void setNewPopularRecycler(String gameData)
     {
+        allGamesItemsList.clear();
         try {
             JSONArray newAndPopularDataArray = new JSONArray(gameData);
             for(int i =0 ; i<newAndPopularDataArray.length();i++)

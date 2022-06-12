@@ -1,5 +1,8 @@
 package com.nitish.gamershub.Activities;
 
+import static com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter.SelectedGameObject;
+import static com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter.gameDataObject;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -10,6 +13,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -26,10 +31,14 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.OnUserEarnedRewardListener;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.google.android.gms.ads.rewarded.RewardItem;
+import com.google.android.gms.ads.rewarded.RewardedAd;
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
@@ -37,10 +46,11 @@ import com.google.gson.Gson;
 import com.nitish.gamershub.Adapters.CategoriesAdapter;
 import com.nitish.gamershub.Adapters.ViewPagerAdapter2;
 import com.nitish.gamershub.Fragments.PopularAndNewFragment;
+import com.nitish.gamershub.Helper_class;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.Pojo.Categories;
 import com.nitish.gamershub.R;
-import com.nitish.gamershub.Splash_Screen;
+import com.nitish.gamershub.Utils.ConstantsHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,7 +87,11 @@ public class HomeActivity extends AppCompatActivity {
     AdView googleBannerAdView;
     boolean interstitialAdDismissed = false;
 
+    Button removeAdsButton;
     private InterstitialAd interstitialAd;
+
+    private RewardedAd rewardedAd;
+    boolean isLoading;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +104,7 @@ public class HomeActivity extends AppCompatActivity {
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navigationView);
         navigationButton =findViewById(R.id.navigationButton);
+        removeAdsButton =findViewById(R.id.removeAdsButton);
         categoriesRecycler = findViewById(R.id.categoriesRecycler);
         googleBannerAdView = findViewById(R.id.googleBannerAdView);
         categoriesList = new ArrayList<>();
@@ -109,10 +124,33 @@ public class HomeActivity extends AppCompatActivity {
             }
 
         });
+
+        removeAdsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(ConstantsHelper.ShowAds==false)
+                {
+                    Toast.makeText(HomeActivity.this, "Ads are already disabled", Toast.LENGTH_SHORT).show();
+                    removeAdsButton.setText("Ads Disabled");
+                }
+                else {
+
+                    removeAdsButton.setText("Remove ads (Free)");
+                    showRewardedVideo();
+                }
+            }
+        });
+
+
+
+        loadRewardedAd();
         setUpBannerAd();
-        loadInterstitialAd();
-        showInterstitial();
+      loadInterstitialAd();
+   //     AdsHelper.loadInterstitialAd(this);
+
         setCategory();
+        setSearchView();
 
         // just writing an empty favourite list to avoid null pointer when reading the data
 
@@ -226,6 +264,20 @@ public class HomeActivity extends AppCompatActivity {
 
 
     }
+
+    public void startIntent()
+    {
+        if(interstitialAd!=null && ConstantsHelper.ShowAds)
+        {
+           showInterstitial();
+        }
+        else {
+
+            Intent intent = new Intent(HomeActivity.this, GameDetailActivity2.class);
+            intent.putExtra(gameDataObject, SelectedGameObject);
+            startActivity(intent);
+        }
+    }
     // post method
     public void parseAllGamesData( JSONArray allGamesJsonArray)
     {
@@ -244,6 +296,30 @@ public class HomeActivity extends AppCompatActivity {
         }
 
 
+
+    }
+    public void setSearchView()
+    {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(viewPagerAdapter!=null&&viewPagerAdapter.getCount()==2)
+                {
+                    // searching in all games
+                    ((PopularAndNewFragment)viewPagerAdapter.getItem(0)).setSetSearchFilter(newText);
+                    // searching from favourites
+                    ((PopularAndNewFragment)viewPagerAdapter.getItem(1)).setSetSearchFilter(newText);
+                }
+                return false;
+            }
+        });
     }
     public void showSnackBar(String message , ViewGroup viewGroup)
     {
@@ -299,7 +375,7 @@ public class HomeActivity extends AppCompatActivity {
         AdRequest adRequest = new AdRequest.Builder().build();
         InterstitialAd.load(
                 this,
-                "ca-app-pub-3940256099942544/1033173712",
+                getString(R.string.admob_inter),
                 adRequest,
                 new InterstitialAdLoadCallback() {
                     @Override
@@ -307,7 +383,6 @@ public class HomeActivity extends AppCompatActivity {
                         // The mInterstitialAd reference will be null until
                         // an ad is loaded.
                         HomeActivity.this.interstitialAd = interstitialAd;
-                        interstitialAd.show( HomeActivity.this);
                         Log.i("gInterstitialAd", "onAdLoaded");
 
                         interstitialAd.setFullScreenContentCallback(
@@ -318,8 +393,11 @@ public class HomeActivity extends AppCompatActivity {
                                         // Make sure to set your reference to null so you don't
                                         // show it a second time.
                                         HomeActivity.this.interstitialAd = null;
-                                        Log.d("gInterstitialAd", "The ad was dismissed.");
-                                        interstitialAdDismissed = true;
+
+
+                                        Intent intent = new Intent(HomeActivity.this, GameDetailActivity2.class);
+                                        intent.putExtra(gameDataObject, SelectedGameObject);
+                                        startActivity(intent);
                                     }
 
                                     @Override
@@ -343,14 +421,14 @@ public class HomeActivity extends AppCompatActivity {
                     @Override
                     public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                         // Handle the error
-                        Log.i("gInterstitialAd", loadAdError.getMessage());
+                        Log.i("gInterstitialAd", "ad loading failed : "+loadAdError.getMessage());
                         interstitialAd = null;
 
                         String error = String.format(
                                         "domain: %s, code: %d, message: %s",
                                         loadAdError.getDomain(), loadAdError.getCode(), loadAdError.getMessage());
 
-                        Log.d("gInterstitialAd","Add loading failed "+error);
+                        Log.d("gInterstitialAd","Ad loading failed : "+error);
                     }
                 });
     }
@@ -379,11 +457,9 @@ public class HomeActivity extends AppCompatActivity {
             googleBannerAdView.resume();
 
         }
-
-            if(!interstitialAdDismissed) // when the ad is not dismissed
-            {
-                loadInterstitialAd();
-            }
+        // load the ad again
+        if(interstitialAd==null)
+            loadInterstitialAd();
 
 
     }
@@ -398,7 +474,8 @@ public class HomeActivity extends AppCompatActivity {
     }
     private void showInterstitial() {
         // Show the ad if it's ready. Otherwise toast and restart the game.
-        if (interstitialAd != null) {
+
+        if (interstitialAd != null && ConstantsHelper.ShowAds) {
             interstitialAd.show(this);
         }
     }
@@ -416,5 +493,89 @@ public class HomeActivity extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
 
+    }
+    private void loadRewardedAd() {
+        if (rewardedAd == null) {
+            isLoading = true;
+            AdRequest adRequest = new AdRequest.Builder().build();
+            RewardedAd.load(
+                    this,
+                    getString(R.string.admob_reward),
+                    adRequest,
+                    new RewardedAdLoadCallback() {
+                        @Override
+                        public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                            // Handle the error.
+                            Log.d("rewardedAd", "onAdFailedToLoad "+loadAdError.getMessage());
+                            rewardedAd = null;
+                            HomeActivity.this.isLoading = false;
+                        }
+
+                        @Override
+                        public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
+                            HomeActivity.this.rewardedAd = rewardedAd;
+                            Log.d("rewardedAd", "onAdLoaded");
+                            HomeActivity.this.isLoading = false;
+                        }
+                    });
+        }
+    }
+
+
+
+    private void showRewardedVideo() {
+
+        if (rewardedAd == null) {
+            Toast.makeText(this, "The ad is not loaded yet , try again", Toast.LENGTH_SHORT).show();
+            Log.d("TAG", "The rewarded ad wasn't ready yet.");
+            return;
+        }
+
+        rewardedAd.setFullScreenContentCallback(
+                new FullScreenContentCallback() {
+                    @Override
+                    public void onAdShowedFullScreenContent() {
+                        // Called when ad is shown.
+                        Log.d("rewardedAd", "onAdShowedFullScreenContent");
+
+                    }
+
+                    @Override
+                    public void onAdFailedToShowFullScreenContent(AdError adError) {
+                        // Called when ad fails to show.
+                        Log.d("rewardedAd", "onAdFailedToShowFullScreenContent");
+                        // Don't forget to set the ad reference to null so you
+                        // don't show the ad a second time.
+                        rewardedAd = null;
+                        Toast.makeText(HomeActivity.this, "Ad loading failed please try again", Toast.LENGTH_SHORT)
+                                .show();
+                    }
+
+                    @Override
+                    public void onAdDismissedFullScreenContent() {
+                        // Called when ad is dismissed.
+                        // Don't forget to set the ad reference to null so you
+                        // don't show the ad a second time.
+                        rewardedAd = null;
+
+                        HomeActivity.this.loadRewardedAd();
+                    }
+                });
+        Activity activityContext = HomeActivity.this;
+        rewardedAd.show(
+                activityContext,
+                new OnUserEarnedRewardListener() {
+                    @Override
+                    public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+                        // Handle the reward.
+                        Toast.makeText(HomeActivity.this, "Congrats the ads are disabled for now", Toast.LENGTH_SHORT)
+                                .show();
+                        // Preload the next rewarded ad.
+                        ConstantsHelper.ShowAds = false;
+                        removeAdsButton.setText("Ads Disabled ");
+                        int rewardAmount = rewardItem.getAmount();
+                        String rewardType = rewardItem.getType();
+                    }
+                });
     }
 }

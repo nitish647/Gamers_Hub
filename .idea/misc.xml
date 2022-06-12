@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/round_corners.xml" value="0.2035" />
+        <entry key="app/src/main/res/drawable/textview_round.xml" value="0.2035" />
         <entry key="app/src/main/res/layout/activity_category.xml" value="0.18342391304347827" />
         <entry key="app/src/main/res/layout/activity_favourite.xml" value="0.18342391304347827" />
         <entry key="app/src/main/res/layout/activity_frag_container.xml" value="0.18342391304347827" />
@@ -13,6 +15,7 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.16485507246376813" />
         <entry key="app/src/main/res/layout/categires_layout.xml" value="0.18342391304347827" />
         <entry key="app/src/main/res/layout/category_item.xml" value="0.18342391304347827" />
+        <entry key="app/src/main/res/layout/exit_game_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_desc_frag.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_game_details.xml" value="0.18342391304347827" />
         <entry key="app/src/main/res/layout/fragment_game_frag.xml" value="0.17119565217391305" />

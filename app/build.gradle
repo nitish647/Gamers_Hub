@@ -30,8 +30,8 @@ android {
         apply plugin: 'com.google.gms.google-services'
         minSdkVersion 21
         targetSdkVersion 32
-        versionCode 13
-        versionName "2.2"
+        versionCode 14
+        versionName "2.3"
         multiDexEnabled true
         manifestPlaceholders = [
                 onesignal_app_id: 'dea42835-b4ba-4795-92e6-d041bd0b9a03',

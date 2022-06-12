@@ -57,27 +57,30 @@ tools:context=".Activities.HomeActivity">
                     android:layout_width="wrap_content"
                     android:layout_height="39dp"
                     android:layout_centerInParent="true"
+
                     android:fontFamily="sans-serif-condensed"
 
                     android:gravity="center"
-
                     android:text="Gamers Hub"
                     android:textColor="@android:color/white"
-                    android:textSize="30sp">
+                    android:textSize="25sp">
 
                 </TextView>
 
                 <androidx.appcompat.widget.SearchView
                     android:id="@+id/searchView"
 
-                    android:visibility="gone"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+
+                    android:icon="@drawable/search_icon_white"
+                    android:layout_width="wrap_content"
+
+
+                    app:queryBackground="@android:color/white"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginEnd="5dp"
-                    android:layout_toEndOf="@+id/main_title"
-                    >
+                    android:layout_marginEnd="10dp"
+                    android:backgroundTint="@android:color/white">
 
                 </androidx.appcompat.widget.SearchView>
 
@@ -111,7 +114,7 @@ tools:context=".Activities.HomeActivity">
 
         android:layout_gravity="bottom"
         ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-3940256099942544/6300978111">
+        ads:adUnitId="@string/admob_banner">
 
     </com.google.android.gms.ads.AdView>
 
@@ -119,11 +122,11 @@ tools:context=".Activities.HomeActivity">
 <com.google.android.material.navigation.NavigationView
     android:id="@+id/navigationView"
 
-     android:visibility="gone"
+
     android:layout_width="300dp"
     android:layout_gravity="start"
 
-    android:background="#F0740D"
+    android:background="@color/gamersHubThemeOrange"
     android:layout_height="match_parent">
 
     <LinearLayout
@@ -137,7 +140,9 @@ tools:context=".Activities.HomeActivity">
         </include>
 
         <Button
-            android:id="@+id/remove_ads"
+            android:backgroundTint="#2196f3"
+            android:background="@drawable/round_corners"
+            android:id="@+id/removeAdsButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="5dp"

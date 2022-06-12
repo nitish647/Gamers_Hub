@@ -195,4 +195,5 @@ public class GameDetailsFragment extends Fragment {
         });
     }
 
+
 }
