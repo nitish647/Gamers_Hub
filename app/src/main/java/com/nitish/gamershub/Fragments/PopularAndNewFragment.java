@@ -1,6 +1,7 @@
 package com.nitish.gamershub.Fragments;
 
-import static com.nitish.gamershub.Activities.HomeActivity.FavouriteList;
+
+import static com.nitish.gamershub.Utils.ConstantsHelper.FavouriteList;
 
 import android.os.Bundle;
 

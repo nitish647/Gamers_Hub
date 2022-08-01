@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -38,6 +39,33 @@ public class CommonMethods {
     // this class is just contains the common methods  so that are users can copy paste the methods from here
     Context context;
 
+    // common yes no dialog bix
+    public void deleteOrderBillDialog(String orderId , int position , ViewGroup rootLayout)
+    {
+
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(context);
+        android.app.AlertDialog deleteDialog = builder.create();
+
+
+        builder.setMessage("Do you want to delete this bill?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                dialogInterface.dismiss();
+
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        builder.show();
+
+    }
     // common dialog box
     public void addAccountDialog() {
         LayoutInflater factory = LayoutInflater.from(context);
@@ -287,6 +315,8 @@ public class CommonMethods {
 
         requestQueue.add(jsonObjectRequest);
     }
+
+
 
 
 }

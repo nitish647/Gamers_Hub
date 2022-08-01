@@ -1,7 +1,7 @@
 package com.nitish.gamershub.Fragments;
 
-import static com.nitish.gamershub.Activities.HomeActivity.FavouriteList;
-import static com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter.gameDataObject;
+import static com.nitish.gamershub.Utils.ConstantsHelper.FavouriteList;
+import static com.nitish.gamershub.Utils.ConstantsHelper.gameDataObject;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -29,6 +29,7 @@ import com.like.OnLikeListener;
 import com.nitish.gamershub.Activities.GameDetailActivity2;
 import com.nitish.gamershub.Activities.GamePlayActivity;
 import com.nitish.gamershub.Activities.HomeActivity;
+import com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter;
 import com.nitish.gamershub.Helper_class;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.R;
@@ -72,11 +73,14 @@ public class GameDetailsFragment extends Fragment {
         gameDescTextview =view.findViewById(R.id.gameDescTextview);
         favButton =view.findViewById(R.id.favButton);
 
-         allGamesItems = (AllGamesItems) getActivity().getIntent().getSerializableExtra(gameDataObject);
+        favouriteArrayList = new ArrayList<>();
+         allGamesItems = NewAndPopularGamesAdapter.SelectedGameObject;
 
 
-        favouriteArrayList = Paper.book().read(FavouriteList);
 
+
+        ArrayList<AllGamesItems> itemsArrayList = (ArrayList<AllGamesItems>) Paper.book().read(FavouriteList);
+        favouriteArrayList = itemsArrayList;
 
 
         gameNameTextview.setText(allGamesItems.getName());
@@ -142,6 +146,8 @@ public class GameDetailsFragment extends Fragment {
 
 
         playButton.setBackground(Helper_class.setSingleColorRoundBackground("#F0740D", 15.0F));
+
+
 
         return  view;
     }

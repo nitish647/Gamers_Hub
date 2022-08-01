@@ -1,30 +1,56 @@
 package com.nitish.gamershub.Activities;
 
+import static com.nitish.gamershub.Activities.LoginPage.GamersHub_ParentCollection;
 import static com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter.SelectedGameObject;
-import static com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter.gameDataObject;
+import static com.nitish.gamershub.Utils.ConstantsHelper.FavouriteList;
+import static com.nitish.gamershub.Utils.ConstantsHelper.MainGamesList;
+import static com.nitish.gamershub.Utils.ConstantsHelper.NewGamesList;
+import static com.nitish.gamershub.Utils.ConstantsHelper.PopularGamesList;
+import static com.nitish.gamershub.Utils.ConstantsHelper.UserMail;
+import static com.nitish.gamershub.Utils.ConstantsHelper.gameDataObject;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.denzcoskun.imageslider.ImageSlider;
+import com.denzcoskun.imageslider.constants.ScaleTypes;
+import com.denzcoskun.imageslider.models.SlideModel;
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
+import com.firebase.ui.auth.IdpResponse;
+import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -39,41 +65,49 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.nitish.gamershub.Adapters.CategoriesAdapter;
-import com.nitish.gamershub.Adapters.ViewPagerAdapter2;
-import com.nitish.gamershub.Fragments.PopularAndNewFragment;
-import com.nitish.gamershub.Helper_class;
+import com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.Pojo.Categories;
+import com.nitish.gamershub.Pojo.UserProfile;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.ConstantsHelper;
+import com.nitish.gamershub.Utils.NotificationHelper;
+import com.nitish.gamershub.Utils.ProgressBarHelper;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.paperdb.Paper;
 
 public class HomeActivity extends AppCompatActivity {
 
     // the whole game data
-    JSONArray masterDataJsonArray ;
+    JSONObject masterDataJsonObject;
 
-    public static  String FavouriteList = "FavouriteList";
-    public static  String MainGamesList = "MainGamesList";
-    public static  String NewGamesList = "NewGamesList";
-    public static  String PopularGamesList = "PopularGamesList";
+
     int currentSelectedFragPosition=0;
-    static private TabLayout tabLayout;
-    static private ViewPager viewPager;
-    ViewPagerAdapter2 viewPagerAdapter;
+
+
+
     SearchView searchView;
     RequestQueue requestQueue;
     List<Categories> categoriesList;
@@ -84,39 +118,82 @@ public class HomeActivity extends AppCompatActivity {
     DrawerLayout drawerLayout;
     LinearLayout linearAdContainer;
 
+    NewAndPopularGamesAdapter newAndPopularGamesAdapter;
     AdView googleBannerAdView;
     boolean interstitialAdDismissed = false;
 
+    TextView totalPointsTextview;
     Button removeAdsButton;
     private InterstitialAd interstitialAd;
 
+    Button logoutButton;
+
     private RewardedAd rewardedAd;
     boolean isLoading;
+    RecyclerView allGamesRecyclerView;
+    ArrayList<AllGamesItems> mainGamesArrayList;
+    ImageSlider imageSlider;
+    ProgressDialog progressDialog;
+
+
+    // firebase auth
+    private FirebaseAuth mAuth;
+
+    FirebaseFirestore firestoreDb;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Paper.init(this);
-        tabLayout = findViewById(R.id.tabLayout);
-        viewPager = findViewById(R.id.viewPager);
+        requestQueue = Volley.newRequestQueue(this);
+        allGamesRecyclerView = findViewById(R.id.allGamesRecyclerView);
+        totalPointsTextview = findViewById(R.id.totalPointsTextview);
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+        firestoreDb = FirebaseFirestore.getInstance();
+         logoutButton= findViewById(R.id.logoutButton);
         searchView = findViewById(R.id.searchView);
-        tabLayout.setupWithViewPager(viewPager);
+        progressDialog = ProgressBarHelper.setProgressBarDialog(this);
         drawerLayout = findViewById(R.id.drawerLayout);
+        imageSlider = findViewById(R.id.imageSlider);
         navigationView = findViewById(R.id.navigationView);
         navigationButton =findViewById(R.id.navigationButton);
         removeAdsButton =findViewById(R.id.removeAdsButton);
         categoriesRecycler = findViewById(R.id.categoriesRecycler);
         googleBannerAdView = findViewById(R.id.googleBannerAdView);
         categoriesList = new ArrayList<>();
+        mainGamesArrayList = new ArrayList<>();
         navigationView.setVisibility(View.VISIBLE);
-        viewPagerAdapter = new ViewPagerAdapter2(getSupportFragmentManager(),FragmentPagerAdapter.BEHAVIOR_SET_USER_VISIBLE_HINT);
 
-        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+        FirebaseApp.initializeApp(HomeActivity.this);
+        NotificationHelper.generateFcmToken(HomeActivity.this);
+        getUserData();
+
+
+        // firebase login
+
+
+        // Choose authentication providers
+
+
+
+
+        setHeader();
+       MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(@NonNull InitializationStatus initializationStatus) {
             }
         });
 
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                logOutDialog();
+            }
+        });
         navigationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -125,11 +202,18 @@ public class HomeActivity extends AppCompatActivity {
 
         });
 
+        // just writing an empty favourite list to avoid null pointer when reading the data
+
+        if(!Paper.book().contains(FavouriteList)||Paper.book().read(FavouriteList)==null) {
+            ArrayList<AllGamesItems> favouriteArrayList = new ArrayList<>();
+            Paper.book().write(FavouriteList, favouriteArrayList);
+        }
+
         removeAdsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if(ConstantsHelper.ShowAds==false)
+                if(!ConstantsHelper.ShowAds)
                 {
                     Toast.makeText(HomeActivity.this, "Ads are already disabled", Toast.LENGTH_SHORT).show();
                     removeAdsButton.setText("Ads Disabled");
@@ -144,6 +228,8 @@ public class HomeActivity extends AppCompatActivity {
 
 
 
+
+        bannerImagesApi();
         loadRewardedAd();
         setUpBannerAd();
       loadInterstitialAd();
@@ -152,36 +238,79 @@ public class HomeActivity extends AppCompatActivity {
         setCategory();
         setSearchView();
 
-        // just writing an empty favourite list to avoid null pointer when reading the data
 
-        if(!Paper.book().contains(FavouriteList)) {
-            ArrayList<AllGamesItems> favouriteArrayList = new ArrayList<>();
-            Paper.book().write(FavouriteList, favouriteArrayList);
-        }
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(HomeActivity.this,4);
+        allGamesRecyclerView.setLayoutManager(gridLayoutManager);
+
 
         try {
-            masterDataJsonArray = new JSONArray(Paper.book().read(Splash_Screen.MaterData)+"");
-
-            JSONArray mainGameJsonArray = masterDataJsonArray.getJSONObject(0).getJSONArray("main");
-            JSONArray popularGamesJsonArray = masterDataJsonArray.getJSONObject(0).getJSONArray("best");
-            JSONArray newGamesJsonArray =  masterDataJsonArray.getJSONObject(0).getJSONArray("new");
-            String allGamesJsonArrayString = mainGameJsonArray.toString();
-            String popularGamesJsonArrayString = popularGamesJsonArray.toString();
-            String newGamesJsonArrayString = newGamesJsonArray.toString();
+            masterDataJsonObject = new JSONObject(Paper.book().read(Splash_Screen.MaterData)+"");
+           JSONArray mainGameJsonArray = masterDataJsonObject.getJSONArray("main");
+            JSONArray popularGamesJsonArray = masterDataJsonObject.getJSONArray("best");
+            JSONArray newGamesJsonArray =  masterDataJsonObject.getJSONArray("new");
 
 
-            // will save the all games in paper in arraylist form
+          // will save the all games in paper in arraylist form
             saveAllGamesData(mainGameJsonArray,popularGamesJsonArray,newGamesJsonArray);
 
-            setUpViewPager(allGamesJsonArrayString,popularGamesJsonArrayString,newGamesJsonArrayString);
 
 
-        } catch (JSONException e) {
+
+
+
+
+
+     //       setUpViewPager(allGamesJsonArrayString,popularGamesJsonArrayString,newGamesJsonArrayString);
+
+
+        } catch (Exception e) {
+            Toast.makeText(this, "Some error has occurred : gError223", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
 
 
     }
+
+
+
+
+
+    public void getUserData()
+    {
+
+        firestoreDb.collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail)+"").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful())
+                {
+                    DocumentSnapshot documentSnapshot = task.getResult();
+
+                    if(documentSnapshot.exists())
+                    {
+
+                        UserProfile  userProfile=   documentSnapshot.toObject(UserProfile.class);
+
+                        UserProfile.ProfileData profileData = userProfile.profileData;
+
+                        totalPointsTextview.setText(profileData.gamePoints+"");
+                    }
+                    else {
+                        Toast.makeText(HomeActivity.this, "document does not exist", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(HomeActivity.this, "couldn't get the documents ", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
+    }
+
+
     public void setUpViewPager(String allGamesListJsonArray, String popularGamesJsonArray, String newGamesJsonArray)
     {
         //sending the titles in bundle
@@ -205,47 +334,13 @@ public class HomeActivity extends AppCompatActivity {
 
         // when there is no fragment added in viewpager adapter then only add the fragment
 
-//            viewPagerAdapter.addFragment(new AllGamesFragment(), "All Games");
-            viewPagerAdapter.addFragment(new PopularAndNewFragment(), "All Games");
-            viewPagerAdapter.addFragment(new PopularAndNewFragment(), "Favourites");
-
-
-        //passing the json data to the fragments
-        viewPagerAdapter.getItem(0).setArguments(bundle);
-        viewPagerAdapter.getItem(1).setArguments(bundle2);
-
-        viewPager.setAdapter(viewPagerAdapter);
-
-
-
-
-        viewPager.setCurrentItem(currentSelectedFragPosition);
-
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-                currentSelectedFragPosition = position;
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-
 
     }
     public void setCategory()
     {
         //category images
 
-       // categoriesList.add(new Categories(R.drawable.fav_on2,"","Favourites"));
+         categoriesList.add(new Categories(R.drawable.fav_on2,"","Favourites"));
         categoriesList.add(new Categories(R.drawable.new_icon1,"","New"));
         categoriesList.add(new Categories(R.drawable.best_games,"","Best"));
         categoriesList.add(new Categories(R.drawable.action_icon1,"","Action"));
@@ -274,7 +369,7 @@ public class HomeActivity extends AppCompatActivity {
         else {
 
             Intent intent = new Intent(HomeActivity.this, GameDetailActivity2.class);
-            intent.putExtra(gameDataObject, SelectedGameObject);
+        //    intent.putExtra(gameDataObject, SelectedGameObject);
             startActivity(intent);
         }
     }
@@ -310,16 +405,33 @@ public class HomeActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if(viewPagerAdapter!=null&&viewPagerAdapter.getCount()==2)
-                {
+
                     // searching in all games
-                    ((PopularAndNewFragment)viewPagerAdapter.getItem(0)).setSetSearchFilter(newText);
+                    newAndPopularGamesAdapter.searchFilter.filter(newText);
                     // searching from favourites
-                    ((PopularAndNewFragment)viewPagerAdapter.getItem(1)).setSetSearchFilter(newText);
-                }
+
                 return false;
             }
         });
+    }
+    public void setImageSlider(JSONArray bannerImagesJsonArray) throws JSONException {
+
+        ArrayList<String> imageUrlList = new ArrayList<>();
+        for(int i =0;i<bannerImagesJsonArray.length();i++)
+        {
+            JSONObject jsonObject = bannerImagesJsonArray.getJSONObject(i);
+
+            imageUrlList.add(jsonObject.getString("largeImageUrl"));
+
+        }
+        ArrayList<SlideModel> slideModelArrayList = new ArrayList<>();
+        for(String imageUri : imageUrlList)
+        {
+            SlideModel slideModel = new SlideModel(imageUri,null,null);
+            slideModelArrayList.add(slideModel);
+
+        }
+        imageSlider.setImageList(slideModelArrayList, ScaleTypes.FIT);
     }
     public void showSnackBar(String message , ViewGroup viewGroup)
     {
@@ -344,7 +456,10 @@ public class HomeActivity extends AppCompatActivity {
                 mainItemsArrayList.add(allGamesItems);
             }
 
-            Paper.book().write(HomeActivity.MainGamesList,mainItemsArrayList);
+            newAndPopularGamesAdapter = new NewAndPopularGamesAdapter(HomeActivity.this,mainItemsArrayList);
+            allGamesRecyclerView.setAdapter(newAndPopularGamesAdapter);
+
+            Paper.book().write(MainGamesList,mainItemsArrayList);
 
             for(int i = 0; i< newGamesJsonArray.length(); i++)
             {
@@ -352,7 +467,7 @@ public class HomeActivity extends AppCompatActivity {
                 AllGamesItems allGamesItems = gson.fromJson(jsonObject.toString(),AllGamesItems.class);
                 newGamesItemsArrayList.add(allGamesItems);
             }
-            Paper.book().write(HomeActivity.NewGamesList,newGamesItemsArrayList);
+            Paper.book().write(NewGamesList,newGamesItemsArrayList);
 
 
             for(int i = 0; i< popularGamesJsonArray.length(); i++)
@@ -361,13 +476,63 @@ public class HomeActivity extends AppCompatActivity {
                 AllGamesItems allGamesItems = gson.fromJson(jsonObject.toString(),AllGamesItems.class);
                 popularItemsArrayList.add(allGamesItems);
             }
-            Paper.book().write(HomeActivity.PopularGamesList,popularItemsArrayList);
+            Paper.book().write(PopularGamesList,popularItemsArrayList);
 
-        } catch (JSONException e) {
-            Toast.makeText(HomeActivity.this, "something went wrong while showing this data : error334", Toast.LENGTH_SHORT).show();
+            if(popularGamesJsonArray.length()>0)
+            Paper.book().read(PopularGamesList,popularItemsArrayList.get(0).getName());
+        } catch (Exception e) {
+            Toast.makeText(HomeActivity.this, "something went wrong while showing this data : error334 "+e, Toast.LENGTH_SHORT).show();
             Log.d("gError334",e.toString());
             e.printStackTrace();
         }
+    }
+
+    public void bannerImagesApi()
+    {
+
+        String url = getString(R.string.dbGitUrl)+"gamers_hub_data/banner_Images.json";
+
+        Log.d("url",url);
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+
+
+            @Override
+            public void onResponse(JSONObject response) {
+
+                Log.d("gResponse","response banner_Images data "+response);
+
+                //    Toast.makeText(Splash_Screen.this, response+"", Toast.LENGTH_SHORT).show();
+                try {
+                    JSONArray bannerImagesJsonArray =  response.getJSONArray("bannerImages");
+                    setImageSlider(bannerImagesJsonArray);
+
+                } catch (Exception e) {
+                    Log.d("gError","error in  banner_Images data "+e.toString());
+                    e.printStackTrace();
+                }
+
+
+
+
+
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("gError","error in banner_Images data "+error);
+
+            }
+        });
+
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                6000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        requestQueue.add(jsonObjectRequest);
     }
     public void loadInterstitialAd() {
 
@@ -396,7 +561,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
                                         Intent intent = new Intent(HomeActivity.this, GameDetailActivity2.class);
-                                        intent.putExtra(gameDataObject, SelectedGameObject);
+                                    //    intent.putExtra(gameDataObject, SelectedGameObject);
                                         startActivity(intent);
                                     }
 
@@ -577,5 +742,70 @@ public class HomeActivity extends AppCompatActivity {
                         String rewardType = rewardItem.getType();
                     }
                 });
+    }
+    public void logOutDialog()
+    {
+
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(HomeActivity.this);
+        android.app.AlertDialog deleteDialog = builder.create();
+
+
+        builder.setMessage("Do you want to logout?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+                dialogInterface.dismiss();
+
+                progressDialog.show();
+
+                AuthUI.getInstance()
+                        .signOut(HomeActivity.this)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            public void onComplete(@NonNull Task<Void> task) {
+                                // ...
+                                progressDialog.dismiss();
+                                startActivity(new Intent(HomeActivity.this,LoginPage.class));
+                                finish();
+
+                            }
+                        });
+
+
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        builder.show();
+
+    }
+    public void setHeader()
+    {
+
+
+        TextView profileName = findViewById(R.id.profileName);
+        CircleImageView profileIcon =findViewById(R.id.profileIcon);
+
+     //   profileName.setText("hahahhaha");
+
+        if(mAuth!=null &&  mAuth.getCurrentUser()!=null) {
+
+
+            profileName.setText(mAuth.getCurrentUser().getDisplayName());
+            Picasso.get().load(mAuth.getCurrentUser().getPhotoUrl()).into(profileIcon);
+        }
+        else {
+            Toast.makeText(this, "current user is null", Toast.LENGTH_SHORT).show();
+        }
+
+
+
+
+
     }
 }

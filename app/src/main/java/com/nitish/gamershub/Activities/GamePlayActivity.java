@@ -1,6 +1,6 @@
 package com.nitish.gamershub.Activities;
 
-import static com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter.gameDataObject;
+import static com.nitish.gamershub.Utils.ConstantsHelper.gameDataObject;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +17,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -42,6 +43,7 @@ public class GamePlayActivity extends AppCompatActivity {
     StringBuilder blocklist;
     WebView view;
     String loddnormallist= "0"; //if you want to use a filterlist without "::::" at the beginning. please change to 1
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

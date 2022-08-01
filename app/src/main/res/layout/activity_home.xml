@@ -12,6 +12,7 @@ android:layout_height="match_parent"
 tools:context=".Activities.HomeActivity">
 
 <RelativeLayout
+    android:background="#f0f2f5"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -87,19 +88,46 @@ tools:context=".Activities.HomeActivity">
 
             </RelativeLayout>
         </com.google.android.material.appbar.AppBarLayout>
-
-     <com.google.android.material.tabs.TabLayout
-         android:id="@+id/tabLayout"
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content">
-
-     </com.google.android.material.tabs.TabLayout>
-   <androidx.viewpager.widget.ViewPager
-       android:id="@+id/viewPager"
+<androidx.core.widget.NestedScrollView
+    android:fillViewport="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</androidx.viewpager.widget.ViewPager>
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+
+    android:layout_height="match_parent">
+
+
+        <com.denzcoskun.imageslider.ImageSlider
+
+            android:id="@+id/imageSlider"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+
+            android:fitsSystemWindows="true"
+            android:padding="5dp"
+            app:iss_auto_cycle="true"
+            app:iss_delay="0"
+            app:iss_period="1000"
+            >
+
+        </com.denzcoskun.imageslider.ImageSlider>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/allGamesRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </androidx.recyclerview.widget.RecyclerView>
+</LinearLayout>
+</androidx.core.widget.NestedScrollView>
     </LinearLayout>
 
 
@@ -123,6 +151,7 @@ tools:context=".Activities.HomeActivity">
     android:id="@+id/navigationView"
 
 
+
     android:layout_width="300dp"
     android:layout_gravity="start"
 
@@ -135,17 +164,108 @@ tools:context=".Activities.HomeActivity">
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include layout="@layout/header_layout">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_height="120dp"
+            android:layout_width="match_parent"
+            android:background="#000000">
 
-        </include>
+            <de.hdodenhof.circleimageview.CircleImageView
 
+                android:id="@+id/profileIcon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+
+                android:layout_marginTop="15dp"
+                android:src="@drawable/gamers_hub_icon15">
+
+            </de.hdodenhof.circleimageview.CircleImageView>
+
+            <TextView
+                android:id="@+id/profileName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_gravity="center"
+
+                android:fontFamily="serif-monospace"
+                android:text="Gamers Hub"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp">
+
+            </TextView>
+            <LinearLayout
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <RelativeLayout
+
+            android:padding="5dp"
+            android:background="@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/gameCoinsImage"
+                android:layout_margin="5dp"
+                android:src="@drawable/game_coins"
+                android:layout_width="40dp"
+                android:layout_height="40dp">
+
+            </ImageView>
+            <TextView
+                android:layout_centerHorizontal="true"
+
+                android:layout_marginStart="20dp"
+                android:id="@+id/totalPoints"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_gravity="center"
+
+                android:fontFamily="serif-monospace"
+                android:text="Total Coins"
+
+                android:textSize="15sp">
+
+            </TextView>
+             <TextView
+
+
+           android:layout_below="@+id/totalPoints"
+            android:layout_marginStart="20dp"
+            android:id="@+id/totalPointsTextview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+                 android:layout_centerHorizontal="true"
+
+            android:textColor="@android:color/black"
+                 android:layout_marginTop="5dp"
+            android:layout_gravity="center"
+
+            android:fontFamily="serif-monospace"
+            android:text="000"
+
+                 android:textStyle="bold"
+            android:textSize="17sp">
+
+        </TextView>
+        </RelativeLayout>
         <Button
-            android:backgroundTint="#2196f3"
-            android:background="@drawable/round_corners"
+            android:background="#2196f3"
+
             android:id="@+id/removeAdsButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="5dp"
+
             android:layout_marginVertical="3dp"
             android:gravity="center"
             android:text="Remove ads (Free)"
@@ -179,7 +299,18 @@ tools:context=".Activities.HomeActivity">
         </GridView>
 
 
+
     </LinearLayout>
+    <Button
+        android:layout_marginBottom="10dp"
+        android:id="@+id/logoutButton"
+        android:layout_gravity="bottom"
+        android:text="Log Out"
+        android:background="@android:color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </Button>
 </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -1,8 +1,7 @@
 package com.nitish.gamershub.Pojo;
 
-import java.io.Serializable;
 
-public class AllGamesItems implements Serializable {
+public class AllGamesItems  {
 
     String img_file;
     String  orientation;
@@ -10,6 +9,9 @@ public class AllGamesItems implements Serializable {
     String name;
     String description;
     String gameUrl;
+
+    public AllGamesItems() {
+    }
 
     public AllGamesItems(String img_file, String orientation, String category, String name, String description, String gameUrl) {
         this.img_file = img_file;

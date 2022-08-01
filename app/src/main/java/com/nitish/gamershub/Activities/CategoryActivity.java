@@ -1,7 +1,11 @@
 package com.nitish.gamershub.Activities;
 
 import static com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter.SelectedGameObject;
-import static com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter.gameDataObject;
+import static com.nitish.gamershub.Utils.ConstantsHelper.FavouriteList;
+import static com.nitish.gamershub.Utils.ConstantsHelper.MainGamesList;
+import static com.nitish.gamershub.Utils.ConstantsHelper.NewGamesList;
+import static com.nitish.gamershub.Utils.ConstantsHelper.PopularGamesList;
+import static com.nitish.gamershub.Utils.ConstantsHelper.gameDataObject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -51,9 +55,9 @@ public class CategoryActivity extends AppCompatActivity {
         backButton = findViewById(R.id.backButton);
         categoryGamesList = new ArrayList<>();
         googleBannerAdView = findViewById(R.id.googleBannerAdView);
-        popularGamesList = Paper.book().read(HomeActivity.PopularGamesList);
-        newGamesList = Paper.book().read(HomeActivity.NewGamesList);
-        mainGamesList = Paper.book().read(HomeActivity.MainGamesList);
+        popularGamesList = Paper.book().read(PopularGamesList);
+        newGamesList = Paper.book().read(NewGamesList);
+        mainGamesList = Paper.book().read(MainGamesList);
 
         categoriesRecycler.setLayoutManager(new GridLayoutManager(this,4));
 
@@ -79,6 +83,13 @@ public class CategoryActivity extends AppCompatActivity {
             {
                 categoryGamesList = newGamesList;
             }
+            else if(categoryName.toLowerCase().contains("fav"))
+            {
+                ArrayList<AllGamesItems> favlist2 = Paper.book().read(FavouriteList);
+                categoryGamesList = favlist2;
+            }
+
+
             else {
                 for (int i = 0; i < mainGamesList.size(); i++) {
                     if (categoryName.toLowerCase().contains(mainGamesList.get(i).getCategory().toLowerCase())) {
@@ -103,7 +114,7 @@ public class CategoryActivity extends AppCompatActivity {
         else {
 
             Intent intent = new Intent(this, GameDetailActivity2.class);
-            intent.putExtra(gameDataObject, SelectedGameObject);
+//            intent.putExtra(gameDataObject, SelectedGameObject);
             startActivity(intent);
         }
     }
@@ -134,7 +145,7 @@ public class CategoryActivity extends AppCompatActivity {
 
 
                                         Intent intent = new Intent(CategoryActivity.this, GameDetailActivity2.class);
-                                        intent.putExtra(gameDataObject, NewAndPopularGamesAdapter.SelectedGameObject);
+                                    //    intent.putExtra(gameDataObject, NewAndPopularGamesAdapter.SelectedGameObject);
                                         startActivity(intent);
                                     }
 

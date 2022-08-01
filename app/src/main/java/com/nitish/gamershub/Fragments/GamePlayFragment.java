@@ -1,10 +1,8 @@
 package com.nitish.gamershub.Fragments;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
-import static com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter.gameDataObject;
 
 import android.annotation.TargetApi;
-import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.http.SslError;
@@ -12,6 +10,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +21,11 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.monstertechno.adblocker.AdBlockerWebView;
-import com.nitish.gamershub.Activities.GamePlayActivity;
+import com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter;
 import com.nitish.gamershub.Helper_class;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.R;
@@ -35,6 +35,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Locale;
 
 
 public class GamePlayFragment extends Fragment {
@@ -50,17 +51,27 @@ public class GamePlayFragment extends Fragment {
 
     String loddnormallist= "0"; //if you want to use a filterlist without "::::" at the beginning. please change to 1
 
+    TextView timerTextview;
+
+    public int seconds = 0;
+
+    // Is the stopwatch running?
+    private boolean running;
+public     String timerMinuteSecond="00:00";
+
+    private boolean wasRunning;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view= inflater.inflate(R.layout.fragment_game_play, container, false);
         webView = view.findViewById(R.id.webView);
+        timerTextview = view.findViewById(R.id.timerTextview);
 
 
+        loadGame();
 
-        load();
-        allGamesItems = (AllGamesItems) getActivity().getIntent().getSerializableExtra(gameDataObject);
+        allGamesItems = NewAndPopularGamesAdapter.SelectedGameObject;
 
 
 
@@ -74,7 +85,6 @@ public class GamePlayFragment extends Fragment {
         layoutParams = new LinearLayout.LayoutParams(0, 0);
         loading_lottieAnimationView.setVisibility(View.VISIBLE);
 
-        new AdBlockerWebView.init(view.getContext()).initializeWebView(webView);
         webView.setWebViewClient(new Browser_home());
 
 
@@ -179,7 +189,7 @@ public class GamePlayFragment extends Fragment {
 
 
     }
-    private void load(){//Blocklist loading
+    private void loadGame(){//Blocklist loading
         String strLine2="";
         blocklist = new StringBuilder();
 
@@ -206,4 +216,96 @@ public class GamePlayFragment extends Fragment {
     private WebResourceResponse getTextWebResource(InputStream data) {
         return new WebResourceResponse("text/plain", "UTF-8", data);
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        wasRunning = running;
+        running = false;
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        if (wasRunning) {
+            running = true;
+        }
+    }
+    public void startTimer()
+    {
+        running = true;
+        timer();
+    }
+
+    public String resetTimer()
+    {
+        running = false;
+        seconds = 0;
+        return timerMinuteSecond;
+    }
+    public void timer()
+    {
+
+
+
+        // Creates a new Handler
+        final Handler handler
+                = new Handler();
+
+        // Call the post() method,
+        // passing in a new Runnable.
+        // The post() method processes
+        // code without a delay,
+        // so the code in the Runnable
+        // will run almost immediately.
+        handler.post(new Runnable() {
+            @Override
+
+            public void run()
+            {
+                int hours = seconds / 3600;
+                int minutes = (seconds % 3600) / 60;
+                int secs = seconds % 60;
+
+                // Format the seconds into hours, minutes,
+                // and seconds.
+                String time
+                        = String
+                        .format(Locale.getDefault(),
+                                "%d:%02d:%02d", hours,
+                                minutes, secs);
+//
+//                String seconds
+//                        = String
+//                        .format(Locale.getDefault(),
+//                                "%02d",  secs);
+
+
+          //      Toast.makeText(view.getContext(), "timer ran "+time, Toast.LENGTH_SHORT).show();
+
+
+                 timerMinuteSecond
+                            = String
+                            .format(Locale.getDefault(),
+                                    "%02d:%02d",
+                                    minutes, secs);
+
+                    timerTextview.setText(timerMinuteSecond);
+
+                // If running is true, increment the
+                // seconds variable.
+                if (running) {
+                    seconds++;
+                }
+
+                // Post the code again
+                // with a delay of 1 second.
+                handler.postDelayed(this, 1100);
+            }
+        });
+    }
+
+
 }
+

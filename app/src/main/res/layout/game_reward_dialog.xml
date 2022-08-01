@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+
+    android:elevation="@dimen/cardview_default_radius"
+    android:padding="5dp"
+    android:backgroundTint="#dfdcff"
+    android:background="@drawable/round_corners"
+    android:layout_marginHorizontal="20dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:layout_marginTop="10dp"
+        android:textColor="@android:color/black"
+        android:textSize="45sp"
+        android:gravity="center"
+        android:text="Congratulations"
+        android:id="@+id/welcomeTextview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp">
+
+    </TextView>
+
+    <ImageView
+        android:id="@+id/gameCoinsImage"
+        android:layout_width="201dp"
+        android:layout_height="150dp"
+
+        android:layout_marginTop="50dp"
+        android:src="@drawable/game_coins"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/welcomeTextview">
+
+    </ImageView>
+
+    <TextView
+
+        android:gravity="center"
+        android:text="You have earned  100 coins "
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:id="@+id/earnedCoinsTextview"
+        android:backgroundTint="#5341eb"
+        android:background="@drawable/round_corners"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gameCoinsImage">
+
+    </TextView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

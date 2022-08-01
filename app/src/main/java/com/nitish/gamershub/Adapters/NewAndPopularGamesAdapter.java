@@ -18,6 +18,7 @@ import com.nitish.gamershub.Activities.CategoryActivity;
 import com.nitish.gamershub.Activities.GameDetailActivity2;
 import com.nitish.gamershub.Activities.HomeActivity;
 import com.nitish.gamershub.Pojo.AllGamesItems;
+import com.nitish.gamershub.Pojo.AllGamesItemsSerializable;
 import com.nitish.gamershub.R;
 import com.squareup.picasso.Picasso;
 
@@ -26,7 +27,7 @@ import java.util.List;
 
 public class NewAndPopularGamesAdapter  extends RecyclerView.Adapter<NewAndPopularGamesAdapter.PopularAndNewViewHolder> implements Filterable {
 
-    public static  String gameDataObject = "gameDataObject";
+
     Context context;
     List<AllGamesItems> allGamesItemsList ;
     List<AllGamesItems> allGamesItemsListFull;
@@ -49,6 +50,14 @@ public class NewAndPopularGamesAdapter  extends RecyclerView.Adapter<NewAndPopul
     public void onBindViewHolder(@NonNull PopularAndNewViewHolder holder, int position) {
 
         AllGamesItems allGamesItems = allGamesItemsList.get(position);
+
+        AllGamesItemsSerializable allGamesItemsSerializable = new AllGamesItemsSerializable();
+        allGamesItemsSerializable.setGameUrl(allGamesItems.getGameUrl());
+        allGamesItemsSerializable.setCategory(allGamesItems.getCategory());
+        allGamesItemsSerializable.setImg_file(allGamesItems.getImg_file());
+        allGamesItemsSerializable.setOrientation(allGamesItems.getOrientation());
+        allGamesItemsSerializable.setDescription(allGamesItems.getDescription());
+        allGamesItemsSerializable.setName(allGamesItems.getName());
 
         Picasso.get().load(allGamesItems.getImg_file()).into(holder.game_image);
         holder.game_name.setText(allGamesItems.getName());

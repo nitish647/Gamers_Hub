@@ -1,11 +1,12 @@
 package com.nitish.gamershub.Activities;
 
-import static com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter.gameDataObject;
+import static com.nitish.gamershub.Utils.ConstantsHelper.gameDataObject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -13,6 +14,7 @@ import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -20,7 +22,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
@@ -28,12 +34,16 @@ import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter;
+import com.nitish.gamershub.Fragments.GamePlayFragment;
 import com.nitish.gamershub.Helper_class;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.ConstantsHelper;
 
-public class GameDetailActivity2 extends AppCompatActivity {
+import java.time.LocalTime;
+
+public class GameDetailActivity2 extends FragmentActivity {
 
 
 
@@ -41,8 +51,9 @@ public class GameDetailActivity2 extends AppCompatActivity {
     InterstitialAd interstitialAd;
     Button playButton,checkVisibilityButton;
     static  String DetailFrag = "GameDetailFragment";
-    Fragment gamePlayFragment,gameDetailsFragment;
+    Fragment gameDetailsFragment;
 
+    GamePlayFragment gamePlayFragment;
     boolean gamePlayVisibility= false;
     AllGamesItems allGamesItems;
     FragmentManager fragmentManager;
@@ -53,13 +64,14 @@ public class GameDetailActivity2 extends AppCompatActivity {
 
         playButton = findViewById(R.id.playButton);
         checkVisibilityButton =findViewById(R.id.checkVisibilityButton);
-         allGamesItems = (AllGamesItems) getIntent().getSerializableExtra(gameDataObject);
+         allGamesItems = NewAndPopularGamesAdapter.SelectedGameObject;
          fragmentManager = getSupportFragmentManager();
-        gamePlayFragment = fragmentManager.findFragmentById(R.id.gamePlayFrag);
+        gamePlayFragment = (GamePlayFragment)fragmentManager.findFragmentById(R.id.gamePlayFrag);
         gameDetailsFragment = fragmentManager.findFragmentById(R.id.gameDescFrag);
 
 
         loadInterstitialAd();
+
 
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,6 +86,7 @@ public class GameDetailActivity2 extends AppCompatActivity {
                     }
 
                     gamePlayVisibility = true;
+                    gamePlayFragment.startTimer();
                     // game play fragment is visible
 
 
@@ -157,6 +170,11 @@ public class GameDetailActivity2 extends AppCompatActivity {
         fragmentTransaction.disallowAddToBackStack();
         fragmentTransaction.commit();
         // game play fragment is not visible
+        gamePlayFragment.resetTimer();// reset the timer
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if(LocalTime.parse( gamePlayFragment.timerMinuteSecond).compareTo(LocalTime.parse("00:30")) > 0 )
+                Toast.makeText(this, "you are rewarded", Toast.LENGTH_SHORT).show();
+        }
         gamePlayVisibility = false;
     }
     public void oldExitDialog()
@@ -288,5 +306,29 @@ public class GameDetailActivity2 extends AppCompatActivity {
         // load the ad again
         if(interstitialAd==null)
             loadInterstitialAd();
+    }
+    public void updateUserWallet()
+    {
+
+    }
+    public void showRewardDialog()
+    {
+        LayoutInflater factory = LayoutInflater.from(GameDetailActivity2.this);
+
+        final View addBankAccLayout = factory.inflate(R.layout.activity_category, null);
+
+        final AlertDialog addAccountDialog = new AlertDialog.Builder(GameDetailActivity2.this).create();
+
+
+        addAccountDialog.setView(addBankAccLayout);
+
+        addAccountDialog.show();
+
+        EditText accNumberEditText = addBankAccLayout.findViewById(R.id.searchView);
+        Spinner accountTypeSpinner = addBankAccLayout.findViewById(R.id.webView);
+
+        TextView dismissDialogButton = addBankAccLayout.findViewById(R.id.playButton);
+
+
     }
 }
