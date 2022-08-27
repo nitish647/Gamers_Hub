@@ -1,10 +1,7 @@
 package com.nitish.gamershub.Activities;
 
-import static com.nitish.gamershub.Utils.ConstantsHelper.gameDataObject;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -22,9 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,14 +29,23 @@ import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter;
 import com.nitish.gamershub.Fragments.GamePlayFragment;
 import com.nitish.gamershub.Helper_class;
 import com.nitish.gamershub.Pojo.AllGamesItems;
+import com.nitish.gamershub.Pojo.UserProfile;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.ConstantsHelper;
+import com.nitish.gamershub.Utils.UserOperations;
 
 import java.time.LocalTime;
+
+import io.paperdb.Paper;
 
 public class GameDetailActivity2 extends FragmentActivity {
 
@@ -61,7 +65,7 @@ public class GameDetailActivity2 extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_detail);
-
+        Paper.init(GameDetailActivity2.this);
         playButton = findViewById(R.id.playButton);
         checkVisibilityButton =findViewById(R.id.checkVisibilityButton);
          allGamesItems = NewAndPopularGamesAdapter.SelectedGameObject;
@@ -166,16 +170,26 @@ public class GameDetailActivity2 extends FragmentActivity {
 //                    wv_paused = true;
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        gamePlayVisibility = false;
+
         fragmentTransaction.show(gameDetailsFragment).hide(gamePlayFragment);
         fragmentTransaction.disallowAddToBackStack();
         fragmentTransaction.commit();
         // game play fragment is not visible
         gamePlayFragment.resetTimer();// reset the timer
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if(LocalTime.parse( gamePlayFragment.timerMinuteSecond).compareTo(LocalTime.parse("00:30")) > 0 )
-                Toast.makeText(this, "you are rewarded", Toast.LENGTH_SHORT).show();
+            if(LocalTime.parse( gamePlayFragment.timerMinuteSecond).compareTo(LocalTime.parse("00:30")) > 0 ) {
+
+
+                int amount = Integer.valueOf(Paper.book().read(ConstantsHelper.GeneralRewardCoins,50)+"");
+                updateUserWallet(amount);
+
+                Toast.makeText(this, "you are rewarded "+amount+" coins", Toast.LENGTH_SHORT).show();
+
+            }
         }
-        gamePlayVisibility = false;
+
     }
     public void oldExitDialog()
     {
@@ -307,27 +321,61 @@ public class GameDetailActivity2 extends FragmentActivity {
         if(interstitialAd==null)
             loadInterstitialAd();
     }
-    public void updateUserWallet()
+    public void updateUserWallet(int amount)
     {
 
+        UserOperations.getFirestoreUser().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful())
+                {
+                    DocumentSnapshot documentSnapshot = task.getResult();
+                    UserProfile userProfile = documentSnapshot.toObject(UserProfile.class);
+
+                    if(userProfile!=null) {
+                        UserOperations.getFirestoreUser().set(UserOperations.addCoinsToWallet(userProfile, amount), SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful())
+                                {
+                                    showRewardDialog(amount);
+                                }
+                            }
+                        });
+
+
+                    }
+                    else {
+                        Toast.makeText(GameDetailActivity2.this, "can't add the reward as user is null ", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(GameDetailActivity2.this, "can't add the reward as user document doesn't exists ", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
     }
-    public void showRewardDialog()
+    public void showRewardDialog(int amount)
     {
         LayoutInflater factory = LayoutInflater.from(GameDetailActivity2.this);
 
-        final View addBankAccLayout = factory.inflate(R.layout.activity_category, null);
+        final View addRewardLayout = factory.inflate(R.layout.game_reward_dialog, null);
 
-        final AlertDialog addAccountDialog = new AlertDialog.Builder(GameDetailActivity2.this).create();
+        final AlertDialog addRewardDialog = new AlertDialog.Builder(GameDetailActivity2.this).create();
 
 
-        addAccountDialog.setView(addBankAccLayout);
+        addRewardDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
+        addRewardDialog.setView(addRewardLayout);
 
-        addAccountDialog.show();
+        addRewardDialog.show();
 
-        EditText accNumberEditText = addBankAccLayout.findViewById(R.id.searchView);
-        Spinner accountTypeSpinner = addBankAccLayout.findViewById(R.id.webView);
+        TextView earnedCoinsTextview = addRewardLayout.findViewById(R.id.earnedCoinsTextview);
 
-        TextView dismissDialogButton = addBankAccLayout.findViewById(R.id.playButton);
+        earnedCoinsTextview.setText("You have earned "+amount+" coins");
 
 
     }

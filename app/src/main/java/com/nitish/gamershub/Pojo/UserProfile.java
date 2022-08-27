@@ -9,6 +9,7 @@ public class UserProfile {
 
     public UserProfile() {
 
+
     }
 
     public UserProfile(ProfileData profileData) {
@@ -27,29 +28,22 @@ public class UserProfile {
     public static class ProfileData {
         public String name ="";
         public String email="";
-        public int gamePoints = 0;
+        public int gameCoins = 0;
 
         public String lastLogin="";
-
+        public String lastOpened="";
 
 
         public ProfileData() {
 
         }
 
-        public ProfileData(String name, String email, int gamePoints, String lastLogin) {
+        public ProfileData(String name, String email, int gameCoins, String lastLogin, String lastOpened) {
             this.name = name;
             this.email = email;
-            this.gamePoints = gamePoints;
+            this.gameCoins = gameCoins;
             this.lastLogin = lastLogin;
-        }
-
-        public String getLastLogin() {
-            return lastLogin;
-        }
-
-        public void setLastLogin(String lastLogin) {
-            this.lastLogin = lastLogin;
+            this.lastOpened = lastOpened;
         }
 
         public String getName() {
@@ -68,12 +62,28 @@ public class UserProfile {
             this.email = email;
         }
 
-        public int getGamePoints() {
-            return gamePoints;
+        public int getGameCoins() {
+            return gameCoins;
         }
 
-        public void setGamePoints(int gamePoints) {
-            this.gamePoints = gamePoints;
+        public void setGameCoins(int gameCoins) {
+            this.gameCoins = gameCoins;
+        }
+
+        public String getLastLogin() {
+            return lastLogin;
+        }
+
+        public void setLastLogin(String lastLogin) {
+            this.lastLogin = lastLogin;
+        }
+
+        public String getLastOpened() {
+            return lastOpened;
+        }
+
+        public void setLastOpened(String lastOpened) {
+            this.lastOpened = lastOpened;
         }
     }
 }

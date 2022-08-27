@@ -1,17 +1,15 @@
 package com.nitish.gamershub.Activities;
 
-import static com.nitish.gamershub.Activities.LoginPage.GamersHub_ParentCollection;
-import static com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter.SelectedGameObject;
 import static com.nitish.gamershub.Utils.ConstantsHelper.FavouriteList;
+import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHub_ParentCollection;
+import static com.nitish.gamershub.Utils.ConstantsHelper.GeneralRewardCoins;
 import static com.nitish.gamershub.Utils.ConstantsHelper.MainGamesList;
 import static com.nitish.gamershub.Utils.ConstantsHelper.NewGamesList;
 import static com.nitish.gamershub.Utils.ConstantsHelper.PopularGamesList;
 import static com.nitish.gamershub.Utils.ConstantsHelper.UserMail;
-import static com.nitish.gamershub.Utils.ConstantsHelper.gameDataObject;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
@@ -21,17 +19,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,16 +36,12 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
-import com.firebase.ui.auth.IdpResponse;
-import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -72,9 +63,12 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.gson.Gson;
 import com.nitish.gamershub.Adapters.CategoriesAdapter;
 import com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter;
@@ -85,14 +79,17 @@ import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.ConstantsHelper;
 import com.nitish.gamershub.Utils.NotificationHelper;
 import com.nitish.gamershub.Utils.ProgressBarHelper;
+import com.nitish.gamershub.Utils.UserOperations;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -140,6 +137,7 @@ public class HomeActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     FirebaseFirestore firestoreDb;
+    Button redeemButton;
 
 
     @Override
@@ -161,6 +159,7 @@ public class HomeActivity extends AppCompatActivity {
         navigationView = findViewById(R.id.navigationView);
         navigationButton =findViewById(R.id.navigationButton);
         removeAdsButton =findViewById(R.id.removeAdsButton);
+        redeemButton = findViewById(R.id.redeemButton);
         categoriesRecycler = findViewById(R.id.categoriesRecycler);
         googleBannerAdView = findViewById(R.id.googleBannerAdView);
         categoriesList = new ArrayList<>();
@@ -169,8 +168,8 @@ public class HomeActivity extends AppCompatActivity {
 
         FirebaseApp.initializeApp(HomeActivity.this);
         NotificationHelper.generateFcmToken(HomeActivity.this);
-        getUserData();
-
+        getUserCoins();
+        getGamersHubData();
 
         // firebase login
 
@@ -200,6 +199,12 @@ public class HomeActivity extends AppCompatActivity {
                 drawerLayout.openDrawer(Gravity.LEFT);
             }
 
+        });
+        redeemButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(HomeActivity.this,RedeemActivity.class));
+            }
         });
 
         // just writing an empty favourite list to avoid null pointer when reading the data
@@ -275,7 +280,7 @@ public class HomeActivity extends AppCompatActivity {
 
 
 
-    public void getUserData()
+    public void getUserCoins()
     {
 
         firestoreDb.collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail)+"").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -292,7 +297,14 @@ public class HomeActivity extends AppCompatActivity {
 
                         UserProfile.ProfileData profileData = userProfile.profileData;
 
-                        totalPointsTextview.setText(profileData.gamePoints+"");
+                        totalPointsTextview.setText(profileData.gameCoins +"");
+
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        String currentDateTime = dateFormat.format(new Date()); // Find todays date
+                        profileData.setLastOpened(currentDateTime);
+                        userProfile.setProfileData(profileData);
+                        firestoreDb.collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail)+"").set(userProfile, SetOptions.merge());
+
                     }
                     else {
                         Toast.makeText(HomeActivity.this, "document does not exist", Toast.LENGTH_SHORT).show();
@@ -310,6 +322,45 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
+    public void getGamersHubData()
+    {
+
+        firestoreDb.collection("Gamers Hub Data").document("rewardCoins"+"").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful())
+                {
+                    DocumentSnapshot documentSnapshot = task.getResult();
+
+                    if(documentSnapshot.exists())
+                    {
+
+                        HashMap<String,Object> hashMap=   (HashMap<String, Object>) documentSnapshot.getData();
+
+                        HashMap<String,Object> rewardCoinsHashmap=   (HashMap<String, Object>) hashMap.get("rewardCoinsList");
+
+                         Object generalCoins =  rewardCoinsHashmap.get(rewardCoinsHashmap.keySet().toArray()[0]);
+
+                         int intGeneralCoins  = Integer.parseInt( generalCoins+"");
+                        Paper.book().write(GeneralRewardCoins,generalCoins);
+
+
+                    }
+                    else {
+                        Toast.makeText(HomeActivity.this, "document does not exist", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(HomeActivity.this, "couldn't get the documents ", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
+    }
 
     public void setUpViewPager(String allGamesListJsonArray, String popularGamesJsonArray, String newGamesJsonArray)
     {
@@ -605,6 +656,29 @@ public class HomeActivity extends AppCompatActivity {
 
     }
     @Override
+    public void onStart() {
+        super.onStart();
+        UserOperations.getFirestoreUser().addSnapshotListener(HomeActivity.this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                if(error!=null)
+                {
+                    Toast.makeText(HomeActivity.this, "error while getting doc 211", Toast.LENGTH_SHORT).show();
+                }
+                if(value!=null && value.exists())
+                {
+                    UserProfile  userProfile=   value.toObject(UserProfile.class);
+
+                    UserProfile.ProfileData profileData = userProfile.profileData;
+
+                    totalPointsTextview.setText(profileData.gameCoins +"");
+                }
+            }
+        });
+
+    }
+
+    @Override
     public void onPause() {
 
         if (googleBannerAdView != null) {
@@ -805,6 +879,23 @@ public class HomeActivity extends AppCompatActivity {
 
 
 
+
+
+    }
+    public void copyCollection()
+    {
+
+        firestoreDb.collection(GamersHub_ParentCollection).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful())
+                {
+                 List<DocumentSnapshot> documentSnapshotList =  task.getResult().getDocuments();
+
+                 firestoreDb.collection(GamersHub_ParentCollection+"2");
+                }
+            }
+        });
 
 
     }

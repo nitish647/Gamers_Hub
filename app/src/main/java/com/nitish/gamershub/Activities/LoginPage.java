@@ -1,5 +1,6 @@
 package com.nitish.gamershub.Activities;
 
+import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHub_ParentCollection;
 import static com.nitish.gamershub.Utils.ConstantsHelper.UserMail;
 
 import androidx.activity.result.ActivityResultCallback;
@@ -25,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -47,7 +49,7 @@ public class LoginPage extends AppCompatActivity {
     SignInButton googleSingInButton;
 
     FirebaseFirestore firestoreDb;
-    public static String GamersHub_ParentCollection ="Gamers Hub";
+
     public  static String Users_ParentDocument ="Users";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,7 @@ public class LoginPage extends AppCompatActivity {
         googleSingInButton = findViewById(R.id.singInButton);
         Paper.init(this);
         firestoreDb = FirebaseFirestore.getInstance();
+
         googleSingInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -103,6 +106,9 @@ public class LoginPage extends AppCompatActivity {
                             if (documentSnapshot.exists()) {
 
                                 // for existing users
+
+
+
                                 UserProfile userProfile =  documentSnapshot.toObject(UserProfile.class);
 
                                 UserProfile.ProfileData profileData = userProfile.profileData;
@@ -110,6 +116,7 @@ public class LoginPage extends AppCompatActivity {
                                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                 String currentDateTime = dateFormat.format(new Date()); // Find todays date
                                 profileData.setLastLogin(currentDateTime);
+
 
                                 userProfile.setProfileData(profileData);
 

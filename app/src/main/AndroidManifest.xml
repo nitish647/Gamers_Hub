@@ -12,6 +12,9 @@
         android:roundIcon="@mipmap/vector_icon2"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".Activities.RedeemActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activities.LoginPage"
             android:exported="false" />
         <activity
