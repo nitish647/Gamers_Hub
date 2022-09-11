@@ -8,7 +8,7 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:id="@+id/appBarLayout"
-        android:background="@color/gamersHubThemeOrange"
+        android:background="@color/gamers_hub_theme"
         android:layout_height="wrap_content">
 
 
@@ -18,8 +18,8 @@
             <ImageView
                 android:id="@+id/backButton"
                 android:src="@drawable/back_icon2"
-                android:layout_width="25dp"
-                android:layout_height="25dp">
+                style="@style/backImageview"
+            >
 
             </ImageView>
             <TextView
@@ -37,6 +37,7 @@
 
     <ScrollView
 
+        android:layout_above="@+id/bottomRelative"
         android:layout_below="@+id/appBarLayout"
         android:fillViewport="true"
         android:layout_width="match_parent"
@@ -145,4 +146,43 @@
 
     </ScrollView>
 
+    <RelativeLayout
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="50dp"
+        android:id="@+id/bottomRelative"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_corners"
+            android:backgroundTint="@color/materialOrange"
+            android:elevation="@dimen/cardview_default_elevation"
+            android:orientation="horizontal"
+
+            android:paddingVertical="10dp">
+
+            <TextView
+
+                style="@style/contentTextview"
+                android:textSize="15sp"
+                android:text="Play this game for 30 seconds to get rewarded"
+                android:textColor="@android:color/white">
+
+            </TextView>
+
+            <ImageView
+
+                android:layout_height="25dp"
+                android:layout_width="25dp"
+                android:layout_marginStart="5dp"
+                android:src="@drawable/indian_coin">
+
+            </ImageView>
+        </LinearLayout>
+    </RelativeLayout>
 </RelativeLayout>

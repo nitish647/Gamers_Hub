@@ -1,6 +1,8 @@
 package com.nitish.gamershub.Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,12 +10,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.nitish.gamershub.Activities.RedeemActivity;
+import com.nitish.gamershub.Helper_class;
 import com.nitish.gamershub.Pojo.RedeemListItem;
 import com.nitish.gamershub.Pojo.UserTransactions;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.databinding.UserTransactionListLayoutBinding;
 
 import java.util.List;
 
@@ -31,21 +37,51 @@ public class UserTransactionListAdapter extends RecyclerView.Adapter<UserTransac
     @NonNull
     @Override
     public UserTransactionListAdapter.TransactionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(context).inflate(R.layout.user_transaction_list_layout,parent,false);
 
-        return new UserTransactionListAdapter.TransactionViewHolder(v);
+        UserTransactionListLayoutBinding binding = DataBindingUtil.inflate( LayoutInflater.from(context),R.layout.user_transaction_list_layout,parent,false);
+
+        return new UserTransactionListAdapter.TransactionViewHolder(binding);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onBindViewHolder(@NonNull UserTransactionListAdapter.TransactionViewHolder holder, int position) {
 
         UserTransactions.TransactionRequest userTransactionRequest = transactionRequestList.get(position);
 
-        holder.transactionAmount.setText("Transaction amount rs "+userTransactionRequest.getAmount());
-        holder.transactionCoins.setText("Coins Redeemed "+userTransactionRequest.getCoins());
 
-        holder.statusTextview.setText(userTransactionRequest.isPaid+"");
-        holder.transactionDate.setText("Request date : "+userTransactionRequest.getRequestDate());
+        if(userTransactionRequest.getRedeemType().toLowerCase().contains("upi"))
+        {
+            holder.binding.transactionImage.setImageResource(R.drawable.upi_icon_1);
+            holder.binding.transactionTypeText.setText("UPI");
+            holder.binding.transactionTypeText.setTextColor(context.getColor(R.color.upiGreen));
+            holder.binding.transactionNumber.setText(userTransactionRequest.getUpiId());
+
+
+        }
+        else {
+            holder.binding.transactionImage.setImageResource(R.drawable.paytm_icom);
+
+            holder.binding.transactionTypeText.setText("Paytm");
+            holder.binding.transactionNumber.setText(userTransactionRequest.getPaytmNumber());
+            holder.binding.transactionTypeText.setTextColor(context.getColor(R.color.paytmBlue));
+        }
+
+        if(!userTransactionRequest.isPaid)
+        {
+            holder.binding.statusTextview.setBackground(Helper_class.setSingleColorRoundBackground("#feb3b3", 10F));
+            holder.binding.statusTextview.setText("Pending");
+            holder.binding.statusTextview.setTextColor(Color.parseColor("#fd1b1b"));
+        }
+        else {
+            holder.binding.statusTextview.setBackground(Helper_class.setSingleColorRoundBackground("#bdf5cb", 10F));
+            holder.binding.statusTextview.setText("Success");
+            holder.binding.statusTextview.setTextColor(Color.parseColor("#1fc648"));
+        }
+        holder.binding.transactionAmount.setText("₹ "+userTransactionRequest.getAmount());
+        holder.binding.transactionCoins.setText(""+userTransactionRequest.getCoins());
+
+        holder.binding.transactionDate.setText(""+userTransactionRequest.getRequestDate());
     }
 
 
@@ -59,16 +95,16 @@ public class UserTransactionListAdapter extends RecyclerView.Adapter<UserTransac
 
     public static class TransactionViewHolder extends RecyclerView.ViewHolder
     {
+        UserTransactionListLayoutBinding binding;
 
-        TextView statusTextview,transactionAmount,transactionCoins,transactionDate;
 
-        public TransactionViewHolder(@NonNull View itemView) {
 
-            super(itemView);
-            transactionDate = itemView.findViewById(R.id.transactionDate);
-            statusTextview = itemView.findViewById(R.id.statusTextview);
-            transactionAmount = itemView.findViewById(R.id.transactionAmount);
-            transactionCoins = itemView.findViewById(R.id.transactionCoins);
+        public TransactionViewHolder(@NonNull  UserTransactionListLayoutBinding userTransactionListLayoutBinding) {
+
+            super(userTransactionListLayoutBinding.getRoot());
+
+
+          this.binding =  userTransactionListLayoutBinding;
         }
     }
 }

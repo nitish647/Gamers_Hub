@@ -5,12 +5,30 @@ public class RedeemListItem {
     int coins;
     int money;
     int imageUrl;
+    String paytmNumber="";
+    String upiID="";
 
     public RedeemListItem(String name, int coins, int money, int imageUrl) {
         this.name = name;
         this.coins = coins;
         this.money = money;
         this.imageUrl = imageUrl;
+    }
+
+    public String getPaytmNumber() {
+        return paytmNumber;
+    }
+
+    public void setPaytmNumber(String paytmNumber) {
+        this.paytmNumber = paytmNumber;
+    }
+
+    public String getUpiID() {
+        return upiID;
+    }
+
+    public void setUpiID(String upiID) {
+        this.upiID = upiID;
     }
 
     public String getName() {

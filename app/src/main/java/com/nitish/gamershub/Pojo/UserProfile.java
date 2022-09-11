@@ -32,18 +32,27 @@ public class UserProfile {
 
         public String lastLogin="";
         public String lastOpened="";
-
-
+        public String deviceInfo="";
+        public String createdAt="";
         public ProfileData() {
 
         }
 
-        public ProfileData(String name, String email, int gameCoins, String lastLogin, String lastOpened) {
-            this.name = name;
-            this.email = email;
-            this.gameCoins = gameCoins;
-            this.lastLogin = lastLogin;
-            this.lastOpened = lastOpened;
+
+        public String getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(String createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public String getDeviceInfo() {
+            return deviceInfo;
+        }
+
+        public void setDeviceInfo(String deviceInfo) {
+            this.deviceInfo = deviceInfo;
         }
 
         public String getName() {

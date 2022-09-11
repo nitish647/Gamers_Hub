@@ -43,21 +43,30 @@ public class UserTransactions implements Serializable {
         public String requestDate;
         public int coins;
         public int amount;
+        public String paytmNumber;
+        public String upiId;
+
+        public String transactionId;
 
         public TransactionRequest() {
         }
 
-        public TransactionRequest(String redeemType, boolean isPaid, String paidDate, int remainingCoins, String requestDate, int coins, int amount) {
-            this.redeemType = redeemType;
-            this.isPaid = isPaid;
-            this.paidDate = paidDate;
-            this.remainingCoins = remainingCoins;
-            this.requestDate = requestDate;
-            this.coins = coins;
-            this.amount = amount;
+
+        public String getPaytmNumber() {
+            return paytmNumber;
         }
 
+        public void setPaytmNumber(String paytmNumber) {
+            this.paytmNumber = paytmNumber;
+        }
 
+        public String getUpiId() {
+            return upiId;
+        }
+
+        public void setUpiId(String upiId) {
+            this.upiId = upiId;
+        }
 
         public String getRedeemType() {
             return redeemType;
@@ -72,8 +81,20 @@ public class UserTransactions implements Serializable {
             return isPaid;
         }
 
+        public void setIsPaid(boolean isPaid) {
+            this.isPaid = isPaid;
+        }
+
         public void setPaid(boolean paid) {
             isPaid = paid;
+        }
+
+        public String getTransactionId() {
+            return transactionId;
+        }
+
+        public void setTransactionId(String transactionId) {
+            this.transactionId = transactionId;
         }
 
         public String getPaidDate() {

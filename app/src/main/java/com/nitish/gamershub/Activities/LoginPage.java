@@ -1,6 +1,7 @@
 package com.nitish.gamershub.Activities;
 
 import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHub_ParentCollection;
+import static com.nitish.gamershub.Utils.ConstantsHelper.UserInfo;
 import static com.nitish.gamershub.Utils.ConstantsHelper.UserMail;
 
 import androidx.activity.result.ActivityResultCallback;
@@ -33,6 +34,8 @@ import com.google.firebase.firestore.SetOptions;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.Pojo.UserProfile;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.Utils.DeviceHelper;
+import com.nitish.gamershub.Utils.UserOperations;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -120,13 +123,16 @@ public class LoginPage extends AppCompatActivity {
 
                                 userProfile.setProfileData(profileData);
 
+
+
+
                                 firestoreDb.collection(GamersHub_ParentCollection).document(user.getEmail()).set(userProfile, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
 
                                         Toast.makeText(LoginPage.this, "Welcome Back", Toast.LENGTH_SHORT).show();
 
-
+                                        Paper.book().write(UserInfo,userProfile);
                                         Paper.book().write(UserMail,user.getEmail());
                                         Intent intent = new Intent(LoginPage.this, HomeActivity.class);
                                         startActivity(intent);
@@ -142,22 +148,24 @@ public class LoginPage extends AppCompatActivity {
 
                                 UserProfile.ProfileData profileData = new UserProfile.ProfileData();
 
-                                profileData.setEmail(user.getEmail());
-                                profileData.setName(user.getDisplayName());
+
 
                                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                 String currentDateTime = dateFormat.format(new Date()); // Find todays date
                                 profileData.setLastLogin(currentDateTime);
+                                profileData.setCreatedAt(user.getDisplayName());
+                                profileData.setDeviceInfo(DeviceHelper.getDeviceNameAndVersion());
+                                profileData.setEmail(user.getEmail());
+                                profileData.setName(user.getDisplayName());
 
                                 userProfile.setProfileData(profileData);
-
-
                                 firestoreDb.collection(GamersHub_ParentCollection).document(user.getEmail()).set(userProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
 
                                         Toast.makeText(LoginPage.this, "Welcome User", Toast.LENGTH_SHORT).show();
                                         Paper.book().write(UserMail,user.getEmail());
+                                        Paper.book().write(UserInfo,userProfile);
                                         Intent intent = new Intent(LoginPage.this, HomeActivity.class);
                                         startActivity(intent);
                                         finish();

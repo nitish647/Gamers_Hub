@@ -3,17 +3,14 @@ package com.nitish.gamershub.Activities;
 import static com.nitish.gamershub.Utils.ConstantsHelper.FavouriteList;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHub_ParentCollection;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GeneralRewardCoins;
-import static com.nitish.gamershub.Utils.ConstantsHelper.MainGamesList;
-import static com.nitish.gamershub.Utils.ConstantsHelper.NewGamesList;
-import static com.nitish.gamershub.Utils.ConstantsHelper.PopularGamesList;
+import static com.nitish.gamershub.Utils.ConstantsHelper.UserInfo;
 import static com.nitish.gamershub.Utils.ConstantsHelper.UserMail;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
-import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,24 +20,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import com.denzcoskun.imageslider.ImageSlider;
-import com.denzcoskun.imageslider.constants.ScaleTypes;
-import com.denzcoskun.imageslider.models.SlideModel;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
@@ -59,8 +47,8 @@ import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -69,21 +57,21 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
-import com.google.gson.Gson;
 import com.nitish.gamershub.Adapters.CategoriesAdapter;
-import com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter;
+import com.nitish.gamershub.Fragments.HomeFragment;
+import com.nitish.gamershub.Fragments.ProfileFragment;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.Pojo.Categories;
 import com.nitish.gamershub.Pojo.UserProfile;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.ConstantsHelper;
+import com.nitish.gamershub.Utils.DeviceHelper;
 import com.nitish.gamershub.Utils.NotificationHelper;
 import com.nitish.gamershub.Utils.ProgressBarHelper;
 import com.nitish.gamershub.Utils.UserOperations;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
@@ -95,41 +83,43 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.paperdb.Paper;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends BasicActivity {
 
     // the whole game data
     JSONObject masterDataJsonObject;
+
+
 
 
     int currentSelectedFragPosition=0;
 
 
 
-    SearchView searchView;
+    HomeFragment homeFragment;
+    ProfileFragment profileFragment;
+    Fragment previousFragment;
     RequestQueue requestQueue;
     List<Categories> categoriesList;
     RecyclerView categoriesRecycler;
-    Button navigationButton;
+
 
     NavigationView navigationView;
     DrawerLayout drawerLayout;
     LinearLayout linearAdContainer;
+    FrameLayout frameLayout;
 
-    NewAndPopularGamesAdapter newAndPopularGamesAdapter;
     AdView googleBannerAdView;
     boolean interstitialAdDismissed = false;
 
-    TextView totalPointsTextview;
-    Button removeAdsButton;
+
+
     private InterstitialAd interstitialAd;
 
     Button logoutButton;
 
     private RewardedAd rewardedAd;
     boolean isLoading;
-    RecyclerView allGamesRecyclerView;
     ArrayList<AllGamesItems> mainGamesArrayList;
-    ImageSlider imageSlider;
     ProgressDialog progressDialog;
 
 
@@ -137,49 +127,33 @@ public class HomeActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     FirebaseFirestore firestoreDb;
-    Button redeemButton;
-
+    BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Paper.init(this);
-        requestQueue = Volley.newRequestQueue(this);
-        allGamesRecyclerView = findViewById(R.id.allGamesRecyclerView);
-        totalPointsTextview = findViewById(R.id.totalPointsTextview);
-        // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         firestoreDb = FirebaseFirestore.getInstance();
-         logoutButton= findViewById(R.id.logoutButton);
-        searchView = findViewById(R.id.searchView);
-        progressDialog = ProgressBarHelper.setProgressBarDialog(this);
-        drawerLayout = findViewById(R.id.drawerLayout);
-        imageSlider = findViewById(R.id.imageSlider);
-        navigationView = findViewById(R.id.navigationView);
-        navigationButton =findViewById(R.id.navigationButton);
-        removeAdsButton =findViewById(R.id.removeAdsButton);
-        redeemButton = findViewById(R.id.redeemButton);
-        categoriesRecycler = findViewById(R.id.categoriesRecycler);
-        googleBannerAdView = findViewById(R.id.googleBannerAdView);
+
+        setViews();
         categoriesList = new ArrayList<>();
-        mainGamesArrayList = new ArrayList<>();
         navigationView.setVisibility(View.VISIBLE);
 
         FirebaseApp.initializeApp(HomeActivity.this);
         NotificationHelper.generateFcmToken(HomeActivity.this);
-        getUserCoins();
-        getGamersHubData();
-
-        // firebase login
-
-
-        // Choose authentication providers
-
-
-
-
         setHeader();
+        updateUserInfo();
+
+        loadInterstitialAd2(new AdDismissedListener() {
+            @Override
+            public void onClick() {
+                Intent intent = new Intent(HomeActivity.this, GameDetailActivity2.class);
+                //    intent.putExtra(gameDataObject, SelectedGameObject);
+                startActivity(intent);
+            }
+        });
        MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(@NonNull InitializationStatus initializationStatus) {
@@ -193,19 +167,7 @@ public class HomeActivity extends AppCompatActivity {
                 logOutDialog();
             }
         });
-        navigationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                drawerLayout.openDrawer(Gravity.LEFT);
-            }
 
-        });
-        redeemButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(HomeActivity.this,RedeemActivity.class));
-            }
-        });
 
         // just writing an empty favourite list to avoid null pointer when reading the data
 
@@ -214,38 +176,19 @@ public class HomeActivity extends AppCompatActivity {
             Paper.book().write(FavouriteList, favouriteArrayList);
         }
 
-        removeAdsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if(!ConstantsHelper.ShowAds)
-                {
-                    Toast.makeText(HomeActivity.this, "Ads are already disabled", Toast.LENGTH_SHORT).show();
-                    removeAdsButton.setText("Ads Disabled");
-                }
-                else {
-
-                    removeAdsButton.setText("Remove ads (Free)");
-                    showRewardedVideo();
-                }
-            }
-        });
 
 
+        setBottomNavigationView();
 
 
-        bannerImagesApi();
         loadRewardedAd();
         setUpBannerAd();
-      loadInterstitialAd();
+
    //     AdsHelper.loadInterstitialAd(this);
 
         setCategory();
-        setSearchView();
 
 
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(HomeActivity.this,4);
-        allGamesRecyclerView.setLayoutManager(gridLayoutManager);
 
 
         try {
@@ -253,20 +196,7 @@ public class HomeActivity extends AppCompatActivity {
            JSONArray mainGameJsonArray = masterDataJsonObject.getJSONArray("main");
             JSONArray popularGamesJsonArray = masterDataJsonObject.getJSONArray("best");
             JSONArray newGamesJsonArray =  masterDataJsonObject.getJSONArray("new");
-
-
-          // will save the all games in paper in arraylist form
-            saveAllGamesData(mainGameJsonArray,popularGamesJsonArray,newGamesJsonArray);
-
-
-
-
-
-
-
-
      //       setUpViewPager(allGamesJsonArrayString,popularGamesJsonArrayString,newGamesJsonArrayString);
-
 
         } catch (Exception e) {
             Toast.makeText(this, "Some error has occurred : gError223", Toast.LENGTH_LONG).show();
@@ -276,11 +206,79 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected int getLayoutResourceId() {
+        return R.layout.activity_home;
+    }
+
+
+    public void setBottomNavigationView()
+    {
+        homeFragment = HomeFragment.newInstance("","");
+        showHideFragment(homeFragment,homeFragment.getTag());
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                item.setChecked(true);
+                switch (item.getItemId())
+                {
+                    case R.id.homeMenu:
+                        if(homeFragment==null)
+                        {
+                            homeFragment = HomeFragment.newInstance("","");
+
+                        }
+                        showHideFragment(homeFragment,homeFragment.getTag());
+
+
+                        break;
+
+                    case R.id.profileMenu:
+
+                        if(profileFragment ==null)
+                        {
+                            profileFragment = profileFragment.newInstance("","");
+
+                        }
+                        showHideFragment(profileFragment, profileFragment.getTag());
+
+
+                        break;
+
+                }
+                return false;
+            }
+        });
+    }
+
+    public void showHideFragment(Fragment fragment ,String tag)
+    {
+        if(fragment==previousFragment)
+        {
+            return;
+        }
+
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+
+        if(!fragment.isAdded())
+        {
+           fragmentTransaction.add(R.id.frameLayout,fragment,tag);
+           if(previousFragment!=null)
+           {
+               fragmentTransaction.hide(previousFragment);
+           }
+        }
+        else {
+            fragmentTransaction.show(fragment);
+            fragmentTransaction.hide(previousFragment);
+        }
+        fragmentTransaction.commit();
+        previousFragment = fragment;
+    }
 
 
 
-
-    public void getUserCoins()
+    public void updateUserInfo()
     {
 
         firestoreDb.collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail)+"").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -297,13 +295,25 @@ public class HomeActivity extends AppCompatActivity {
 
                         UserProfile.ProfileData profileData = userProfile.profileData;
 
-                        totalPointsTextview.setText(profileData.gameCoins +"");
-
                         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         String currentDateTime = dateFormat.format(new Date()); // Find todays date
                         profileData.setLastOpened(currentDateTime);
+                        profileData.setDeviceInfo(DeviceHelper.getDeviceNameAndVersion());
+                        if(profileData.getCreatedAt().trim().isEmpty())
+                        {
+                            profileData.setCreatedAt(currentDateTime);
+                        }
                         userProfile.setProfileData(profileData);
-                        firestoreDb.collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail)+"").set(userProfile, SetOptions.merge());
+
+                        firestoreDb.collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail)+"").set(userProfile, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful())
+                                {
+                                    Paper.book().write(UserInfo,userProfile);
+                                }
+                            }
+                        });
 
                     }
                     else {
@@ -415,7 +425,8 @@ public class HomeActivity extends AppCompatActivity {
     {
         if(interstitialAd!=null && ConstantsHelper.ShowAds)
         {
-           showInterstitial();
+//           showInterstitial();
+            showInterstitial2();
         }
         else {
 
@@ -424,230 +435,6 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(intent);
         }
     }
-    // post method
-    public void parseAllGamesData( JSONArray allGamesJsonArray)
-    {
-
-
-        try {
-            JSONObject masterObject =  allGamesJsonArray.getJSONObject(0);
-
-            JSONArray mainObject  = masterObject.getJSONArray("main");
-
-
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-
-    }
-    public void setSearchView()
-    {
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-
-
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-
-                    // searching in all games
-                    newAndPopularGamesAdapter.searchFilter.filter(newText);
-                    // searching from favourites
-
-                return false;
-            }
-        });
-    }
-    public void setImageSlider(JSONArray bannerImagesJsonArray) throws JSONException {
-
-        ArrayList<String> imageUrlList = new ArrayList<>();
-        for(int i =0;i<bannerImagesJsonArray.length();i++)
-        {
-            JSONObject jsonObject = bannerImagesJsonArray.getJSONObject(i);
-
-            imageUrlList.add(jsonObject.getString("largeImageUrl"));
-
-        }
-        ArrayList<SlideModel> slideModelArrayList = new ArrayList<>();
-        for(String imageUri : imageUrlList)
-        {
-            SlideModel slideModel = new SlideModel(imageUri,null,null);
-            slideModelArrayList.add(slideModel);
-
-        }
-        imageSlider.setImageList(slideModelArrayList, ScaleTypes.FIT);
-    }
-    public void showSnackBar(String message , ViewGroup viewGroup)
-    {
-
-        Snackbar snackbar = Snackbar.make( viewGroup  ,""+message, Snackbar.LENGTH_LONG);
-
-        snackbar.setBackgroundTint(ContextCompat.getColor(getApplicationContext(), R.color.material_dynamic_tertiary99));
-        snackbar.show();
-    }
-    // will set the main games data
-    public void saveAllGamesData(JSONArray mainGamesArray, JSONArray newGamesJsonArray, JSONArray popularGamesJsonArray)
-    {
-        ArrayList<AllGamesItems> mainItemsArrayList = new ArrayList<>();
-        ArrayList<AllGamesItems> newGamesItemsArrayList = new ArrayList<>();
-        ArrayList<AllGamesItems> popularItemsArrayList = new ArrayList<>();
-        Gson gson = new Gson();
-        try {
-            for(int i = 0; i< mainGamesArray.length(); i++)
-            {
-                JSONObject jsonObject = mainGamesArray.getJSONObject(i);
-                AllGamesItems allGamesItems = gson.fromJson(jsonObject.toString(),AllGamesItems.class);
-                mainItemsArrayList.add(allGamesItems);
-            }
-
-            newAndPopularGamesAdapter = new NewAndPopularGamesAdapter(HomeActivity.this,mainItemsArrayList);
-            allGamesRecyclerView.setAdapter(newAndPopularGamesAdapter);
-
-            Paper.book().write(MainGamesList,mainItemsArrayList);
-
-            for(int i = 0; i< newGamesJsonArray.length(); i++)
-            {
-                JSONObject jsonObject = newGamesJsonArray.getJSONObject(i);
-                AllGamesItems allGamesItems = gson.fromJson(jsonObject.toString(),AllGamesItems.class);
-                newGamesItemsArrayList.add(allGamesItems);
-            }
-            Paper.book().write(NewGamesList,newGamesItemsArrayList);
-
-
-            for(int i = 0; i< popularGamesJsonArray.length(); i++)
-            {
-                JSONObject jsonObject = popularGamesJsonArray.getJSONObject(i);
-                AllGamesItems allGamesItems = gson.fromJson(jsonObject.toString(),AllGamesItems.class);
-                popularItemsArrayList.add(allGamesItems);
-            }
-            Paper.book().write(PopularGamesList,popularItemsArrayList);
-
-            if(popularGamesJsonArray.length()>0)
-            Paper.book().read(PopularGamesList,popularItemsArrayList.get(0).getName());
-        } catch (Exception e) {
-            Toast.makeText(HomeActivity.this, "something went wrong while showing this data : error334 "+e, Toast.LENGTH_SHORT).show();
-            Log.d("gError334",e.toString());
-            e.printStackTrace();
-        }
-    }
-
-    public void bannerImagesApi()
-    {
-
-        String url = getString(R.string.dbGitUrl)+"gamers_hub_data/banner_Images.json";
-
-        Log.d("url",url);
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-
-
-            @Override
-            public void onResponse(JSONObject response) {
-
-                Log.d("gResponse","response banner_Images data "+response);
-
-                //    Toast.makeText(Splash_Screen.this, response+"", Toast.LENGTH_SHORT).show();
-                try {
-                    JSONArray bannerImagesJsonArray =  response.getJSONArray("bannerImages");
-                    setImageSlider(bannerImagesJsonArray);
-
-                } catch (Exception e) {
-                    Log.d("gError","error in  banner_Images data "+e.toString());
-                    e.printStackTrace();
-                }
-
-
-
-
-
-
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("gError","error in banner_Images data "+error);
-
-            }
-        });
-
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
-                6000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        requestQueue.add(jsonObjectRequest);
-    }
-    public void loadInterstitialAd() {
-
-
-        AdRequest adRequest = new AdRequest.Builder().build();
-        InterstitialAd.load(
-                this,
-                getString(R.string.admob_inter),
-                adRequest,
-                new InterstitialAdLoadCallback() {
-                    @Override
-                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                        // The mInterstitialAd reference will be null until
-                        // an ad is loaded.
-                        HomeActivity.this.interstitialAd = interstitialAd;
-                        Log.i("gInterstitialAd", "onAdLoaded");
-
-                        interstitialAd.setFullScreenContentCallback(
-                                new FullScreenContentCallback() {
-                                    @Override
-                                    public void onAdDismissedFullScreenContent() {
-                                        // Called when fullscreen content is dismissed.
-                                        // Make sure to set your reference to null so you don't
-                                        // show it a second time.
-                                        HomeActivity.this.interstitialAd = null;
-
-
-                                        Intent intent = new Intent(HomeActivity.this, GameDetailActivity2.class);
-                                    //    intent.putExtra(gameDataObject, SelectedGameObject);
-                                        startActivity(intent);
-                                    }
-
-                                    @Override
-                                    public void onAdFailedToShowFullScreenContent(AdError adError) {
-                                        // Called when fullscreen content failed to show.
-                                        // Make sure to set your reference to null so you don't
-                                        // show it a second time.
-                                        HomeActivity.this.interstitialAd = null;
-                                        Log.d("gInterstitialAd", "The ad failed to show.");
-                                    }
-
-                                    @Override
-                                    public void onAdShowedFullScreenContent() {
-                                        // Called when fullscreen content is shown.
-                                        Log.d("gInterstitialAd", "The ad was shown.");
-                                    }
-                                });
-                    }
-
-
-                    @Override
-                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        // Handle the error
-                        Log.i("gInterstitialAd", "ad loading failed : "+loadAdError.getMessage());
-                        interstitialAd = null;
-
-                        String error = String.format(
-                                        "domain: %s, code: %d, message: %s",
-                                        loadAdError.getDomain(), loadAdError.getCode(), loadAdError.getMessage());
-
-                        Log.d("gInterstitialAd","Ad loading failed : "+error);
-                    }
-                });
-    }
     public void setUpBannerAd()
     {
 
@@ -655,6 +442,7 @@ public class HomeActivity extends AppCompatActivity {
         googleBannerAdView.loadAd(adRequest);
 
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -671,7 +459,6 @@ public class HomeActivity extends AppCompatActivity {
 
                     UserProfile.ProfileData profileData = userProfile.profileData;
 
-                    totalPointsTextview.setText(profileData.gameCoins +"");
                 }
             }
         });
@@ -696,10 +483,10 @@ public class HomeActivity extends AppCompatActivity {
             googleBannerAdView.resume();
 
         }
-        // load the ad again
-        if(interstitialAd==null)
-            loadInterstitialAd();
-
+//        // load the ad again
+//        if(interstitialAd==null)
+//            loadInterstitialAd();
+//
 
     }
 
@@ -711,13 +498,8 @@ public class HomeActivity extends AppCompatActivity {
         }
         super.onDestroy();
     }
-    private void showInterstitial() {
-        // Show the ad if it's ready. Otherwise toast and restart the game.
 
-        if (interstitialAd != null && ConstantsHelper.ShowAds) {
-            interstitialAd.show(this);
-        }
-    }
+
 
     @Override
     protected void onStop() {
@@ -811,7 +593,6 @@ public class HomeActivity extends AppCompatActivity {
                                 .show();
                         // Preload the next rewarded ad.
                         ConstantsHelper.ShowAds = false;
-                        removeAdsButton.setText("Ads Disabled ");
                         int rewardAmount = rewardItem.getAmount();
                         String rewardType = rewardItem.getType();
                     }
@@ -858,6 +639,7 @@ public class HomeActivity extends AppCompatActivity {
         builder.show();
 
     }
+
     public void setHeader()
     {
 
@@ -879,6 +661,20 @@ public class HomeActivity extends AppCompatActivity {
 
 
 
+
+
+    }
+    public void setViews()
+    {
+        logoutButton= findViewById(R.id.logoutButton);
+
+        progressDialog = ProgressBarHelper.setProgressBarDialog(this);
+        drawerLayout = findViewById(R.id.drawerLayout);
+        navigationView = findViewById(R.id.navigationView);
+        frameLayout = findViewById(R.id.frameLayout);
+        googleBannerAdView = findViewById(R.id.googleBannerAdView);
+        categoriesRecycler = findViewById(R.id.categoriesRecycler);
+        bottomNavigationView= findViewById(R.id.bottomNavigationView);
 
 
     }

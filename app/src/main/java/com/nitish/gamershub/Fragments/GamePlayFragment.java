@@ -3,6 +3,7 @@ package com.nitish.gamershub.Fragments;
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.http.SslError;
@@ -20,11 +21,13 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.nitish.gamershub.Activities.GameDetailActivity2;
 import com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter;
 import com.nitish.gamershub.Helper_class;
 import com.nitish.gamershub.Pojo.AllGamesItems;
@@ -43,7 +46,7 @@ public class GamePlayFragment extends Fragment {
 
     View view;
     LinearLayout.LayoutParams layoutParams;
-    LottieAnimationView loading_lottieAnimationView, no_interent_lottie;
+    LottieAnimationView  no_interent_lottie;
     WebView webView;
     AllGamesItems allGamesItems;
 
@@ -55,11 +58,13 @@ public class GamePlayFragment extends Fragment {
 
     public int seconds = 0;
 
+    ImageView dismissButton;
     // Is the stopwatch running?
     private boolean running;
 public     String timerMinuteSecond="00:00";
 
     private boolean wasRunning;
+    GameDetailActivity2 parentActivity;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -67,8 +72,8 @@ public     String timerMinuteSecond="00:00";
         view= inflater.inflate(R.layout.fragment_game_play, container, false);
         webView = view.findViewById(R.id.webView);
         timerTextview = view.findViewById(R.id.timerTextview);
-
-
+        dismissButton = view.findViewById(R.id.dismissButton);
+        parentActivity = (GameDetailActivity2) view.getContext();
         loadGame();
 
         allGamesItems = NewAndPopularGamesAdapter.SelectedGameObject;
@@ -78,12 +83,10 @@ public     String timerMinuteSecond="00:00";
 
 
 
-        loading_lottieAnimationView = view.findViewById(R.id.frag_lottie_loading);
         no_interent_lottie = view.findViewById(R.id.frag_no_internet);
 
 
         layoutParams = new LinearLayout.LayoutParams(0, 0);
-        loading_lottieAnimationView.setVisibility(View.VISIBLE);
 
         webView.setWebViewClient(new Browser_home());
 
@@ -101,6 +104,12 @@ public     String timerMinuteSecond="00:00";
         webView.getSettings().setDatabaseEnabled(true);
         webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT); // load online by default
 
+        dismissButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                parentActivity.onBackPressed();
+            }
+        });
         if (!isNetworkAvailable()) { // loading offline
             webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         }
@@ -134,6 +143,7 @@ public     String timerMinuteSecond="00:00";
 
 
 
+
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
             ByteArrayInputStream EMPTY3 = new ByteArrayInputStream("".getBytes());
@@ -148,22 +158,13 @@ public     String timerMinuteSecond="00:00";
         public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
             if (view.getUrl().equals(failingUrl)) {
                 view.setLayoutParams(layoutParams);
-                loading_lottieAnimationView.setVisibility(View.INVISIBLE);
                 no_interent_lottie.setVisibility(View.VISIBLE);
                 Helper_class.show_toast(view.getContext(), "something went wrong ");
             }
             super.onReceivedError(view, errorCode, description, failingUrl);
         }
 
-        @Override
-        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-            super.onReceivedSslError(view, handler, error);
-        }
 
-        @Override
-        public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
-            super.onReceivedHttpError(view, request, errorResponse);
-        }
 
         @TargetApi(android.os.Build.VERSION_CODES.M)
 
@@ -183,7 +184,8 @@ public     String timerMinuteSecond="00:00";
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            loading_lottieAnimationView.setVisibility(View.GONE);
+
+
 
         }
 

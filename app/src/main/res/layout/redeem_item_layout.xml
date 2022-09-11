@@ -5,77 +5,69 @@
 
     android:elevation="@dimen/cardview_default_radius"
 
+    android:backgroundTint="#e6f9fe"
     android:layout_margin="5dp"
     android:background="@drawable/round_corners"
     android:padding="10dp"
     android:layout_height="wrap_content">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-
-    <ImageView
-
-
-        android:id="@+id/redeemImageview"
-        android:layout_gravity="center_horizontal"
-        android:src="@drawable/paytm_icom"
-        android:layout_width="50dp"
-        android:layout_height="50dp">
-
-    </ImageView>
-
-    <LinearLayout
-        android:background="@drawable/round_corners"
-        android:backgroundTint="#b4edd4"
-        android:padding="5dp"
-        android:layout_marginTop="10dp"
-        android:layout_gravity="center_horizontal"
-        android:id="@+id/redeemAmountRecycler"
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
 
         <ImageView
-            android:src="@drawable/indian_rupee_icon"
-            android:layout_width="25dp"
-            android:layout_height="25dp">
+
+
+            android:id="@+id/redeemImageview"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/paytm_icom">
 
         </ImageView>
+
+
         <TextView
             android:id="@+id/redeemAmountTextview"
-            android:layout_marginStart="5dp"
-            android:text="₹ 50 paytm cash"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="5dp"
+            android:text="₹ 50 Paytm"
+            android:textColor="#08bbef"
+            android:textSize="25sp"
+            android:textStyle="bold">
 
         </TextView>
-    </LinearLayout>
+
+
         <LinearLayout
-            android:backgroundTint="#fee8a9"
-            android:padding="5dp"
-            android:background="@drawable/round_corners"
-            android:layout_marginTop="10dp"
-            android:layout_gravity="center_horizontal"
             android:id="@+id/redeemCoinsRecycler"
-            android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/round_corners"
+            android:backgroundTint="#fee8a9"
+            android:orientation="horizontal"
+            android:padding="5dp">
 
             <ImageView
-                android:src="@drawable/indian_coin"
                 android:layout_width="25dp"
-                android:layout_height="25dp">
+                android:layout_height="25dp"
+                android:src="@drawable/indian_coin">
 
             </ImageView>
+
             <TextView
                 android:id="@+id/redeemCoinsTextview"
-                android:layout_marginStart="5dp"
-                android:text=" 5000 coins"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="5dp"
+                android:text=" 5000 coins">
 
             </TextView>
         </LinearLayout>

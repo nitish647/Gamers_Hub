@@ -1,6 +1,8 @@
 package com.nitish.gamershub.Adapters;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.nitish.gamershub.Activities.RedeemActivity;
@@ -40,9 +44,25 @@ public class RedeemRecyclerviewAdapter extends RecyclerView.Adapter<RedeemRecycl
 
         RedeemListItem redeemListItem = redeemListItemList.get(position);
 
+
+        holder.redeemImageview.setImageResource(redeemListItem.getImageUrl());
+        String redeemType;
+
+        if(redeemListItem.getName().toLowerCase().contains("paytm"))
+        {
+            redeemType ="Paytm";
+            holder.redeemAmountTextview.setTextColor(context.getResources().getColor(R.color.paytmBlue));
+            holder.itemView.setBackgroundTintList(AppCompatResources.getColorStateList(context,R.color.paytmLightBlue));
+        }
+        else {
+            redeemType="UPI";
+            holder.redeemAmountTextview.setTextColor(context.getResources().getColor(R.color.upiGreen));
+            holder.itemView.setBackgroundTintList(AppCompatResources.getColorStateList(context,R.color.upiGreenLight));
+        }
         holder.redeemCoinsTextview.setText(redeemListItem.getCoins()+" coins");
-        holder.redeemAmountTextview.setText("₹ "+redeemListItem.getMoney()+" paytm cash");
+        holder.redeemAmountTextview.setText("₹ "+redeemListItem.getMoney()+" "+redeemType);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View view) {
                 ((RedeemActivity)context).redeemMoneyIcon(redeemListItem);

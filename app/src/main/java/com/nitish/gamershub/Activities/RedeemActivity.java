@@ -5,17 +5,17 @@ import static com.nitish.gamershub.Utils.ConstantsHelper.UserMail;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,70 +27,68 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.SetOptions;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.nitish.gamershub.Adapters.RedeemRecyclerviewAdapter;
 import com.nitish.gamershub.Adapters.UserTransactionListAdapter;
 import com.nitish.gamershub.Pojo.UserTransactions;
 import com.nitish.gamershub.Pojo.RedeemListItem;
 import com.nitish.gamershub.Pojo.UserProfile;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.Utils.CommonMethods;
+import com.nitish.gamershub.Utils.Connectivity;
+import com.nitish.gamershub.Utils.ConstantsHelper;
 import com.nitish.gamershub.Utils.ProgressBarHelper;
+import com.nitish.gamershub.Utils.ToastHelper;
 import com.nitish.gamershub.Utils.UserOperations;
+import com.nitish.gamershub.Utils.ValidationHelper;
+import com.nitish.gamershub.databinding.PaytmUpiNumberLayoutBinding;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 import io.paperdb.Paper;
 
-public class RedeemActivity extends AppCompatActivity {
+public class RedeemActivity extends BasicActivity {
 
-    TextView walletCoinsTextview;
+  //  TextView walletCoinsTextview;
     FirebaseFirestore firebaseFirestore;
 
     RecyclerView redeemRecyclerView;
     ArrayList<RedeemListItem> redeemListItemArrayList = new ArrayList<>();
     int totalGameCoins=0;
     ProgressDialog progressDialog;
-    RelativeLayout redeemHistoryButton;
     UserTransactionListAdapter userTransactionListAdapter;
     ArrayList<UserTransactions.TransactionRequest> transactionRequestList;
      AlertDialog userTransactionDialog;
     RecyclerView userTransactionListRecycler;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reddeem);
-        walletCoinsTextview = findViewById(R.id.walletCoinsTextview);
         redeemRecyclerView = findViewById(R.id.redeemRecyclerView);
-        redeemHistoryButton = findViewById(R.id.redeemHistoryButton);
+
 
         firebaseFirestore = FirebaseFirestore.getInstance();
         progressDialog = ProgressBarHelper.setProgressBarDialog(this);
            transactionRequestList = new ArrayList<>();
-
+           CommonMethods.backButton(RedeemActivity.this);
 
 
         userTransactionListAdapter = new UserTransactionListAdapter(RedeemActivity.this,transactionRequestList);
 
-        setUserTransactionDialog();
 
         getUserCoins();
         setRedeemRecyclerView();
 
-        redeemHistoryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                userTransactionDialog.show();
-            }
-        });
 
+    }
+
+    @Override
+    protected int getLayoutResourceId() {
+        return R.layout.activity_reddeem;
     }
 
     @Override
@@ -134,16 +132,13 @@ public class RedeemActivity extends AppCompatActivity {
 
                        HashMap<String,Object> userTransactionsHashMap = (HashMap<String, Object>) documentSnapshot.get("userTransaction");
 
-                       if(userTransactionsHashMap!=null) {
-                           getUserTransactionList(userTransactionsHashMap);
 
-                       }
                         UserProfile userProfile=   documentSnapshot.toObject(UserProfile.class);
 
                         UserProfile.ProfileData profileData = userProfile.profileData;
 
                         totalGameCoins = profileData.gameCoins;
-                        walletCoinsTextview.setText(profileData.gameCoins +"");
+                  //      walletCoinsTextview.setText(profileData.gameCoins +"");
                     }
                     else {
                         Toast.makeText(RedeemActivity.this, "document does not exist", Toast.LENGTH_SHORT).show();
@@ -163,7 +158,7 @@ public class RedeemActivity extends AppCompatActivity {
     public void setRedeemRecyclerView()
     {
         redeemListItemArrayList.add(new RedeemListItem("Upi50 ",10,1,R.drawable.upi_icon_1));
-        redeemListItemArrayList.add(new RedeemListItem("Paytm50 ",5000,50,R.drawable.paytm_icom));
+        redeemListItemArrayList.add(new RedeemListItem("Paytm50 ",10,1,R.drawable.paytm_icom));
         redeemListItemArrayList.add(new RedeemListItem("Upi100",10000,100,R.drawable.upi_icon_1));
         redeemListItemArrayList.add(new RedeemListItem("Paytm100 ",10000,100,R.drawable.paytm_icom));
         redeemListItemArrayList.add(new RedeemListItem("Upi25 ",2500,25,R.drawable.upi_icon_1));
@@ -175,17 +170,117 @@ public class RedeemActivity extends AppCompatActivity {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void redeemMoneyIcon(RedeemListItem redeemListItem)
     {
+        String connectivityStatus =Connectivity.getConnectionStatus(RedeemActivity.this);
+
+        if(connectivityStatus.equals(ConstantsHelper.ConnectionSignalStatus.NO_CONNECTIVITY+"")||
+                connectivityStatus.equals(ConstantsHelper.ConnectionSignalStatus.POOR_STRENGTH+"" ))
+        {
+            Toast.makeText(this, "Network is not good "+connectivityStatus, Toast.LENGTH_SHORT).show();
+            return;
+        }
         if(totalGameCoins< redeemListItem.getCoins())
         {
             Toast.makeText(this, "Not enough funds to redeem ", Toast.LENGTH_LONG).show();
 
         }
         else {
+            enterPaytmUpiAlertDialog(redeemListItem);
 
-         updateUserWallet(redeemListItem);
+    //     updateUserWallet(redeemListItem);
         }
+
+
+
+    }
+    public PaytmUpiDialogListener paytmUpiDialogListener()
+    {
+        PaytmUpiDialogListener paytmUpiDialogListener = new PaytmUpiDialogListener() {
+            @Override
+            public void redeemClick() {
+      //          updateUserWallet(redeemListItem);
+            }
+        };
+        return paytmUpiDialogListener;
+    }
+    public void enterPaytmUpiAlertDialog(RedeemListItem redeemListItem)
+    {
+        AlertDialog paytmUpiDialog ;
+        LayoutInflater factory = LayoutInflater.from(RedeemActivity.this);
+        PaytmUpiNumberLayoutBinding paytmUpiNumberLayoutBinding = DataBindingUtil.inflate(factory,R.layout.paytm_upi_number_layout,null,false);
+        paytmUpiDialog = new AlertDialog.Builder(RedeemActivity.this).create();
+        paytmUpiDialog.setView(paytmUpiNumberLayoutBinding.getRoot());
+        paytmUpiDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(R.color.fui_transparent));
+        paytmUpiDialog.show();
+
+        // for paytm
+        if(redeemListItem.getName().toLowerCase().contains("paytm"))
+        {
+            paytmUpiNumberLayoutBinding.upiLinear.setVisibility(View.GONE);
+            paytmUpiNumberLayoutBinding.paytmLinear.setVisibility(View.VISIBLE);
+
+            paytmUpiNumberLayoutBinding.redeemButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+
+                    String paytmNumber =paytmUpiNumberLayoutBinding.paytmEdittext.getText().toString();
+                    if(ValidationHelper.isValidIndianMobileNo(paytmNumber))
+                    {
+                        redeemListItem.setPaytmNumber(paytmNumber+"");
+
+                        updateUserWallet(redeemListItem);
+                        paytmUpiDialog.dismiss();
+                    }
+                    else {
+
+                        ToastHelper.customToast(RedeemActivity.this,"Enter a Valid Number");
+                    }
+
+
+                }
+            });
+        }
+        // for upi
+        else {
+            paytmUpiNumberLayoutBinding.upiLinear.setVisibility(View.VISIBLE);
+            paytmUpiNumberLayoutBinding.paytmLinear.setVisibility(View.GONE);
+
+            paytmUpiNumberLayoutBinding.redeemButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    String upiId =paytmUpiNumberLayoutBinding.upiEdittext.getText().toString();
+                    if(ValidationHelper.isValidUpiId(upiId))
+                    {
+                        redeemListItem.setUpiID(upiId+"");
+
+                        updateUserWallet(redeemListItem);
+                        paytmUpiDialog.dismiss();
+                    }
+                    else {
+
+                        ToastHelper.customToast(RedeemActivity.this,"Enter a Valid upi id");
+                    }
+
+
+                }
+            });
+
+        }
+
+        paytmUpiNumberLayoutBinding.noButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                paytmUpiDialog.dismiss();
+            }
+        });
+
+    }
+    public void upiValidation()
+    {
 
     }
     public void raiseRedeemRequest(RedeemListItem redeemListItem)
@@ -209,33 +304,21 @@ public class RedeemActivity extends AppCompatActivity {
                             UserProfile.ProfileData profileData = userProfile.profileData;
 
                             totalGameCoins = profileData.gameCoins;
-                            walletCoinsTextview.setText(profileData.gameCoins +"");
-
-
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        String currentDateTime = dateFormat.format(new Date()); // Find todays date
-
-                        HashMap<String , Object> redeemHistory = new HashMap<>();
-                        HashMap<String , Object> transactions = new HashMap<>();
-                        UserTransactions.TransactionRequest transactionRequest = new UserTransactions.TransactionRequest();
-                        transactionRequest.setRequestDate(currentDateTime);
-                        transactionRequest.setPaid(false);
-
-                        transactionRequest.setCoins(redeemListItem.getCoins());
-                        transactionRequest.setAmount(redeemListItem.getMoney());
-                        transactionRequest.setRedeemType(redeemListItem.getName());
-                        transactionRequest.setRemainingCoins(totalGameCoins);
-                        transactionRequest.setPaidDate(null);
+                       //     walletCoinsTextview.setText(profileData.gameCoins +"");
 
 
 
-                        transactions.put( currentDateTime,transactionRequest);
-                        redeemHistory.put("userTransaction",transactions);
-                        Toast.makeText(RedeemActivity.this, "Request Raised successfully", Toast.LENGTH_SHORT).show();
 
-                        firebaseFirestore.collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail)+"").set(redeemHistory, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        firebaseFirestore.collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail)+"").set(generateTransactionRequest(redeemListItem), SetOptions.merge()).
+
+
+                                addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
+
+                                showRewardDialog(redeemListItem.getMoney());
+                                Toast.makeText(RedeemActivity.this, "Request Raised successfully", Toast.LENGTH_SHORT).show();
+
                                 getUserCoins();
                             }
                         });
@@ -256,6 +339,9 @@ public class RedeemActivity extends AppCompatActivity {
         });
 
     }
+
+
+
     public void updateUserWallet(RedeemListItem redeemListItem)
     {
         progressDialog.show();
@@ -299,60 +385,46 @@ public class RedeemActivity extends AppCompatActivity {
 
     }
 
-    public void getUserTransactionList(HashMap<String,Object> userTransactionsMap)
-    {
-        transactionRequestList.clear();
 
-     Gson gson = new Gson();
-        for(int i =0 ; i<=userTransactionsMap.keySet().toArray().length-1;i++)
+    public HashMap<String,Object> generateTransactionRequest(RedeemListItem redeemListItem)
+    {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String currentDateTime = dateFormat.format(new Date()); // Find todays date
+
+        HashMap<String , Object> redeemHistory = new HashMap<>();
+        HashMap<String , Object> transactions = new HashMap<>();
+
+        UserTransactions.TransactionRequest transactionRequest = new UserTransactions.TransactionRequest();
+        transactionRequest.setRequestDate(currentDateTime);
+        transactionRequest.setIsPaid(false);
+
+        transactionRequest.setCoins(redeemListItem.getCoins());
+        transactionRequest.setAmount(redeemListItem.getMoney());
+
+
+        transactionRequest.setRedeemType(redeemListItem.getName());
+
+
+        if(redeemListItem.getName().toLowerCase().contains("upi"))
         {
-
-            HashMap<String,Object> hashMap = (HashMap<String, Object>) userTransactionsMap.get(userTransactionsMap.keySet().toArray()[i].toString());
-
-            JsonElement jsonElement = gson.toJsonTree(hashMap);
-            UserTransactions.TransactionRequest transactionRequest =gson.fromJson(jsonElement, UserTransactions.TransactionRequest.class);
-
-            transactionRequestList.add(transactionRequest);
+            transactionRequest.setUpiId(redeemListItem.getUpiID());
         }
+        else {
+            transactionRequest.setPaytmNumber(redeemListItem.getPaytmNumber());
 
-       // reverseArrayList(transactionRequestList);
-        userTransactionListAdapter.notifyDataSetChanged();
-
-
-
-    }
-    public ArrayList<UserTransactions.TransactionRequest> reverseArrayList(ArrayList<UserTransactions.TransactionRequest> alist)
-    {
-        // Arraylist for storing reversed elements
-        ArrayList<UserTransactions.TransactionRequest> revArrayList = new ArrayList<UserTransactions.TransactionRequest>();
-        for (int i = alist.size() - 1; i >= 0; i--) {
-
-            // Append the elements in reverse order
-            revArrayList.add(alist.get(i));
         }
-
-        // Return the reversed arraylist
-        return revArrayList;
-    }
-    public void setUserTransactionDialog()
-    {
-        LayoutInflater factory = LayoutInflater.from(RedeemActivity.this);
-
-        final View userTransactionListLayout = factory.inflate(R.layout.user_transaction_list_dialog_list, null);
-
-         userTransactionDialog = new AlertDialog.Builder(RedeemActivity.this).create();
-
-
-        userTransactionDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        userTransactionDialog.setView(userTransactionListLayout);
+        transactionRequest.setRemainingCoins(totalGameCoins);
+        transactionRequest.setPaidDate(null);
 
 
 
-         userTransactionListRecycler = userTransactionListLayout.findViewById(R.id.userTransactionListRecycler);
+        transactions.put( currentDateTime,transactionRequest);
+        redeemHistory.put("userTransaction",transactions);
 
-        userTransactionListRecycler.setLayoutManager(new LinearLayoutManager(this));
-        userTransactionListRecycler.setAdapter(userTransactionListAdapter);
+
+        return  redeemHistory;
 
     }
+
 
 }

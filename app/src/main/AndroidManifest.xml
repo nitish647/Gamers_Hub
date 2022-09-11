@@ -12,6 +12,15 @@
         android:roundIcon="@mipmap/vector_icon2"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".Activities.RewardsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.EarnMoreActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.TransactionHistoryActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activities.RedeemActivity"
             android:exported="false" />
         <activity

@@ -9,8 +9,14 @@ public class ConstantsHelper {
     public static  String MainGamesList = "MainGamesList";
     public static  String NewGamesList = "NewGamesList";
     public static  String PopularGamesList = "PopularGamesList";
-
+    public static  String UserInfo = "UserInfo";
 
     // general reward coins to reward after a game
     public static  String GeneralRewardCoins = "GeneralRewardCoins";
+
+
+    public static enum ConnectionSignalStatus{
+        NO_CONNECTIVITY,GOOD_STRENGTH,FAIR_STRENGTH,POOR_STRENGTH
+
+    }
 }

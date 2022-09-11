@@ -3,10 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../layout/custom_preview.xml" value="0.19255222524977295" />
         <entry key="app/src/main/res/drawable/round_corners.xml" value="0.2035" />
         <entry key="app/src/main/res/drawable/simple_circle.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/textview_round.xml" value="0.2035" />
+        <entry key="app/src/main/res/drawable/top_round_corners.xml" value="0.1075" />
         <entry key="app/src/main/res/layout/activity_category.xml" value="0.18342391304347827" />
+        <entry key="app/src/main/res/layout/activity_earn_more.xml" value="0.17119565217391305" />
         <entry key="app/src/main/res/layout/activity_favourite.xml" value="0.18342391304347827" />
         <entry key="app/src/main/res/layout/activity_frag_container.xml" value="0.18342391304347827" />
         <entry key="app/src/main/res/layout/activity_game_desc.xml" value="0.1" />
@@ -15,18 +18,30 @@
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.16485507246376813" />
         <entry key="app/src/main/res/layout/activity_login_page.xml" value="0.161231884057971" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.16485507246376813" />
+        <entry key="app/src/main/res/layout/activity_reddeem.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_rewards.xml" value="0.17119565217391305" />
+        <entry key="app/src/main/res/layout/activity_transaction_history.xml" value="0.17119565217391305" />
         <entry key="app/src/main/res/layout/categires_layout.xml" value="0.18342391304347827" />
         <entry key="app/src/main/res/layout/category_item.xml" value="0.18342391304347827" />
+        <entry key="app/src/main/res/layout/custom_toast_layout.xml" value="0.1" />
         <entry key="app/src/main/res/layout/exit_game_dialog.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_category_list.xml" value="0.17119565217391305" />
         <entry key="app/src/main/res/layout/fragment_desc_frag.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_game_details.xml" value="0.18342391304347827" />
         <entry key="app/src/main/res/layout/fragment_game_frag.xml" value="0.17119565217391305" />
         <entry key="app/src/main/res/layout/fragment_game_play.xml" value="0.18342391304347827" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.17119565217391305" />
         <entry key="app/src/main/res/layout/fragment_home_all_games.xml" value="0.16485507246376813" />
         <entry key="app/src/main/res/layout/fragment_popular_and_new.xml" value="0.16485507246376813" />
+        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.2" />
         <entry key="app/src/main/res/layout/game_reward_dialog.xml" value="0.19583333333333333" />
         <entry key="app/src/main/res/layout/header_layout.xml" value="0.161231884057971" />
+        <entry key="app/src/main/res/layout/paytm_upi_number_layout.xml" value="0.17119565217391305" />
         <entry key="app/src/main/res/layout/popular_and_new_layout.xml" value="0.17119565217391305" />
+        <entry key="app/src/main/res/layout/redeem_item_layout.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/show_webview_dialog.xml" value="0.17119565217391305" />
+        <entry key="app/src/main/res/layout/user_transaction_list_layout.xml" value="0.33" />
+        <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.19427083333333334" />
       </map>
     </option>
   </component>

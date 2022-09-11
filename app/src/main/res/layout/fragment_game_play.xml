@@ -48,22 +48,50 @@
         </com.airbnb.lottie.LottieAnimationView>
     </LinearLayout>
 
-    <TextView
-        android:layout_margin="5dp"
 
-        android:layout_gravity="end"
-        android:gravity="center"
-        android:id="@+id/timerTextview"
+
+    <com.nitish.gamershub.Utils.MovableFloatingActionRelative
+
         android:backgroundTint="@android:color/white"
-        android:background="@drawable/simple_circle"
-        android:padding="2dp"
-        android:text="00"
+        android:background="@drawable/round_corners"
+        android:padding="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp">
+<LinearLayout
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
-        android:textSize="9sp"
-        android:textColor="@android:color/black"
 
-        android:layout_width="30dp"
-        android:layout_height="30dp">
+            <TextView
 
-    </TextView>
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:id="@+id/timerTextview"
+
+                android:padding="2dp"
+                android:text="00"
+                android:textSize="9sp"
+
+                android:textColor="@android:color/black"
+
+                android:layout_width="25dp"
+                android:layout_height="25dp">
+
+            </TextView>
+
+
+        <ImageView
+            android:id="@+id/dismissButton"
+            android:layout_marginStart="5dp"
+            android:src="@drawable/cross_icon"
+            android:layout_width="10dp"
+            android:layout_height="10dp">
+
+        </ImageView>
+</LinearLayout>
+    </com.nitish.gamershub.Utils.MovableFloatingActionRelative>
+
+
 </FrameLayout>

@@ -3,6 +3,9 @@
     <string name="navigation_drawer_open">Drawer Open</string>
     <string name="navigation_drawer_close">Drawer Closed</string>
 
+
+    <string name="play_store_link">https://play.google.com/store/apps/details?id=com.nitish.gamershub</string>
+
     <string name="instrcutions">
         <br> Once You play the Game , the game will be offline for a while</br>
         <br>

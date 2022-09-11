@@ -2,6 +2,7 @@ package com.nitish.gamershub.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -35,6 +36,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter;
+import com.nitish.gamershub.Fragments.GameDetailsFragment;
 import com.nitish.gamershub.Fragments.GamePlayFragment;
 import com.nitish.gamershub.Helper_class;
 import com.nitish.gamershub.Pojo.AllGamesItems;
@@ -42,6 +44,7 @@ import com.nitish.gamershub.Pojo.UserProfile;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.ConstantsHelper;
 import com.nitish.gamershub.Utils.UserOperations;
+import com.nitish.gamershub.databinding.GameRewardDialogBinding;
 
 import java.time.LocalTime;
 
@@ -55,7 +58,7 @@ public class GameDetailActivity2 extends FragmentActivity {
     InterstitialAd interstitialAd;
     Button playButton,checkVisibilityButton;
     static  String DetailFrag = "GameDetailFragment";
-    Fragment gameDetailsFragment;
+    GameDetailsFragment gameDetailsFragment;
 
     GamePlayFragment gamePlayFragment;
     boolean gamePlayVisibility= false;
@@ -71,7 +74,7 @@ public class GameDetailActivity2 extends FragmentActivity {
          allGamesItems = NewAndPopularGamesAdapter.SelectedGameObject;
          fragmentManager = getSupportFragmentManager();
         gamePlayFragment = (GamePlayFragment)fragmentManager.findFragmentById(R.id.gamePlayFrag);
-        gameDetailsFragment = fragmentManager.findFragmentById(R.id.gameDescFrag);
+        gameDetailsFragment = (GameDetailsFragment)fragmentManager.findFragmentById(R.id.gameDescFrag);
 
 
         loadInterstitialAd();
@@ -361,21 +364,28 @@ public class GameDetailActivity2 extends FragmentActivity {
     }
     public void showRewardDialog(int amount)
     {
+        GameRewardDialogBinding gameRewardDialogBinding;
         LayoutInflater factory = LayoutInflater.from(GameDetailActivity2.this);
 
-        final View addRewardLayout = factory.inflate(R.layout.game_reward_dialog, null);
+        gameRewardDialogBinding =  DataBindingUtil.inflate(factory,R.layout.game_reward_dialog,null,false);
 
         final AlertDialog addRewardDialog = new AlertDialog.Builder(GameDetailActivity2.this).create();
 
 
         addRewardDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        addRewardDialog.setView(addRewardLayout);
+        addRewardDialog.setView(gameRewardDialogBinding.getRoot());
 
         addRewardDialog.show();
 
-        TextView earnedCoinsTextview = addRewardLayout.findViewById(R.id.earnedCoinsTextview);
 
-        earnedCoinsTextview.setText("You have earned "+amount+" coins");
+        gameRewardDialogBinding.earnedCoinsTextview.setText("You have earned "+amount+" coins");
+
+        gameRewardDialogBinding.cancelImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addRewardDialog.dismiss();
+            }
+        });
 
 
     }

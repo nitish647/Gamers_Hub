@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+
+<RelativeLayout
+
+    android:padding="5dp"
+    android:background="@drawable/round_corners"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <LinearLayout
+
+            android:id="@+id/paytmLinear"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+    <LinearLayout
+
+
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:src="@drawable/paytm_icom"
+            android:id="@+id/transactionImage"
+            android:layout_marginVertical="10dp"
+            android:layout_gravity="center"
+            android:layout_width="50dp"
+            android:layout_height="50dp">
+
+        </ImageView>
+
+    </LinearLayout>
+    <TextView
+        android:textColor="@color/paytmBlue"
+        android:textSize="25sp"
+
+
+        android:layout_marginVertical="10dp"
+        android:gravity="center"
+        android:text="Enter your Paytm number "
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </TextView>
+        <EditText
+            android:id="@+id/paytmEdittext"
+            android:hint="Enter paytm number"
+            android:layout_margin="10dp"
+            android:padding="15dp"
+            android:inputType="number"
+            android:maxLength="10"
+            android:textColor="@color/paytmBlue"
+            android:backgroundTint="@color/paytmLightBlue"
+            android:background="@drawable/round_corners"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </EditText>
+
+
+        </LinearLayout>
+        <LinearLayout
+
+            android:visibility="gone"
+            android:id="@+id/upiLinear"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <LinearLayout
+
+
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:src="@drawable/upi_icon_1"
+                    android:layout_marginVertical="10dp"
+                    android:layout_gravity="center"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp">
+
+                </ImageView>
+
+            </LinearLayout>
+            <TextView
+                android:textColor="@color/upiGreen"
+                android:textSize="25sp"
+
+
+                android:layout_marginVertical="10dp"
+                android:gravity="center"
+                android:text="Enter your Upi ID "
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </TextView>
+            <EditText
+                android:id="@+id/upiEdittext"
+                android:hint="Enter upi id"
+                android:layout_margin="10dp"
+                android:padding="15dp"
+
+                android:textColor="@color/upiGreen"
+                android:backgroundTint="#e3f4f6"
+                android:background="@drawable/round_corners"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </EditText>
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:padding="5dp"
+            android:layout_marginVertical="20dp"
+            android:layout_marginHorizontal="10dp"
+            android:gravity="center"
+
+            android:weightSum="10"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content">
+
+            <Button
+
+
+                android:id="@+id/redeemButton"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#0f70ff"
+                android:text="Redeem"
+                android:layout_margin="10dp"
+                android:background="@drawable/round_corners"
+                android:layout_weight="5"
+                android:gravity="center"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </Button>
+            <Button
+                android:id="@+id/noButton"
+
+                android:backgroundTint="#eef1f7"
+                android:background="@drawable/round_corners"
+                android:textColor="#0f70ff"
+                android:text="Cancel"
+                android:layout_weight="5"
+                android:gravity="center"
+                android:layout_margin="10dp"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </Button>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>
+</layout>

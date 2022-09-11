@@ -1,81 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<layout>
+
+
 <RelativeLayout
+    android:backgroundTint="#f1f5fe"
     android:background="@drawable/round_corners"
     android:layout_margin="5dp"
     android:elevation="@dimen/cardview_default_radius"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:padding="10dp"
-    android:layout_height="100dp">
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <LinearLayout
-            android:orientation="vertical"
+
+        <RelativeLayout
+            android:id="@+id/transactionImageRelative"
+            android:elevation="@dimen/cardview_default_elevation"
+            android:background="@drawable/round_corners"
+
+            android:layout_margin="10dp"
+            android:padding="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/transactionAmount"
-                android:text="Transaction Amount  Rs 50"
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-            </TextView>
-            <TextView
-                android:layout_marginTop="5dp"
-                android:id="@+id/transactionCoins"
-                android:text="Transaction Coins 5000 coins"
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-            </TextView>
 
 
-        </LinearLayout>
+            <ImageView
 
-        <TextView
-            android:id="@+id/transactionDate"
+                android:id="@+id/transactionImage"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentStart="true"
+                android:padding="10dp"
+                android:src="@drawable/paytm_icom">
+
+            </ImageView>
+        </RelativeLayout>
+        <LinearLayout
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentBottom="true"
-            android:textSize="11sp"
-            android:textColor="@android:color/black"
-            android:text=" Date  : 13 july 2022">
-
-        </TextView>
-        <LinearLayout
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_toEndOf="@+id/transactionImageRelative"
+            android:orientation="vertical">
 
 
-        <TextView
+            <TextView
 
-            android:text="Status"
+                android:id="@+id/transactionTypeText"
+                android:textColor="@color/paytmBlue"
+                android:text="Paytm"
+                android:textSize="17sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
+            </TextView>
+            <TextView
+                android:id="@+id/transactionNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+                android:text="7003432424"
+                android:textColor="@android:color/black"
+                android:textSize="15sp">
 
-        </TextView>
-        <TextView
+            </TextView>
+            <TextView
+                android:id="@+id/transactionDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
 
-            android:id="@+id/statusTextview"
-            android:text="Done"
-            android:background="#b4edd4"
-            android:padding="5dp"
-           android:layout_marginStart="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+                android:text="13 july 2022"
+                android:textColor="@android:color/black"
+                android:textSize="13sp">
 
-        </TextView>
+            </TextView>
+
         </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_alignParentEnd="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_gravity="end"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/transactionCoins"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_gravity="center"
+                    android:text=" 5000 ">
+
+                </TextView>
+                <ImageView
+
+                    android:layout_gravity="center"
+                    android:src="@drawable/indian_coin"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp">
+
+                </ImageView>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/transactionAmount"
+                android:layout_width="wrap_content"
+                android:textColor="@color/upiGreen"
+                android:textStyle="bold"
+                android:textSize="25dp"
+                android:layout_marginEnd="25dp"
+                android:layout_gravity="end"
+                android:layout_height="wrap_content"
+                android:text=" ₹ 50">
+
+            </TextView>
+
+            <LinearLayout
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:orientation="horizontal">
+
+
+                <TextView
+
+                    android:layout_width="wrap_content"
+
+
+                    android:layout_height="wrap_content"
+                    android:text="Status">
+
+                </TextView>
+
+                <TextView
+
+                    android:id="@+id/statusTextview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+
+
+                    android:padding="5dp"
+                    android:text="Done">
+
+                </TextView>
+            </LinearLayout>
+        </LinearLayout>
+
     </RelativeLayout>
 
 </RelativeLayout>
+</layout>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.TransactionHistoryActivity">
+    <RelativeLayout
+
+        android:id="@+id/appBarLayoutRelative"
+        android:background="@color/gamers_hub_theme"
+        android:elevation="@dimen/cardview_default_elevation"
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+        <ImageView
+            android:id="@+id/backImageview"
+            android:layout_marginStart="10dp"
+            android:layout_centerVertical="true"
+            style="@style/backImageview"
+            >
+
+        </ImageView>
+
+        <TextView
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="15dp"
+            android:layout_toEndOf="@+id/backImageview"
+            android:gravity="center_vertical"
+            android:text="Transactions History"
+            android:textColor="@android:color/white"
+            android:textSize="25sp"
+            android:textStyle="bold">
+
+        </TextView>
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_below="@+id/appBarLayoutRelative"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/transactionRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </androidx.recyclerview.widget.RecyclerView>
+    </RelativeLayout>
+</RelativeLayout>
+
+</layout>

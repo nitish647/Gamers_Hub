@@ -11,317 +11,140 @@ android:id="@+id/drawerLayout"
 android:layout_height="match_parent"
 tools:context=".Activities.HomeActivity">
 
-<RelativeLayout
-    android:background="#f0f2f5"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    <RelativeLayout
 
-
-    <LinearLayout
-        android:layout_above="@+id/googleBannerAdView"
-        android:id="@+id/mainLinear"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="5dp"
-        android:orientation="vertical"
-        android:weightSum="10">
+        android:layout_height="match_parent">
 
-        <com.google.android.material.appbar.AppBarLayout
+
+        <FrameLayout
+            android:id="@+id/frameLayout"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-
-            android:background="#F0740D">
-
-            <RelativeLayout
+            android:layout_height="match_parent"
+            android:layout_above="@+id/googleBannerAdView"
 
 
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <com.google.android.gms.ads.AdView
+
+            android:layout_above="@+id/bottomNavigationView"
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/googleBannerAdView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/fui_transparent"
+
+            android:layout_gravity="bottom"
+            ads:adSize="BANNER"
+            ads:adUnitId="@string/admob_banner">
+
+        </com.google.android.gms.ads.AdView>
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+
+            android:elevation="@dimen/cardview_default_elevation"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginBottom="5dp"
+            android:id="@+id/bottomNavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/round_corners"
+            android:backgroundTint="@android:color/white"
+            app:menu="@menu/bottom_navigation_menu">
+
+        </com.google.android.material.bottomnavigation.BottomNavigationView>
+    </RelativeLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigationView"
+
+        android:layout_width="match_parent"
+        android:layout_gravity="start"
+
+        android:background="@color/gamers_hub_theme"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_height="120dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:background="#000000">
 
-                <Button
-                    android:id="@+id/navigationButton"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginStart="7dp"
-                    android:layout_marginBottom="12dp"
+                <de.hdodenhof.circleimageview.CircleImageView
 
-                    android:background="@drawable/navigation_icon4"
-                    android:gravity="start">
+                    android:id="@+id/profileIcon"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
 
-                </Button>
+                    android:layout_marginTop="15dp"
+                    android:src="@drawable/gamers_hub_icon15">
+
+                </de.hdodenhof.circleimageview.CircleImageView>
 
                 <TextView
-                    android:id="@+id/main_title"
+                    android:id="@+id/profileName"
                     android:layout_width="wrap_content"
-                    android:layout_height="39dp"
-                    android:layout_centerInParent="true"
+                    android:layout_height="wrap_content"
 
-                    android:fontFamily="sans-serif-condensed"
+                    android:layout_gravity="center"
 
-                    android:gravity="center"
+                    android:fontFamily="serif-monospace"
                     android:text="Gamers Hub"
-                    android:textColor="@android:color/white"
-                    android:textSize="25sp">
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp">
 
                 </TextView>
 
-                <androidx.appcompat.widget.SearchView
-                    android:id="@+id/searchView"
-
-
-                    android:icon="@drawable/search_icon_white"
-                    android:layout_width="wrap_content"
-
-
-                    app:queryBackground="@android:color/white"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="10dp"
-                    android:backgroundTint="@android:color/white">
-
-                </androidx.appcompat.widget.SearchView>
-
-
-            </RelativeLayout>
-        </com.google.android.material.appbar.AppBarLayout>
-<androidx.core.widget.NestedScrollView
-    android:fillViewport="true"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-<LinearLayout
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-
-    android:layout_height="match_parent">
-
-
-        <com.denzcoskun.imageslider.ImageSlider
-
-            android:id="@+id/imageSlider"
-            android:layout_width="match_parent"
-            android:layout_height="180dp"
-
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
-
-            android:fitsSystemWindows="true"
-            android:padding="5dp"
-            app:iss_auto_cycle="true"
-            app:iss_delay="0"
-            app:iss_period="1000"
-            >
-
-        </com.denzcoskun.imageslider.ImageSlider>
-
-
-        <androidx.recyclerview.widget.RecyclerView
-
-            android:id="@+id/allGamesRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </androidx.recyclerview.widget.RecyclerView>
-</LinearLayout>
-</androidx.core.widget.NestedScrollView>
-    </LinearLayout>
-
-
-    <com.google.android.gms.ads.AdView
-
-
-        xmlns:ads="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/googleBannerAdView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-
-        android:layout_gravity="bottom"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/admob_banner">
-
-    </com.google.android.gms.ads.AdView>
-
-</RelativeLayout>
-<com.google.android.material.navigation.NavigationView
-    android:id="@+id/navigationView"
+            </LinearLayout>
 
 
 
-    android:layout_width="300dp"
-    android:layout_gravity="start"
-
-    android:background="@color/gamersHubThemeOrange"
-    android:layout_height="match_parent">
-
-    <LinearLayout
-
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_height="120dp"
-            android:layout_width="match_parent"
-            android:background="#000000">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-
-                android:id="@+id/profileIcon"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_gravity="center"
-
-                android:layout_marginTop="15dp"
-                android:src="@drawable/gamers_hub_icon15">
-
-            </de.hdodenhof.circleimageview.CircleImageView>
-
-            <TextView
-                android:id="@+id/profileName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:layout_gravity="center"
-
-                android:fontFamily="serif-monospace"
-                android:text="Gamers Hub"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp">
-
-            </TextView>
             <LinearLayout
-                android:layout_gravity="center"
-                android:orientation="horizontal"
-                android:layout_width="wrap_content"
+                android:layout_marginTop="50dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
 
+
+            <androidx.recyclerview.widget.RecyclerView
+
+
+                android:elevation="@dimen/cardview_default_elevation"
+                android:background="@drawable/round_corners"
+                android:padding="10dp"
+                android:layout_marginTop="50dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:id="@+id/categoriesRecycler"
+                android:layout_width="match_parent"
+                android:numColumns="2">
+
+            </androidx.recyclerview.widget.RecyclerView>
             </LinearLayout>
+
+
+
+
         </LinearLayout>
-
-        <RelativeLayout
-
-            android:padding="5dp"
+        <Button
+            android:layout_marginBottom="10dp"
+            android:id="@+id/logoutButton"
+            android:layout_gravity="bottom"
+            android:text="Log Out"
             android:background="@android:color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/gameCoinsImage"
-                android:layout_margin="5dp"
-                android:src="@drawable/game_coins"
-                android:layout_width="40dp"
-                android:layout_height="40dp">
-
-            </ImageView>
-            <TextView
-                android:layout_centerHorizontal="true"
-
-                android:layout_marginStart="20dp"
-                android:id="@+id/totalPoints"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:layout_gravity="center"
-
-                android:fontFamily="serif-monospace"
-                android:text="Total Coins"
-
-                android:textSize="15sp">
-
-            </TextView>
-             <TextView
-
-
-           android:layout_below="@+id/totalPoints"
-            android:layout_marginStart="20dp"
-            android:id="@+id/totalPointsTextview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-                 android:layout_centerHorizontal="true"
-
-            android:textColor="@android:color/black"
-                 android:layout_marginTop="5dp"
-            android:layout_gravity="center"
-
-            android:fontFamily="serif-monospace"
-            android:text="000"
-
-                 android:textStyle="bold"
-            android:textSize="17sp">
-
-        </TextView>
-        </RelativeLayout>
-        <Button
-            android:background="#6A5ADF"
-            android:textColor="@android:color/white"
-            android:text="Redeem coins"
-            android:id="@+id/redeemButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
         </Button>
-        <Button
-            android:background="#2196f3"
-
-            android:id="@+id/removeAdsButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
-            android:layout_marginVertical="3dp"
-            android:gravity="center"
-            android:text="Remove ads (Free)"
-
-            android:textColor="@android:color/white"
-
-
-            >
-
-        </Button>
-
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:id="@+id/categoriesRecycler"
-            android:layout_width="match_parent"
-            android:numColumns="2">
-
-        </androidx.recyclerview.widget.RecyclerView>
-
-
-        <GridView
-            android:layout_margin="5dp"
-            android:layout_marginTop="40dp"
-            android:numColumns="2"
-            android:id="@+id/info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </GridView>
-
-
-
-    </LinearLayout>
-    <Button
-        android:layout_marginBottom="10dp"
-        android:id="@+id/logoutButton"
-        android:layout_gravity="bottom"
-        android:text="Log Out"
-        android:background="@android:color/white"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    </Button>
-</com.google.android.material.navigation.NavigationView>
-
+    </com.google.android.material.navigation.NavigationView>
 </androidx.drawerlayout.widget.DrawerLayout>

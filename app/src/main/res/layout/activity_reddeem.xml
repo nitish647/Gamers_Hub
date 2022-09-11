@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -6,74 +9,91 @@
     android:layout_width="match_parent"
 
     android:layout_height="match_parent"
-    android:background="#009EDA"
+    android:background="@color/gamers_hub_theme"
+    android:backgroundTint="@color/gamers_hub_theme"
 
     tools:context=".Activities.RedeemActivity">
+    <RelativeLayout
+
+        android:id="@+id/appBarLayoutRelative"
+        android:background="@color/gamers_hub_theme"
+        android:elevation="@dimen/cardview_default_elevation"
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+
+        <ImageView
+            android:id="@+id/backButton"
+
+
+            style="@style/backImageview"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp">
+
+        </ImageView>
+
+        <TextView
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="15dp"
+            android:layout_toEndOf="@+id/backButton"
+            android:gravity="center_vertical"
+            android:text="Rewards"
+            android:textColor="@android:color/white"
+            android:textSize="25sp"
+            android:textStyle="bold">
+
+        </TextView>
+    </RelativeLayout>
+
 <LinearLayout
+    android:layout_below="@+id/appBarLayoutRelative"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
 
- <LinearLayout
-     android:id="@+id/gameCoinsLinear"
-     android:orientation="vertical"
 
-     android:layout_width="match_parent"
-     android:layout_height="150dp">
 
-    <TextView
-        android:text="Redeem"
+     <RelativeLayout
 
-        android:textColor="@android:color/white"
-        android:layout_marginTop="10dp"
-        android:textSize="25sp"
-        android:textStyle="bold"
 
-        android:gravity="center_horizontal"
-        android:id="@+id/redeemTextview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    </TextView>
-
-     <TextView
-         android:id="@+id/walletCoinsTextview"
-         android:layout_width="match_parent"
-         android:layout_height="match_parent"
-         android:layout_alignParentTop="true"
          android:layout_marginTop="10dp"
-         android:gravity="center_horizontal"
-         android:text="Total Coins "
-         android:textColor="@android:color/white"
-         android:textSize="25sp"
-         android:textStyle="bold">
+         android:layout_marginHorizontal="10sp"
+         android:layout_width="match_parent"
+         android:layout_height="140dp"
 
-     </TextView>
+         android:background="@drawable/round_corners"
+         android:backgroundTint="#ffedb3"
+         android:elevation="@dimen/cardview_default_elevation">
+
+         <LinearLayout
+
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginStart="10dp"
+             android:layout_marginTop="10dp"
+             android:orientation="vertical">
+
+             <TextView
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_marginTop="25dp"
+
+                 android:text="It generally takes 24-48 working hours to fulfil a redeem request"
+                 android:textSize="16sp">
+
+             </TextView>
+         </LinearLayout>
 
 
- </LinearLayout>
-    <RelativeLayout
+
+     </RelativeLayout>
 
 
-        android:id="@+id/redeemHistoryButton"
-        android:elevation="@dimen/cardview_default_radius"
-        android:background="@drawable/round_corners"
-        android:layout_gravity="bottom"
-        android:layout_width="match_parent"
-        android:layout_marginHorizontal="10dp"
-        android:layout_height="50dp">
 
-        <TextView
-            android:layout_centerInParent="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:textColor="@color/cardview_dark_background"
-            android:text="Redeem History">
 
-        </TextView>
-    </RelativeLayout>
 
     <androidx.core.widget.NestedScrollView
       android:layout_marginTop="10dp"
@@ -83,6 +103,7 @@
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:padding="20dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -97,3 +118,4 @@
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>
 </RelativeLayout>
+</layout>

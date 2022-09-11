@@ -1,5 +1,6 @@
 package com.nitish.gamershub.Utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
@@ -7,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,6 +66,18 @@ public class CommonMethods {
         });
 
         builder.show();
+
+    }
+    public static void backButton(Context context)
+    {
+        Activity activity = (Activity) context;
+        ImageView backButton =activity.findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                activity.finish();
+            }
+        });
 
     }
     // common dialog box

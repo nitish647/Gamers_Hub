@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
@@ -36,7 +37,7 @@ import java.util.List;
 
 import io.paperdb.Paper;
 
-public class CategoryActivity extends AppCompatActivity {
+public class CategoryActivity extends BasicActivity {
     ImageView backButton;
     TextView categoryNameTextview;
     RecyclerView categoriesRecycler;
@@ -48,7 +49,7 @@ public class CategoryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_category);
+        setContentView(getLayoutResourceId());
         Paper.init(this);
         categoriesRecycler =findViewById(R.id.categoriesRecycler);
         categoryNameTextview =findViewById(R.id.categoryNameTextview);
@@ -103,6 +104,11 @@ public class CategoryActivity extends AppCompatActivity {
 
 
         }
+    }
+
+    @Override
+    protected int getLayoutResourceId() {
+        return R.layout.activity_category;
     }
 
     public void startIntent()

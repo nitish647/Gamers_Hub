@@ -17,10 +17,10 @@ public class ToastHelper {
         Activity activity = (Activity)context;
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         //Getting the View object as defined in the customtoast.xml file
-        View layout = layoutInflater.inflate(R.layout.activity_category,null);
+        View layout = layoutInflater.inflate(R.layout.custom_toast_layout,null);
 
-        RelativeLayout backgroundRelative = layout.findViewById(R.id.playButton);
-        TextView messageTextview = layout.findViewById(R.id.webView);
+        RelativeLayout backgroundRelative = layout.findViewById(R.id.backgroundRelative);
+        TextView messageTextview = layout.findViewById(R.id.messageTextview);
 
 
         Toast toast = new Toast(context);

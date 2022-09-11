@@ -1,63 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<layout>
+
+
+<RelativeLayout
 
     android:elevation="@dimen/cardview_default_radius"
     android:padding="5dp"
-    android:backgroundTint="#dfdcff"
+
     android:background="@drawable/round_corners"
-    android:layout_marginHorizontal="20dp"
+    android:layout_marginHorizontal="5dp"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:layout_marginTop="10dp"
-        android:textColor="@android:color/black"
-        android:textSize="35sp"
-        android:gravity="center"
-        android:text="Congratulations"
-        android:id="@+id/welcomeTextview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="0dp">
-
-    </TextView>
-
     <ImageView
+        android:id="@+id/cancelImage"
+        android:src="@drawable/cross_icon"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_width="20dp"
+        android:layout_height="20dp">
+
+    </ImageView>
+
+   <LinearLayout
+       android:layout_below="@+id/cancelImage"
+       android:orientation="vertical"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content">
+
+
+    <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/gameCoinsImage"
         android:layout_width="201dp"
         android:layout_height="150dp"
 
-        android:layout_marginTop="50dp"
-        android:src="@drawable/game_coins"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/rupee_reward_box"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/welcomeTextview">
 
-    </ImageView>
+    </com.airbnb.lottie.LottieAnimationView>
+       <TextView
+           android:id="@+id/welcomeTextview"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="10dp"
+           android:gravity="center"
+           android:text="Congratulations"
+           android:textColor="@android:color/black"
+           android:textSize="35sp"
+           app:layout_constraintTop_toTopOf="parent"
+           tools:layout_editor_absoluteX="0dp">
+
+       </TextView>
+
+       <LinearLayout
+           android:gravity="center"
+           android:layout_marginTop="5dp"
+           android:elevation="@dimen/cardview_default_elevation"
+           android:padding="5dp"
+           android:backgroundTint="#5341eb"
+           android:background="@drawable/round_corners"
+           android:orientation="horizontal"
+           android:layout_width="match_parent"
+           android:layout_height="50dp">
+
 
     <TextView
 
+        android:layout_gravity="center_vertical"
         android:gravity="center"
-        android:text="You have earned  100 coins "
+        android:text="Redeem request generated for 100 coins "
         android:textColor="@android:color/white"
-        android:textSize="20sp"
+        android:textSize="17sp"
         android:id="@+id/earnedCoinsTextview"
-        android:backgroundTint="#5341eb"
-        android:background="@drawable/round_corners"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="15dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gameCoinsImage">
+
+    >
 
     </TextView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+           <ImageView
+               android:src="@drawable/indian_coin"
+               android:layout_gravity="center_vertical"
+               android:layout_width="30dp"
+               android:layout_height="30dp">
+
+           </ImageView>
+       </LinearLayout>
+
+   </LinearLayout>
+</RelativeLayout>
+</layout>
