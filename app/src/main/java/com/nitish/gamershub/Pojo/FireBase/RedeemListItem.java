@@ -1,4 +1,4 @@
-package com.nitish.gamershub.Pojo;
+package com.nitish.gamershub.Pojo.FireBase;
 
 public class RedeemListItem {
     String name;

@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.19255222524977295" />
+        <entry key="app/src/main/res/drawable/round_corner_10dp.xml" value="0.11" />
         <entry key="app/src/main/res/drawable/round_corners.xml" value="0.2035" />
         <entry key="app/src/main/res/drawable/simple_circle.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/textview_round.xml" value="0.2035" />
@@ -18,8 +19,8 @@
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.16485507246376813" />
         <entry key="app/src/main/res/layout/activity_login_page.xml" value="0.161231884057971" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.16485507246376813" />
-        <entry key="app/src/main/res/layout/activity_reddeem.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/activity_rewards.xml" value="0.17119565217391305" />
+        <entry key="app/src/main/res/layout/activity_reddeem.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/activity_rewards.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_transaction_history.xml" value="0.17119565217391305" />
         <entry key="app/src/main/res/layout/categires_layout.xml" value="0.18342391304347827" />
         <entry key="app/src/main/res/layout/category_item.xml" value="0.18342391304347827" />

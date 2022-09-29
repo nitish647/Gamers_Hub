@@ -1,15 +1,31 @@
-package com.nitish.gamershub.Pojo;
+package com.nitish.gamershub.Pojo.FireBase;
 
 public class UserProfile {
 
 
     public ProfileData profileData;
+    public TimerStatus timerStatus;
+    public UserTransactions userTransactions;
+
+
+
+
+
 
 
 
     public UserProfile() {
 
 
+    }
+
+
+    public UserTransactions getUserTransactions() {
+        return userTransactions;
+    }
+
+    public void setUserTransactions(UserTransactions userTransactions) {
+        this.userTransactions = userTransactions;
     }
 
     public UserProfile(ProfileData profileData) {
@@ -23,6 +39,25 @@ public class UserProfile {
     public void setProfileData(ProfileData profileData) {
         this.profileData = profileData;
     }
+
+
+    public TimerStatus getTimerStatus() {
+        return timerStatus;
+    }
+
+    public void setTimerStatus(TimerStatus timerStatus) {
+        this.timerStatus = timerStatus;
+    }
+
+
+
+
+
+
+
+
+
+
 
 
     public static class ProfileData {

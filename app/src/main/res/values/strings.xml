@@ -2,6 +2,7 @@
     <string name="app_name">Gamers Hub</string>
     <string name="navigation_drawer_open">Drawer Open</string>
     <string name="navigation_drawer_close">Drawer Closed</string>
+    <string name="getCurrentTimeAsiaKolkata">https://timeapi.io/api/Time/current/zone?timeZone=Asia/Kolkata</string>
 
 
     <string name="play_store_link">https://play.google.com/store/apps/details?id=com.nitish.gamershub</string>
@@ -66,4 +67,7 @@
 
 
     <string name="dbGitUrl">https://nitish647.github.io/</string>
+
+    <string name="googleAccountWebClientID">1058533668645-87ngkdds23afa0ehib47oe2e5ro1r6pk.apps.googleusercontent.com</string>
+
 </resources>

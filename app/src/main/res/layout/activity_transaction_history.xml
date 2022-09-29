@@ -8,6 +8,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/lightGrey2"
     tools:context=".Activities.TransactionHistoryActivity">
     <RelativeLayout
 
@@ -45,7 +46,31 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
+        <RelativeLayout
+            android:visibility="gone"
+            android:id="@+id/noTransactionRelative"
+            android:padding="10dp"
+            android:elevation="@dimen/cardview_default_elevation"
+            android:layout_centerInParent="true"
+            android:layout_marginHorizontal="20sp"
+            android:background="@drawable/round_corners"
+            android:layout_width="match_parent"
+            android:layout_height="100dp">
+            <TextView
+                android:textSize="25sp"
+                android:text="No transactions done yet"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </TextView>
+
+        </RelativeLayout>
+
         <androidx.recyclerview.widget.RecyclerView
+
             android:id="@+id/transactionRecycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent">

@@ -1,7 +1,6 @@
 package com.nitish.gamershub.Adapters;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.nitish.gamershub.Activities.RedeemActivity;
-import com.nitish.gamershub.Pojo.RedeemListItem;
+import com.nitish.gamershub.Pojo.FireBase.RedeemListItem;
 import com.nitish.gamershub.R;
 
 import java.util.List;

@@ -65,7 +65,7 @@
          android:layout_height="140dp"
 
          android:background="@drawable/round_corners"
-         android:backgroundTint="#ffedb3"
+
          android:elevation="@dimen/cardview_default_elevation">
 
          <LinearLayout

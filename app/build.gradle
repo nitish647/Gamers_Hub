@@ -75,10 +75,10 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-firestore'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.firebase:firebase-database:20.0.5'
+    implementation 'com.google.firebase:firebase-database:20.0.6'
     implementation 'com.android.volley:volley:1.2.1'
     testImplementation 'junit:junit:4.13.2'
-    implementation 'com.google.android.gms:play-services-ads:21.0.0'
+    implementation 'com.google.android.gms:play-services-ads:21.2.0'
 
     implementation 'com.facebook.android:audience-network-sdk:5.11.0'
 
@@ -113,6 +113,7 @@ dependencies {
 
     implementation 'com.google.code.gson:gson:2.9.0'
 
+    implementation 'com.google.android.gms:play-services-auth:20.3.0'
 
     implementation 'io.github.pilgr:paperdb:2.7.2'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'

@@ -2,7 +2,6 @@ package com.nitish.gamershub.Fragments;
 
 import static com.nitish.gamershub.Utils.ConstantsHelper.UserInfo;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,14 +13,11 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.nitish.gamershub.Activities.HomeActivity;
-import com.nitish.gamershub.Activities.RedeemActivity;
 import com.nitish.gamershub.Activities.RewardsActivity;
-import com.nitish.gamershub.Activities.TransactionHistoryActivity;
-import com.nitish.gamershub.Pojo.UserProfile;
+import com.nitish.gamershub.Pojo.FireBase.UserProfile;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.databinding.FragmentProfileBinding;
 import com.squareup.picasso.Picasso;
@@ -110,11 +106,13 @@ public class ProfileFragment extends Fragment {
 
     public void setViews()
     {
-        if( firebaseAuth!=null &&   firebaseAuth.getCurrentUser()!=null) {
+        if( parentHomeActivity.getGoogleSignInAccount()!=null) {
 
 
-            binding.profileName.setText(firebaseAuth.getCurrentUser().getDisplayName());
-            Picasso.get().load(firebaseAuth.getCurrentUser().getPhotoUrl()).into(binding.profileIcon);
+            binding.profileName.setText(parentHomeActivity.getGoogleSignInAccount().getDisplayName());
+            if(parentHomeActivity.getGoogleSignInAccount().getPhotoUrl()!=null)
+                if(!(parentHomeActivity.getGoogleSignInAccount().getPhotoUrl()+"").equals("null"))
+                    Picasso.get().load(parentHomeActivity.getGoogleSignInAccount().getPhotoUrl()).into(binding.profileIcon);
 
         }
 

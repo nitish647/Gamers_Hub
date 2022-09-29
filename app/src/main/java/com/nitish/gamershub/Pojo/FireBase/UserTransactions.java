@@ -1,4 +1,4 @@
-package com.nitish.gamershub.Pojo;
+package com.nitish.gamershub.Pojo.FireBase;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
@@ -7,8 +7,10 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 public class UserTransactions implements Serializable {
 
@@ -16,21 +18,19 @@ public class UserTransactions implements Serializable {
 
 
 
-    TransactionRequest transactionRequest;
+    ArrayList<TransactionRequest> transactionRequestArrayList;
 
     public UserTransactions() {
 
     }
-    public UserTransactions(TransactionRequest transactionRequest) {
-        this.transactionRequest = transactionRequest;
+
+    public ArrayList<TransactionRequest> getTransactionRequestArrayList() {
+
+        return (transactionRequestArrayList!=null)?transactionRequestArrayList:new ArrayList<TransactionRequest>();
     }
 
-    public TransactionRequest getTransactionRequest() {
-        return transactionRequest;
-    }
-
-    public void setTransactionRequest(TransactionRequest transactionRequest) {
-        this.transactionRequest = transactionRequest;
+    public void setTransactionRequestArrayList(ArrayList<TransactionRequest> transactionRequestArrayList) {
+        this.transactionRequestArrayList = transactionRequestArrayList;
     }
 
     public static class TransactionRequest  {
@@ -85,17 +85,6 @@ public class UserTransactions implements Serializable {
             this.isPaid = isPaid;
         }
 
-        public void setPaid(boolean paid) {
-            isPaid = paid;
-        }
-
-        public String getTransactionId() {
-            return transactionId;
-        }
-
-        public void setTransactionId(String transactionId) {
-            this.transactionId = transactionId;
-        }
 
         public String getPaidDate() {
             return paidDate;
@@ -137,6 +126,7 @@ public class UserTransactions implements Serializable {
             this.amount = amount;
         }
     }
+
 
 }
 

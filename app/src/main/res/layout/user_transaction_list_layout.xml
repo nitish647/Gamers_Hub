@@ -4,7 +4,7 @@
 
 
 <RelativeLayout
-    android:backgroundTint="#f1f5fe"
+
     android:background="@drawable/round_corners"
     android:layout_margin="5dp"
     android:elevation="@dimen/cardview_default_radius"
@@ -118,8 +118,8 @@
                 android:layout_width="wrap_content"
                 android:textColor="@color/upiGreen"
                 android:textStyle="bold"
-                android:textSize="25dp"
-                android:layout_marginEnd="25dp"
+                android:textSize="25sp"
+                android:layout_marginEnd="15dp"
                 android:layout_gravity="end"
                 android:layout_height="wrap_content"
                 android:text=" ₹ 50">

@@ -4,7 +4,7 @@ import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHub_ParentCollect
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.nitish.gamershub.Pojo.UserProfile;
+import com.nitish.gamershub.Pojo.FireBase.UserProfile;
 
 import io.paperdb.Paper;
 
@@ -23,7 +23,7 @@ public class UserOperations {
     }
 
 
-    public static UserProfile addCoinsToWallet(UserProfile userProfile, int amount)
+    public static UserProfile.ProfileData addCoinsToWallet(UserProfile userProfile, int amount)
     {
 
 
@@ -37,6 +37,6 @@ public class UserOperations {
 
         userProfile.setProfileData(profileData);
 
-        return userProfile;
+        return profileData;
     }
 }

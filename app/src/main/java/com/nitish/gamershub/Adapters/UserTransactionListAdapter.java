@@ -4,20 +4,14 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.nitish.gamershub.Activities.RedeemActivity;
-import com.nitish.gamershub.Helper_class;
-import com.nitish.gamershub.Pojo.RedeemListItem;
-import com.nitish.gamershub.Pojo.UserTransactions;
+import com.nitish.gamershub.Pojo.FireBase.UserTransactions;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.databinding.UserTransactionListLayoutBinding;
 
@@ -69,12 +63,11 @@ public class UserTransactionListAdapter extends RecyclerView.Adapter<UserTransac
 
         if(!userTransactionRequest.isPaid)
         {
-            holder.binding.statusTextview.setBackground(Helper_class.setSingleColorRoundBackground("#feb3b3", 10F));
             holder.binding.statusTextview.setText("Pending");
             holder.binding.statusTextview.setTextColor(Color.parseColor("#fd1b1b"));
         }
         else {
-            holder.binding.statusTextview.setBackground(Helper_class.setSingleColorRoundBackground("#bdf5cb", 10F));
+
             holder.binding.statusTextview.setText("Success");
             holder.binding.statusTextview.setTextColor(Color.parseColor("#1fc648"));
         }

@@ -41,7 +41,7 @@ import java.util.Map;
 
 import io.paperdb.Paper;
 
-public class Splash_Screen extends AppCompatActivity {
+public class Splash_Screen extends BasicActivity {
     SharedPreferences sh;
     SharedPreferences.Editor editor;
     TextView textView;
@@ -81,6 +81,11 @@ public class Splash_Screen extends AppCompatActivity {
                 textView.setText("PLease check your internet connection and try again");
             }
         }, 11000);
+    }
+
+    @Override
+    protected int getLayoutResourceId() {
+        return R.layout.activity_splash__screen;
     }
 
 
@@ -137,17 +142,21 @@ public class Splash_Screen extends AppCompatActivity {
 
 
 
-                    FirebaseUser currentUser = mAuth.getCurrentUser();
+              //      FirebaseUser currentUser = mAuth.getCurrentUser();
+
+
+
 
                     // when not singed in
                     Intent intent;
-                    if(currentUser==null) {
-                        intent = new Intent(getApplicationContext(), LoginPage.class);
+                    if( getGoogleSignInAccount()==null) {
+                        intent = new Intent(Splash_Screen.this, LoginPage.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);;
                     }
                     else
                     // when already  singed in
                     {
-                        Toast.makeText(Splash_Screen.this, "hello "+currentUser.getEmail(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Splash_Screen.this, "hello "+ getGoogleSignInAccount().getEmail(), Toast.LENGTH_SHORT).show();
 
                         intent = new Intent(getApplicationContext(), HomeActivity.class);
                     }

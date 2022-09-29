@@ -108,14 +108,14 @@
 
             <RelativeLayout
                 android:id="@+id/redeemCoinsRecycler"
-                android:padding="5dp"
-                android:backgroundTint="@color/light_purple"
-                android:background="@drawable/round_corners"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="10dp"
+                android:background="@drawable/round_corners"
+                android:elevation="@dimen/cardview_default_elevation"
+                android:padding="5dp"
 
-                android:elevation="@dimen/cardview_default_elevation">
+                android:textSize="20sp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -125,8 +125,7 @@
 
                     <ImageView
 
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
+                        style="@style/optionIcon2"
                         android:src="@drawable/indian_rupee_icon">
 
                     </ImageView>
@@ -134,11 +133,11 @@
                     <TextView
 
                         style="@style/contentTextview"
-                        android:layout_marginStart="20dp"
-                        android:textSize="20sp"
-                        android:textColor="@android:color/black"
                         android:layout_gravity="center_vertical"
+                        android:layout_marginStart="20dp"
                         android:text="Redeem Coins"
+                        android:textColor="@android:color/black"
+                        android:textSize="20sp"
 
 
                         >
@@ -147,26 +146,25 @@
                 </LinearLayout>
 
 
-                <ImageView
-                    style="@style/optionIcon2"
+                <TextView
+                    style="@style/contentTextviewBlue"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="Redeem">
 
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/next_arrow_icon"
-                    app:tint="@color/greyPrimary">
-
-                </ImageView>
+                </TextView>
             </RelativeLayout>
+
             <RelativeLayout
                 android:id="@+id/transactionHistoryRelative"
-                android:padding="5dp"
-                android:backgroundTint="@color/light_purple"
-                android:background="@drawable/round_corners"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="10dp"
+                android:background="@drawable/round_corners"
+                android:elevation="@dimen/cardview_default_elevation"
+                android:padding="5dp"
 
-                android:elevation="@dimen/cardview_default_elevation">
+                android:textSize="20sp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -176,8 +174,9 @@
 
                     <ImageView
 
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
+
+                        style="@style/optionIcon2"
+
                         android:src="@drawable/transaction_history">
 
                     </ImageView>
@@ -185,11 +184,11 @@
                     <TextView
 
                         style="@style/contentTextview"
-                        android:layout_marginStart="20dp"
-                        android:textSize="20sp"
-                        android:textColor="@android:color/black"
                         android:layout_gravity="center_vertical"
+                        android:layout_marginStart="20dp"
                         android:text="Transactions History"
+                        android:textColor="@android:color/black"
+                        android:textSize="20sp"
 
 
                         >
@@ -198,25 +197,25 @@
                 </LinearLayout>
 
 
-                <ImageView
-                    style="@style/optionIcon2"
+                <TextView
+                    style="@style/contentTextviewBlue"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="Open">
 
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/next_arrow_icon"
-                    app:tint="@color/greyPrimary">
-
-                </ImageView>
+                </TextView>
             </RelativeLayout>
+
             <RelativeLayout
-                android:padding="5dp"
-                android:backgroundTint="@color/light_purple"
-                android:background="@drawable/round_corners"
-                android:layout_width="wrap_content"
+                android:id="@+id/dailyBonusRelative"
+                android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="10dp"
+                android:background="@drawable/round_corners"
+                android:elevation="@dimen/cardview_default_elevation"
+                android:padding="5dp"
 
-                android:elevation="@dimen/cardview_default_elevation">
+                android:textSize="20sp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -226,8 +225,8 @@
 
                     <ImageView
 
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
+
+                        style="@style/optionIcon2"
                         android:src="@drawable/reward">
 
                     </ImageView>
@@ -235,38 +234,42 @@
                     <TextView
 
                         style="@style/contentTextview"
-                        android:layout_marginStart="20dp"
-                        android:textSize="20sp"
                         android:layout_gravity="center_vertical"
-                        android:textColor="@android:color/black"
+                        android:layout_marginStart="20dp"
                         android:text="Daily Bonus"
+                        android:textColor="@android:color/black"
+                        android:textSize="20sp"
 
 
                         >
 
                     </TextView>
+
                 </LinearLayout>
 
 
-                <ImageView
-                    style="@style/optionIcon2"
+                <TextView
+                    android:id="@+id/claimTextview"
+                    style="@style/contentTextviewBlue"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="Claim">
 
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/next_arrow_icon"
-                    app:tint="@color/greyPrimary">
+                </TextView>
 
-                </ImageView>
             </RelativeLayout>
-            <RelativeLayout
-                android:padding="5dp"
-                android:backgroundTint="@color/light_purple"
-                android:background="@drawable/round_corners"
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:layout_marginTop="10dp"
 
-                android:elevation="@dimen/cardview_default_elevation">
+            <RelativeLayout
+                android:id="@+id/watchVideoRelative"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/round_corners"
+                android:elevation="@dimen/cardview_default_elevation"
+                android:padding="5dp"
+                android:minHeight="60dp"
+
+                >
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -276,8 +279,8 @@
 
                     <ImageView
 
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
+
+                        style="@style/optionIcon2"
                         android:src="@drawable/video_reward">
 
                     </ImageView>
@@ -285,11 +288,11 @@
                     <TextView
 
                         style="@style/contentTextview"
-                        android:layout_marginStart="20dp"
-                        android:textSize="20sp"
                         android:layout_gravity="center_vertical"
-                        android:textColor="@android:color/black"
+                        android:layout_marginStart="20dp"
                         android:text="Watch an Ad and Earn"
+                        android:textColor="@android:color/black"
+                        android:textSize="20sp"
 
 
                         >
@@ -298,15 +301,31 @@
                 </LinearLayout>
 
 
-                <ImageView
-                    style="@style/optionIcon2"
+                <TextView
+                    android:id="@+id/watchVideoTextview"
+                    style="@style/contentTextviewBlue"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"
+                    android:text="Watch">
 
+                </TextView>
+
+                <TextView
+
+                    android:id="@+id/timerTextview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/watchVideoTextview"
                     android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/next_arrow_icon"
-                    app:tint="@color/greyPrimary">
 
-                </ImageView>
+                    android:layout_marginTop="25dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:paddingVertical="5dp"
+                    android:text="Watch">
+
+                </TextView>
             </RelativeLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

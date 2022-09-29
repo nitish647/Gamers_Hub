@@ -1,8 +1,9 @@
 package com.nitish.gamershub.Activities;
 
+import static com.nitish.gamershub.Adapters.CategoriesAdapter.context;
 import static com.nitish.gamershub.Utils.ConstantsHelper.FavouriteList;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHub_ParentCollection;
-import static com.nitish.gamershub.Utils.ConstantsHelper.GeneralRewardCoins;
+import static com.nitish.gamershub.Utils.ConstantsHelper.GoogleSignInAccountUser;
 import static com.nitish.gamershub.Utils.ConstantsHelper.UserInfo;
 import static com.nitish.gamershub.Utils.ConstantsHelper.UserMail;
 
@@ -28,7 +29,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
@@ -40,38 +48,44 @@ import com.google.android.gms.ads.OnUserEarnedRewardListener;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.google.gson.Gson;
 import com.nitish.gamershub.Adapters.CategoriesAdapter;
 import com.nitish.gamershub.Fragments.HomeFragment;
 import com.nitish.gamershub.Fragments.ProfileFragment;
+import com.nitish.gamershub.Interface.AdmobInterstitialAdListener;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.Pojo.Categories;
-import com.nitish.gamershub.Pojo.UserProfile;
+import com.nitish.gamershub.Pojo.FireBase.WatchViewReward;
+import com.nitish.gamershub.Pojo.NetWorkTimerResult;
+import com.nitish.gamershub.Pojo.FireBase.TimerStatus;
+import com.nitish.gamershub.Pojo.FireBase.UserProfile;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.ConstantsHelper;
+import com.nitish.gamershub.Utils.DateTimeHelper;
 import com.nitish.gamershub.Utils.DeviceHelper;
 import com.nitish.gamershub.Utils.NotificationHelper;
 import com.nitish.gamershub.Utils.ProgressBarHelper;
 import com.nitish.gamershub.Utils.UserOperations;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
@@ -79,6 +93,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.paperdb.Paper;
@@ -124,7 +140,6 @@ public class HomeActivity extends BasicActivity {
 
 
     // firebase auth
-    private FirebaseAuth mAuth;
 
     FirebaseFirestore firestoreDb;
     BottomNavigationView bottomNavigationView;
@@ -134,26 +149,30 @@ public class HomeActivity extends BasicActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Paper.init(this);
-        mAuth = FirebaseAuth.getInstance();
-        firestoreDb = FirebaseFirestore.getInstance();
 
+        firestoreDb = FirebaseFirestore.getInstance();
+        requestQueue = Volley.newRequestQueue(HomeActivity.this);
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(HomeActivity.this);
+        Paper.book().write(GoogleSignInAccountUser,acct);
         setViews();
+
+
+
+
+
+        Log.d("pResponse","server timer response "+  Timestamp.now().toDate().toString());
+
         categoriesList = new ArrayList<>();
         navigationView.setVisibility(View.VISIBLE);
 
-        FirebaseApp.initializeApp(HomeActivity.this);
+
         NotificationHelper.generateFcmToken(HomeActivity.this);
         setHeader();
         updateUserInfo();
 
-        loadInterstitialAd2(new AdDismissedListener() {
-            @Override
-            public void onClick() {
-                Intent intent = new Intent(HomeActivity.this, GameDetailActivity2.class);
-                //    intent.putExtra(gameDataObject, SelectedGameObject);
-                startActivity(intent);
-            }
-        });
+        loadInterstitialAd2(interstitialAdListener());
+
+
        MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(@NonNull InitializationStatus initializationStatus) {
@@ -178,7 +197,7 @@ public class HomeActivity extends BasicActivity {
 
 
 
-        setBottomNavigationView();
+            setBottomNavigationView();
 
 
         loadRewardedAd();
@@ -191,18 +210,6 @@ public class HomeActivity extends BasicActivity {
 
 
 
-        try {
-            masterDataJsonObject = new JSONObject(Paper.book().read(Splash_Screen.MaterData)+"");
-           JSONArray mainGameJsonArray = masterDataJsonObject.getJSONArray("main");
-            JSONArray popularGamesJsonArray = masterDataJsonObject.getJSONArray("best");
-            JSONArray newGamesJsonArray =  masterDataJsonObject.getJSONArray("new");
-     //       setUpViewPager(allGamesJsonArrayString,popularGamesJsonArrayString,newGamesJsonArrayString);
-
-        } catch (Exception e) {
-            Toast.makeText(this, "Some error has occurred : gError223", Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        }
-
 
     }
 
@@ -212,6 +219,32 @@ public class HomeActivity extends BasicActivity {
     }
 
 
+    public AdmobInterstitialAdListener interstitialAdListener()
+    {
+        return  new AdmobInterstitialAdListener() {
+            @Override
+            public void onAdDismissed() {
+                Intent intent = new Intent(HomeActivity.this, GameDetailActivity2.class);
+                //    intent.putExtra(gameDataObject, SelectedGameObject);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onAdShown() {
+
+            }
+
+            @Override
+            public void onAdFailed() {
+
+            }
+
+            @Override
+            public void onAdLoading() {
+
+            }
+        };
+    }
     public void setBottomNavigationView()
     {
         homeFragment = HomeFragment.newInstance("","");
@@ -281,7 +314,7 @@ public class HomeActivity extends BasicActivity {
     public void updateUserInfo()
     {
 
-        firestoreDb.collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail)+"").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        getFirebaseUser().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful())
@@ -291,20 +324,30 @@ public class HomeActivity extends BasicActivity {
                     if(documentSnapshot.exists())
                     {
 
+
                         UserProfile  userProfile=   documentSnapshot.toObject(UserProfile.class);
+
+                        if(documentSnapshot.contains("timerStatus"))
+                        {
+
+                            setTimerStatus(userProfile);
+
+
+
+                        }
+                        else {
+                            userProfile.setTimerStatus(createTimerStatus());
+                        }
 
                         UserProfile.ProfileData profileData = userProfile.profileData;
 
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        String currentDateTime = dateFormat.format(new Date()); // Find todays date
-                        profileData.setLastOpened(currentDateTime);
+                        profileData.setLastOpened(DateTimeHelper.datePojo().getGetCurrentDateString());
                         profileData.setDeviceInfo(DeviceHelper.getDeviceNameAndVersion());
                         if(profileData.getCreatedAt().trim().isEmpty())
                         {
-                            profileData.setCreatedAt(currentDateTime);
+                            profileData.setCreatedAt(DateTimeHelper.datePojo().getGetCurrentDateString());
                         }
                         userProfile.setProfileData(profileData);
-
                         firestoreDb.collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail)+"").set(userProfile, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -331,11 +374,29 @@ public class HomeActivity extends BasicActivity {
 
 
     }
+    public TimerStatus createTimerStatus()
+    {
+       TimerStatus timerStatus = new TimerStatus();
+        TimerStatus.DailyBonus dailyBonus = new TimerStatus.DailyBonus();
 
-    public void getGamersHubData()
+        dailyBonus.setClaimed(false);
+
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DateTimeHelper.simpleDateFormatPattern);
+        String currentDateTime = dateFormat.format(new Date());
+
+        dailyBonus.setLastResetDateTime(DateTimeHelper.resetDateToATime(currentDateTime,DateTimeHelper.time_7_am));
+        dailyBonus.setClaimedDate(currentDateTime);
+
+        timerStatus.setDailyBonus(dailyBonus);
+        return  timerStatus;
+    }
+
+
+    public void updateTimerStatus(TimerStatus.DailyBonus dailyBonus)
     {
 
-        firestoreDb.collection("Gamers Hub Data").document("rewardCoins"+"").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        firestoreDb.collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail)+"").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful())
@@ -345,15 +406,31 @@ public class HomeActivity extends BasicActivity {
                     if(documentSnapshot.exists())
                     {
 
-                        HashMap<String,Object> hashMap=   (HashMap<String, Object>) documentSnapshot.getData();
+                        UserProfile  userProfile=   documentSnapshot.toObject(UserProfile.class);
+                        TimerStatus timerStatus = userProfile.getTimerStatus();
 
-                        HashMap<String,Object> rewardCoinsHashmap=   (HashMap<String, Object>) hashMap.get("rewardCoinsList");
+                        userProfile.getTimerStatus().setDailyBonus(dailyBonus);
+                        userProfile.setTimerStatus(timerStatus);
 
-                         Object generalCoins =  rewardCoinsHashmap.get(rewardCoinsHashmap.keySet().toArray()[0]);
+                        firestoreDb.collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail)+"").set(userProfile, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful())
+                                {
 
-                         int intGeneralCoins  = Integer.parseInt( generalCoins+"");
-                        Paper.book().write(GeneralRewardCoins,generalCoins);
 
+
+
+
+                               //     Toast.makeText(HomeActivity.this, "daily earn enabled", Toast.LENGTH_LONG).show();
+
+
+
+
+
+                                }
+                            }
+                        });
 
                     }
                     else {
@@ -371,32 +448,135 @@ public class HomeActivity extends BasicActivity {
 
 
     }
-
-    public void setUpViewPager(String allGamesListJsonArray, String popularGamesJsonArray, String newGamesJsonArray)
+    // post method
+    public void getTimeApi(TimerStatus.DailyBonus dailyBonus)
     {
-        //sending the titles in bundle
-        Bundle bundle = new Bundle();
-        Bundle bundle2 = new Bundle();
-     //   Bundle bundle3 = new Bundle();
 
-        bundle.putString("data", allGamesListJsonArray);
-        bundle.putString("title","All Games");
-       bundle.putString("masterData",Paper.book().read(Splash_Screen.MaterData)+"");
 
-        bundle2.putString("data", newGamesJsonArray);
-        bundle2.putString("title","Favourites");
-      bundle2.putString("masterData",Paper.book().read(Splash_Screen.MaterData)+"");
 
+        String url = getString(R.string.getCurrentTimeAsiaKolkata);
+
+
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url,null,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        //    progressBarDialog.dismiss(); // close the progressbar
+                        Log.d("pResponse","offlinebillgenerate response : "+response.toString());
+                        try {
+
+
+
+                            if(response.has("dateTime"))
+
+                            {
+
+                                NetWorkTimerResult netWorkTimerResult  = new Gson().fromJson(response.toString(),NetWorkTimerResult.class);
+                                runTimerSample(netWorkTimerResult.toString(), dailyBonus);
+                            }
+
+
+                        } catch (Exception e) {
+
+                            Toast.makeText(context, " Error333 , could generate the bill ", Toast.LENGTH_LONG).show();
+
+                            Log.e("pError3223",e.toString());
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+//                        Toast.makeText(getContext(), "error "+error.toString(), Toast.LENGTH_LONG).show();
+//                        progressBarDialog.dismiss(); // close the progressbar
+
+
+                        Log.e("pError",error.toString());
+
+
+                    }
+                })
+
+
+
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+
+                //instead o f pass current user authtoken
+//             params.put("authtoken", Paper.book().read("authToken"));
 //
-//        bundle3.putString("data", newGamesJsonArray);
-//        bundle3.putString("title","Favourites");
-//       bundle3.putString("masterData",Paper.book().read(Splash_Screen.MaterData)+"");
-//
-
-        // when there is no fragment added in viewpager adapter then only add the fragment
+                params.put("authtoken", Paper.book().read("authToken"));
 
 
+
+
+                return params;
+
+            }
+        };
+
+
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                6000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+
+
+
+        requestQueue.add(jsonObjectRequest);
     }
+    private void  setTimerStatus(UserProfile userProfile)
+    {
+
+
+        if(userProfile.getTimerStatus()==null)
+            return;
+
+
+            TimerStatus.DailyBonus dailyBonus = userProfile.getTimerStatus().getDailyBonus();
+
+
+            if(dailyBonus!=null)
+            {
+
+                getTimeApi(dailyBonus);
+
+
+            }
+            else {
+             dailyBonus = new TimerStatus.DailyBonus();
+             userProfile.getTimerStatus().setDailyBonus(dailyBonus);
+            }
+
+            // initialize video reward
+        if(userProfile.getTimerStatus().getWatchViewReward()==null)
+        {
+            WatchViewReward watchViewReward = new WatchViewReward();
+            watchViewReward.setClaimed(false);
+            watchViewReward.setClaimedTime(DateTimeHelper.datePojo().getGetCurrentDateString());
+
+            userProfile.getTimerStatus().setWatchViewReward(watchViewReward);
+        }
+        }
+
+
+
+
+
+
+
+
+
+
+
     public void setCategory()
     {
         //category images
@@ -443,6 +623,51 @@ public class HomeActivity extends BasicActivity {
 
     }
 
+    public  void runTimerSample(String currentTime,TimerStatus.DailyBonus dailyBonus) {
+
+        String lastModifiedTime = dailyBonus.getLastResetDateTime();
+        Log.d("pResponse","current time "+currentTime);
+
+        Date date1CurrentDate1 = null;
+        try {
+            date1CurrentDate1 = DateTimeHelper.convertStringIntoDate(currentTime);
+            Date date2lastModifiedTime = DateTimeHelper.convertStringIntoDate(lastModifiedTime);
+            long mills =  date1CurrentDate1.getTime()-date2lastModifiedTime.getTime() ;
+
+
+            Log.v("Data1", "" + date1CurrentDate1.toString());
+            Log.v("Data2", "" + date2lastModifiedTime.toString());
+
+
+            int hours = (int) (mills / (1000 * 60 * 60));
+            int mins = (int) (mills / (1000 * 60)) % 60;
+
+            String diff = hours + ":" + mins; // u
+            Log.d("pTimer","time difference " + diff);
+
+
+            // reset the time to 8 pm when the time difference is 24 hours
+            if(hours>=24)
+            {
+                dailyBonus.setClaimed(false);
+                dailyBonus.setClaimedDate(DateTimeHelper.datePojo().getSimpleDateFormat().format(date1CurrentDate1)+"");
+                dailyBonus.setLastResetDateTime(DateTimeHelper.resetDateToATime(date1CurrentDate1,DateTimeHelper.time_7_am));
+
+                Log.d("pTimer","Calender timer " +  DateTimeHelper.datePojo().getSimpleDateFormat().format(date1CurrentDate1));
+                updateTimerStatus(dailyBonus);
+
+                //     dailyBonus.setLastResetDateTime();
+            }
+
+
+        } catch ( Exception e) {
+            Log.d("pTimer","Hello, error ! " + e);
+
+            e.printStackTrace();
+        }
+
+
+    }
     @Override
     public void onStart() {
         super.onStart();
@@ -609,24 +834,7 @@ public class HomeActivity extends BasicActivity {
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
-                dialogInterface.dismiss();
-
-                progressDialog.show();
-
-                AuthUI.getInstance()
-                        .signOut(HomeActivity.this)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            public void onComplete(@NonNull Task<Void> task) {
-                                // ...
-                                progressDialog.dismiss();
-                                startActivity(new Intent(HomeActivity.this,LoginPage.class));
-                                finish();
-
-                            }
-                        });
-
-
+                googleSignOut();
             }
         });
         builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -649,11 +857,12 @@ public class HomeActivity extends BasicActivity {
 
      //   profileName.setText("hahahhaha");
 
-        if(mAuth!=null &&  mAuth.getCurrentUser()!=null) {
+        if(getGoogleSignInAccount()!=null) {
 
-
-            profileName.setText(mAuth.getCurrentUser().getDisplayName());
-            Picasso.get().load(mAuth.getCurrentUser().getPhotoUrl()).into(profileIcon);
+            Log.d("pResonse","google id name"+getGoogleSignInAccount().getDisplayName()+" image "+getGoogleSignInAccount().getPhotoUrl());
+            profileName.setText(getGoogleSignInAccount().getDisplayName());
+         //   if(!Objects.requireNonNull(getGoogleSignInAccount().getPhotoUrl()).equals("null"))
+          //  Picasso.get().load(getGoogleSignInAccount().getPhotoUrl()).into(profileIcon);
         }
         else {
             Toast.makeText(this, "current user is null", Toast.LENGTH_SHORT).show();
@@ -678,21 +887,6 @@ public class HomeActivity extends BasicActivity {
 
 
     }
-    public void copyCollection()
-    {
-
-        firestoreDb.collection(GamersHub_ParentCollection).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful())
-                {
-                 List<DocumentSnapshot> documentSnapshotList =  task.getResult().getDocuments();
-
-                 firestoreDb.collection(GamersHub_ParentCollection+"2");
-                }
-            }
-        });
 
 
-    }
 }

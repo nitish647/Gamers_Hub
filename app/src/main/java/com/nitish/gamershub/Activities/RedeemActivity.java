@@ -16,7 +16,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,9 +28,9 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.SetOptions;
 import com.nitish.gamershub.Adapters.RedeemRecyclerviewAdapter;
 import com.nitish.gamershub.Adapters.UserTransactionListAdapter;
-import com.nitish.gamershub.Pojo.UserTransactions;
-import com.nitish.gamershub.Pojo.RedeemListItem;
-import com.nitish.gamershub.Pojo.UserProfile;
+import com.nitish.gamershub.Pojo.FireBase.UserTransactions;
+import com.nitish.gamershub.Pojo.FireBase.RedeemListItem;
+import com.nitish.gamershub.Pojo.FireBase.UserProfile;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.CommonMethods;
 import com.nitish.gamershub.Utils.Connectivity;
@@ -155,6 +154,9 @@ public class RedeemActivity extends BasicActivity {
 
 
     }
+
+
+
     public void setRedeemRecyclerView()
     {
         redeemListItemArrayList.add(new RedeemListItem("Upi50 ",10,1,R.drawable.upi_icon_1));
@@ -195,16 +197,7 @@ public class RedeemActivity extends BasicActivity {
 
 
     }
-    public PaytmUpiDialogListener paytmUpiDialogListener()
-    {
-        PaytmUpiDialogListener paytmUpiDialogListener = new PaytmUpiDialogListener() {
-            @Override
-            public void redeemClick() {
-      //          updateUserWallet(redeemListItem);
-            }
-        };
-        return paytmUpiDialogListener;
-    }
+
     public void enterPaytmUpiAlertDialog(RedeemListItem redeemListItem)
     {
         AlertDialog paytmUpiDialog ;
@@ -279,73 +272,15 @@ public class RedeemActivity extends BasicActivity {
         });
 
     }
-    public void upiValidation()
-    {
-
-    }
-    public void raiseRedeemRequest(RedeemListItem redeemListItem)
-    {
-
-        firebaseFirestore.collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail)+"").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                progressDialog.dismiss();
-                if(task.isSuccessful())
-                {
-                    DocumentSnapshot documentSnapshot = task.getResult();
 
 
-                    if(documentSnapshot.exists())
-                    {
-
-
-                            UserProfile userProfile=   documentSnapshot.toObject(UserProfile.class);
-
-                            UserProfile.ProfileData profileData = userProfile.profileData;
-
-                            totalGameCoins = profileData.gameCoins;
-                       //     walletCoinsTextview.setText(profileData.gameCoins +"");
-
-
-
-
-                        firebaseFirestore.collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail)+"").set(generateTransactionRequest(redeemListItem), SetOptions.merge()).
-
-
-                                addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-
-                                showRewardDialog(redeemListItem.getMoney());
-                                Toast.makeText(RedeemActivity.this, "Request Raised successfully", Toast.LENGTH_SHORT).show();
-
-                                getUserCoins();
-                            }
-                        });
-
-
-                    }
-                    else {
-                        Toast.makeText(RedeemActivity.this, "document does not exist", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                progressDialog.dismiss();
-                Toast.makeText(RedeemActivity.this, "couldn't get the documents ", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-    }
 
 
 
     public void updateUserWallet(RedeemListItem redeemListItem)
     {
         progressDialog.show();
-        UserOperations.getFirestoreUser().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        getFirebaseUser().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful())
@@ -353,25 +288,39 @@ public class RedeemActivity extends BasicActivity {
                     DocumentSnapshot documentSnapshot = task.getResult();
                     UserProfile userProfile = documentSnapshot.toObject(UserProfile.class);
 
-                    if(userProfile!=null) {
-                        UserOperations.getFirestoreUser().set(UserOperations.addCoinsToWallet(userProfile, -redeemListItem.getCoins()), SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    UserProfile.ProfileData profileData = userProfile.getProfileData();
+
+
+                   userProfile.setProfileData( UserOperations.addCoinsToWallet(userProfile, -redeemListItem.getCoins()));
+
+                    totalGameCoins = profileData.gameCoins;
+
+                    userProfile.setUserTransactions(setUserTransactions(userProfile.userTransactions,redeemListItem));
+
+
+
+
+
+                        UserOperations.getFirestoreUser().set(userProfile, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
+
+                                progressDialog.dismiss();
                                 if(task.isSuccessful())
                                 {
 
 
-                                    raiseRedeemRequest(redeemListItem);
+                                    showRewardDialog(redeemListItem.getMoney());
+                                    Toast.makeText(RedeemActivity.this, "Request Raised successfully", Toast.LENGTH_SHORT).show();
+
+                                    getUserCoins();
                                 }
                             }
                         });
 
 
-                    }
-                    else {
-                        progressDialog.dismiss();
-                        Toast.makeText(RedeemActivity.this, "can't redeem as user is null ", Toast.LENGTH_SHORT).show();
-                    }
+
+
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -386,13 +335,39 @@ public class RedeemActivity extends BasicActivity {
     }
 
 
-    public HashMap<String,Object> generateTransactionRequest(RedeemListItem redeemListItem)
+    public UserTransactions setUserTransactions(UserTransactions userTransactions, RedeemListItem redeemListItem)
     {
+        if(userTransactions == null)
+        {
+            userTransactions = new UserTransactions();
+        }
+
+
+        ArrayList<UserTransactions.TransactionRequest>  transactionRequestArrayList;
+        if(userTransactions.getTransactionRequestArrayList()!=null) {
+            transactionRequestArrayList = userTransactions.getTransactionRequestArrayList();
+        }
+        else
+        {
+            transactionRequestArrayList = new ArrayList<>();
+        }
+
+
+        transactionRequestArrayList.add(generateTransactionRequest(redeemListItem));
+        userTransactions.setTransactionRequestArrayList(transactionRequestArrayList);
+
+        return userTransactions;
+
+
+    }
+    public UserTransactions.TransactionRequest generateTransactionRequest(RedeemListItem redeemListItem)
+    {
+
+
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String currentDateTime = dateFormat.format(new Date()); // Find todays date
 
-        HashMap<String , Object> redeemHistory = new HashMap<>();
-        HashMap<String , Object> transactions = new HashMap<>();
 
         UserTransactions.TransactionRequest transactionRequest = new UserTransactions.TransactionRequest();
         transactionRequest.setRequestDate(currentDateTime);
@@ -418,11 +393,11 @@ public class RedeemActivity extends BasicActivity {
 
 
 
-        transactions.put( currentDateTime,transactionRequest);
-        redeemHistory.put("userTransaction",transactions);
 
 
-        return  redeemHistory;
+
+
+        return  transactionRequest;
 
     }
 
