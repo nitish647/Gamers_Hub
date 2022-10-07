@@ -1,8 +1,13 @@
 package com.nitish.gamershub.Activities;
 
+import static com.nitish.gamershub.Utils.ConstantsHelper.timerHourMinuteSecond;
+import static com.nitish.gamershub.Utils.DateTimeHelper.simpleDateFormatPattern;
+
+import androidx.annotation.RequiresApi;
 import androidx.databinding.DataBindingUtil;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -17,9 +22,12 @@ import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.DateTimeHelper;
 import com.nitish.gamershub.databinding.ActivityRewardsBinding;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class RewardsActivity extends BasicActivity {
 
@@ -28,16 +36,14 @@ public class RewardsActivity extends BasicActivity {
 
     boolean isLoading;
     public int seconds = 0;
-    public     String timerHourMinuteSecond ="00:00:00";
 
-    boolean running ,  wasRunning ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this,R.layout.activity_rewards);
         setOnclickListeners();
-
         loadInterstitialAdNew();
         getProfileData();
     }
@@ -119,7 +125,7 @@ public class RewardsActivity extends BasicActivity {
 
         showProgressBar();
 
-        getUserProfile(getUserProfileDataListener());
+        getUserProfileGlobal(getUserProfileDataListener());
 
 
 
@@ -129,7 +135,7 @@ public class RewardsActivity extends BasicActivity {
 
     public void updateViews(UserProfile userProfile )
     {
-        UserProfile.ProfileData profileData = userProfile.profileData;
+        UserProfile.ProfileData profileData = userProfile.getProfileData();
        TimerStatus timerStatus = userProfile.getTimerStatus();
      TimerStatus.DailyBonus dailyBonus = timerStatus.getDailyBonus();
 
@@ -143,11 +149,7 @@ public class RewardsActivity extends BasicActivity {
           binding.claimTextview.setText("claim");
 
       }
-
-
-
-
-
+        timerForRewardVideo();
 
     }
 
@@ -168,21 +170,22 @@ public class RewardsActivity extends BasicActivity {
 
 
                 dailyBonus.setClaimed(true);
-                String currentDate = DateTimeHelper.datePojo().getGetCurrentDateString();
+                String currentDate = DateTimeHelper.getDatePojo().getGetCurrentDateString();
                 dailyBonus.setLastResetDateTime(DateTimeHelper.resetDateToATime(currentDate,DateTimeHelper.time_7_am));
                 dailyBonus.setClaimedDate(currentDate);
                 userProfile.getTimerStatus().setDailyBonus(dailyBonus);
-                userProfile.getProfileData().setGameCoins(userProfile.getProfileData().getGameCoins()+200);
-                setUserProfile(userProfile, new SetUserDataListener() {
+                int getDailyCheckReward = getGamersHubDataGlobal().getGamesData().getDailyCheckReward();
+                userProfile.getProfileData().setGameCoins(userProfile.getProfileData().getGameCoins()+getDailyCheckReward);
+                setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
                     @Override
                     public void onTaskSuccessful() {
-                        showRewardDialog("Successfully credited " + 200 + " coins for Daily bonus", R.raw.rupee_piggy_bank_award, new OnDialogLister() {
+                        showRewardDialog("Successfully credited " + getDailyCheckReward + " coins for Daily bonus", R.raw.rupee_piggy_bank_award, new OnDialogLister() {
                             @Override
                             public void onDialogDismissLister() {
                                 showInterstitialAdNew(setInterstitialAdListener());
                             }
                         });
-                        getUserProfile(getUserProfileDataListener());
+                        getUserProfileGlobal(getUserProfileDataListener());
                     }
                 });
             }
@@ -199,7 +202,7 @@ public class RewardsActivity extends BasicActivity {
 
                 RewardsActivity.this.userProfile = userProfile;
 
-                timer();
+
                 updateViews(userProfile);
 
             }
@@ -256,47 +259,48 @@ public class RewardsActivity extends BasicActivity {
 
     public void setWatchVideoRewardAfterVideo()
     {
-        WatchViewReward watchViewReward =    userProfile.getTimerStatus().watchViewReward;
+        WatchViewReward watchViewReward =    getUserProfileGlobalData().getTimerStatus().getWatchViewReward();
 
         // increment 1 hour in the current date
-        Calendar cal = Calendar.getInstance(); // creates calendar
-        cal.setTime(new Date());               // sets calendar time/date
+        Calendar cal = Calendar.getInstance();// creates calendar
+        cal.setTimeZone(TimeZone.getDefault());
+        cal.setTime(DateTimeHelper.getDatePojo().getGetCurrentDate());               // sets calendar time/date
         cal.add(Calendar.HOUR_OF_DAY, 1);      // adds one hour
-
 
         watchViewReward.setClaimedTime(DateTimeHelper.convertDateToString(cal.getTime()));
         watchViewReward.setClaimed(true);
 
         binding.watchVideoTextview.setText("watched");
+      int coins =  userProfile.getProfileData().getGameCoins();
+
+      int getWatchVideoReward = getGamersHubDataGlobal().gamesData.getWatchVideoReward();
+      int totalCoins=coins+getWatchVideoReward;
+      userProfile.getProfileData().setGameCoins(totalCoins);
         userProfile.getTimerStatus().setWatchViewReward(watchViewReward);
 
-        setUserProfile( userProfile ,  new SetUserDataListener() {
+        setUserProfile( userProfile ,  new SetUserDataOnCompleteListener() {
            @Override
            public void onTaskSuccessful() {
-               showRewardDialog("Successfully credited " + 50 + " coins for Watching video", R.raw.rupee_piggy_bank_award, new OnDialogLister() {
+               showRewardDialog("Successfully credited " + getWatchVideoReward + " coins for Watching video", R.raw.rupee_piggy_bank_award, new OnDialogLister() {
                    @Override
                    public void onDialogDismissLister() {
 
                    }
                });
 
-               timer();
-               getUserProfile(getUserProfileDataListener());
+               timerForRewardVideo();
+               getUserProfileGlobal(getUserProfileDataListener());
            }
        });
 
     }
 
-    public void setWatchVideoReward()
+
+
+
+    public void timerForRewardVideo()
     {
-        WatchViewReward watchViewReward =    userProfile.getTimerStatus().getWatchViewReward();
 
-        watchViewReward.setClaimed(false);
-
-
-    }
-    public void timer()
-    {
         // Creates a new Handler
         final Handler handler
                 = new Handler();
@@ -311,7 +315,7 @@ public class RewardsActivity extends BasicActivity {
 
                 String lastModifiedTime = watchViewReward.getClaimedTime();
 
-                String currentTime = DateTimeHelper.datePojo().getGetCurrentDateString();
+                String currentTime = DateTimeHelper.getDatePojo().getGetCurrentDateString();
 
                 try {
                 Date       date1CurrentDate1 = DateTimeHelper.convertStringIntoDate(currentTime);
@@ -344,12 +348,13 @@ public class RewardsActivity extends BasicActivity {
                     String claimText  ="Next claim in "+timerHourMinuteSecond.replace("-","");
 
 
-                    if(Math.abs(mins)<=55)
+
+                    if(hours>=1||!userProfile.getTimerStatus().getWatchViewReward().isClaimed())
                     {
                        binding.watchVideoTextview.setText("Watch");
                        binding.timerTextview.setVisibility(View.GONE);
+                        userProfile.getTimerStatus().getWatchViewReward().setClaimed(false);
 
-                        setWatchVideoReward();
 
                         return;
                     }
@@ -377,5 +382,10 @@ public class RewardsActivity extends BasicActivity {
     }
 
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        userProfile = getUserProfileGlobalData();
+        updateViews(userProfile);
+    }
 }

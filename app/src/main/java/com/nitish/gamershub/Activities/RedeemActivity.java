@@ -1,31 +1,18 @@
 package com.nitish.gamershub.Activities;
 
-import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHub_ParentCollection;
-import static com.nitish.gamershub.Utils.ConstantsHelper.UserMail;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.ProgressDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.SetOptions;
 import com.nitish.gamershub.Adapters.RedeemRecyclerviewAdapter;
 import com.nitish.gamershub.Adapters.UserTransactionListAdapter;
 import com.nitish.gamershub.Pojo.FireBase.UserTransactions;
@@ -35,18 +22,13 @@ import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.CommonMethods;
 import com.nitish.gamershub.Utils.Connectivity;
 import com.nitish.gamershub.Utils.ConstantsHelper;
+import com.nitish.gamershub.Utils.DateTimeHelper;
 import com.nitish.gamershub.Utils.ProgressBarHelper;
 import com.nitish.gamershub.Utils.ToastHelper;
-import com.nitish.gamershub.Utils.UserOperations;
 import com.nitish.gamershub.Utils.ValidationHelper;
 import com.nitish.gamershub.databinding.PaytmUpiNumberLayoutBinding;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-
-import io.paperdb.Paper;
 
 public class RedeemActivity extends BasicActivity {
 
@@ -56,11 +38,9 @@ public class RedeemActivity extends BasicActivity {
     RecyclerView redeemRecyclerView;
     ArrayList<RedeemListItem> redeemListItemArrayList = new ArrayList<>();
     int totalGameCoins=0;
-    ProgressDialog progressDialog;
-    UserTransactionListAdapter userTransactionListAdapter;
     ArrayList<UserTransactions.TransactionRequest> transactionRequestList;
-     AlertDialog userTransactionDialog;
-    RecyclerView userTransactionListRecycler;
+
+    RedeemListItem redeemListItem;
 
 
     @Override
@@ -76,10 +56,11 @@ public class RedeemActivity extends BasicActivity {
            CommonMethods.backButton(RedeemActivity.this);
 
 
-        userTransactionListAdapter = new UserTransactionListAdapter(RedeemActivity.this,transactionRequestList);
 
 
-        getUserCoins();
+        getCoins();
+
+        totalGameCoins = getUserProfileGlobalData().getProfileData().getGameCoins();
         setRedeemRecyclerView();
 
 
@@ -90,70 +71,7 @@ public class RedeemActivity extends BasicActivity {
         return R.layout.activity_reddeem;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        UserOperations.getFirestoreUser().addSnapshotListener(RedeemActivity.this, new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                if(error!=null)
-                {
-                    Toast.makeText(RedeemActivity.this, "error while getting doc 211", Toast.LENGTH_SHORT).show();
-                }
-                if(value!=null && value.exists())
-                {
-                    UserProfile  userProfile=   value.toObject(UserProfile.class);
 
-                    UserProfile.ProfileData profileData = userProfile.profileData;
-
-              //      walletCoinsTextview.setText(profileData.gameCoins +"");
-
-
-                }
-            }
-        });
-
-    }
-    public void getUserCoins()
-    {
-
-
-        firebaseFirestore.collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail)+"").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful())
-                {
-                    DocumentSnapshot documentSnapshot = task.getResult();
-
-                    if(documentSnapshot.exists())
-                    {
-
-
-                       HashMap<String,Object> userTransactionsHashMap = (HashMap<String, Object>) documentSnapshot.get("userTransaction");
-
-
-                        UserProfile userProfile=   documentSnapshot.toObject(UserProfile.class);
-
-                        UserProfile.ProfileData profileData = userProfile.profileData;
-
-                        totalGameCoins = profileData.gameCoins;
-                  //      walletCoinsTextview.setText(profileData.gameCoins +"");
-                    }
-                    else {
-                        Toast.makeText(RedeemActivity.this, "document does not exist", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(RedeemActivity.this, "couldn't get the documents ", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-
-    }
 
 
 
@@ -175,6 +93,7 @@ public class RedeemActivity extends BasicActivity {
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void redeemMoneyIcon(RedeemListItem redeemListItem)
     {
+        this.redeemListItem = redeemListItem;
         String connectivityStatus =Connectivity.getConnectionStatus(RedeemActivity.this);
 
         if(connectivityStatus.equals(ConstantsHelper.ConnectionSignalStatus.NO_CONNECTIVITY+"")||
@@ -183,13 +102,13 @@ public class RedeemActivity extends BasicActivity {
             Toast.makeText(this, "Network is not good "+connectivityStatus, Toast.LENGTH_SHORT).show();
             return;
         }
-        if(totalGameCoins< redeemListItem.getCoins())
+        if(totalGameCoins< this.redeemListItem.getCoins())
         {
             Toast.makeText(this, "Not enough funds to redeem ", Toast.LENGTH_LONG).show();
 
         }
         else {
-            enterPaytmUpiAlertDialog(redeemListItem);
+            enterPaytmUpiAlertDialog();
 
     //     updateUserWallet(redeemListItem);
         }
@@ -198,7 +117,7 @@ public class RedeemActivity extends BasicActivity {
 
     }
 
-    public void enterPaytmUpiAlertDialog(RedeemListItem redeemListItem)
+    public void enterPaytmUpiAlertDialog()
     {
         AlertDialog paytmUpiDialog ;
         LayoutInflater factory = LayoutInflater.from(RedeemActivity.this);
@@ -224,7 +143,10 @@ public class RedeemActivity extends BasicActivity {
                     {
                         redeemListItem.setPaytmNumber(paytmNumber+"");
 
-                        updateUserWallet(redeemListItem);
+                        UserTransactions userTransactions =   setUserTransactions(getUserProfileGlobalData().getUserTransactions(),redeemListItem);
+                        updateUserWalletForTransaction(- redeemListItem.getCoins(),setUserDataLister(redeemListItem),userTransactions);
+
+
                         paytmUpiDialog.dismiss();
                     }
                     else {
@@ -250,7 +172,9 @@ public class RedeemActivity extends BasicActivity {
                     {
                         redeemListItem.setUpiID(upiId+"");
 
-                        updateUserWallet(redeemListItem);
+                        UserTransactions userTransactions =   setUserTransactions(getUserProfileGlobalData().getUserTransactions(),redeemListItem);
+                        updateUserWalletForTransaction(- redeemListItem.getCoins(),setUserDataLister(redeemListItem),userTransactions);
+
                         paytmUpiDialog.dismiss();
                     }
                     else {
@@ -277,63 +201,20 @@ public class RedeemActivity extends BasicActivity {
 
 
 
-    public void updateUserWallet(RedeemListItem redeemListItem)
+
+
+    public void getCoins()
     {
         progressDialog.show();
-        getFirebaseUser().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        getUserProfileGlobal(new GetUserProfileDataListener() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful())
-                {
-                    DocumentSnapshot documentSnapshot = task.getResult();
-                    UserProfile userProfile = documentSnapshot.toObject(UserProfile.class);
-
-                    UserProfile.ProfileData profileData = userProfile.getProfileData();
-
-
-                   userProfile.setProfileData( UserOperations.addCoinsToWallet(userProfile, -redeemListItem.getCoins()));
-
-                    totalGameCoins = profileData.gameCoins;
-
-                    userProfile.setUserTransactions(setUserTransactions(userProfile.userTransactions,redeemListItem));
-
-
-
-
-
-                        UserOperations.getFirestoreUser().set(userProfile, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-
-                                progressDialog.dismiss();
-                                if(task.isSuccessful())
-                                {
-
-
-                                    showRewardDialog(redeemListItem.getMoney());
-                                    Toast.makeText(RedeemActivity.this, "Request Raised successfully", Toast.LENGTH_SHORT).show();
-
-                                    getUserCoins();
-                                }
-                            }
-                        });
-
-
-
-
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
+            public void onTaskSuccessful(UserProfile userProfile) {
                 progressDialog.dismiss();
-                Toast.makeText(RedeemActivity.this, "can't redeem as user document doesn't exists ", Toast.LENGTH_SHORT).show();
+                totalGameCoins = getUserProfileGlobalData().getProfileData().getGameCoins();
 
             }
         });
-
     }
-
 
     public UserTransactions setUserTransactions(UserTransactions userTransactions, RedeemListItem redeemListItem)
     {
@@ -360,13 +241,14 @@ public class RedeemActivity extends BasicActivity {
 
 
     }
+
+
     public UserTransactions.TransactionRequest generateTransactionRequest(RedeemListItem redeemListItem)
     {
 
 
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String currentDateTime = dateFormat.format(new Date()); // Find todays date
+        String currentDateTime = DateTimeHelper.getDatePojo().getGetCurrentDateString(); // Find todays date
 
 
         UserTransactions.TransactionRequest transactionRequest = new UserTransactions.TransactionRequest();
@@ -401,5 +283,22 @@ public class RedeemActivity extends BasicActivity {
 
     }
 
+    public SetUserDataOnCompleteListener setUserDataLister(RedeemListItem redeemListItem)
+    {
+        return  new SetUserDataOnCompleteListener() {
+            @Override
+            public void onTaskSuccessful() {
+
+
+                String message= "Congratulations , Redeem request generated for "+redeemListItem.getMoney();
+                showRewardDialog(message);
+                Toast.makeText(RedeemActivity.this, "Request Raised successfully", Toast.LENGTH_SHORT).show();
+
+
+                getCoins();
+            }
+        };
+
+    }
 
 }

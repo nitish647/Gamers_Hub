@@ -8,16 +8,13 @@ import static com.nitish.gamershub.Utils.ConstantsHelper.UserInfo;
 import static com.nitish.gamershub.Utils.ConstantsHelper.UserMail;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -37,20 +34,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.ads.OnUserEarnedRewardListener;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
-import com.google.android.gms.ads.interstitial.InterstitialAd;
-import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewarded.RewardedAd;
-import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -58,13 +47,9 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.Timestamp;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.SetOptions;
 import com.google.gson.Gson;
 import com.nitish.gamershub.Adapters.CategoriesAdapter;
@@ -73,28 +58,25 @@ import com.nitish.gamershub.Fragments.ProfileFragment;
 import com.nitish.gamershub.Interface.AdmobInterstitialAdListener;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.Pojo.Categories;
+import com.nitish.gamershub.Pojo.FireBase.AdViewedStats;
 import com.nitish.gamershub.Pojo.FireBase.WatchViewReward;
 import com.nitish.gamershub.Pojo.NetWorkTimerResult;
 import com.nitish.gamershub.Pojo.FireBase.TimerStatus;
 import com.nitish.gamershub.Pojo.FireBase.UserProfile;
 import com.nitish.gamershub.R;
-import com.nitish.gamershub.Utils.ConstantsHelper;
 import com.nitish.gamershub.Utils.DateTimeHelper;
 import com.nitish.gamershub.Utils.DeviceHelper;
 import com.nitish.gamershub.Utils.NotificationHelper;
 import com.nitish.gamershub.Utils.ProgressBarHelper;
-import com.nitish.gamershub.Utils.UserOperations;
-import com.squareup.picasso.Picasso;
+import com.nitish.gamershub.Utils.ToastHelper;
 
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.paperdb.Paper;
@@ -119,6 +101,7 @@ public class HomeActivity extends BasicActivity {
     RecyclerView categoriesRecycler;
 
 
+
     NavigationView navigationView;
     DrawerLayout drawerLayout;
     LinearLayout linearAdContainer;
@@ -127,9 +110,6 @@ public class HomeActivity extends BasicActivity {
     AdView googleBannerAdView;
     boolean interstitialAdDismissed = false;
 
-
-
-    private InterstitialAd interstitialAd;
 
     Button logoutButton;
 
@@ -150,6 +130,7 @@ public class HomeActivity extends BasicActivity {
         setContentView(R.layout.activity_home);
         Paper.init(this);
 
+
         firestoreDb = FirebaseFirestore.getInstance();
         requestQueue = Volley.newRequestQueue(HomeActivity.this);
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(HomeActivity.this);
@@ -160,8 +141,8 @@ public class HomeActivity extends BasicActivity {
 
 
 
-        Log.d("pResponse","server timer response "+  Timestamp.now().toDate().toString());
 
+        Log.d("pResponse","server timer response "+  Timestamp.now().toDate().toString());
         categoriesList = new ArrayList<>();
         navigationView.setVisibility(View.VISIBLE);
 
@@ -169,9 +150,7 @@ public class HomeActivity extends BasicActivity {
         NotificationHelper.generateFcmToken(HomeActivity.this);
         setHeader();
         updateUserInfo();
-
-        loadInterstitialAd2(interstitialAdListener());
-
+        loadInterstitialAdNew();
 
        MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
@@ -200,7 +179,6 @@ public class HomeActivity extends BasicActivity {
             setBottomNavigationView();
 
 
-        loadRewardedAd();
         setUpBannerAd();
 
    //     AdsHelper.loadInterstitialAd(this);
@@ -224,9 +202,8 @@ public class HomeActivity extends BasicActivity {
         return  new AdmobInterstitialAdListener() {
             @Override
             public void onAdDismissed() {
-                Intent intent = new Intent(HomeActivity.this, GameDetailActivity2.class);
-                //    intent.putExtra(gameDataObject, SelectedGameObject);
-                startActivity(intent);
+
+                openGameDetailsActivity();
             }
 
             @Override
@@ -242,8 +219,15 @@ public class HomeActivity extends BasicActivity {
             @Override
             public void onAdLoading() {
 
+                openGameDetailsActivity();
             }
         };
+    }
+
+  public void   openGameDetailsActivity()
+    {
+        startActivityIntent(HomeActivity.this,GameDetailActivity2.class);
+
     }
     public void setBottomNavigationView()
     {
@@ -311,86 +295,43 @@ public class HomeActivity extends BasicActivity {
 
 
 
+
     public void updateUserInfo()
     {
 
-        getFirebaseUser().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful())
-                {
-                    DocumentSnapshot documentSnapshot = task.getResult();
 
-                    if(documentSnapshot.exists())
-                    {
-
-
-                        UserProfile  userProfile=   documentSnapshot.toObject(UserProfile.class);
-
-                        if(documentSnapshot.contains("timerStatus"))
-                        {
-
-                            setTimerStatus(userProfile);
-
-
-
-                        }
-                        else {
-                            userProfile.setTimerStatus(createTimerStatus());
-                        }
-
-                        UserProfile.ProfileData profileData = userProfile.profileData;
-
-                        profileData.setLastOpened(DateTimeHelper.datePojo().getGetCurrentDateString());
-                        profileData.setDeviceInfo(DeviceHelper.getDeviceNameAndVersion());
-                        if(profileData.getCreatedAt().trim().isEmpty())
-                        {
-                            profileData.setCreatedAt(DateTimeHelper.datePojo().getGetCurrentDateString());
-                        }
-                        userProfile.setProfileData(profileData);
-                        firestoreDb.collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail)+"").set(userProfile, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful())
-                                {
-                                    Paper.book().write(UserInfo,userProfile);
-                                }
-                            }
-                        });
-
-                    }
-                    else {
-                        Toast.makeText(HomeActivity.this, "document does not exist", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(HomeActivity.this, "couldn't get the documents ", Toast.LENGTH_SHORT).show();
-            }
-        });
-
+        getUserProfileGlobal(getUserProfileDataListener());
 
 
     }
+
     public TimerStatus createTimerStatus()
     {
        TimerStatus timerStatus = new TimerStatus();
+
+
+       // DAILY BONUS
         TimerStatus.DailyBonus dailyBonus = new TimerStatus.DailyBonus();
 
         dailyBonus.setClaimed(false);
 
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat(DateTimeHelper.simpleDateFormatPattern);
-        String currentDateTime = dateFormat.format(new Date());
+        String currentDateTime = DateTimeHelper.getDatePojo().getGetCurrentDateString();
 
         dailyBonus.setLastResetDateTime(DateTimeHelper.resetDateToATime(currentDateTime,DateTimeHelper.time_7_am));
         dailyBonus.setClaimedDate(currentDateTime);
 
         timerStatus.setDailyBonus(dailyBonus);
+
+        // watchViewReward
+        WatchViewReward watchViewReward = new WatchViewReward();
+        watchViewReward.setClaimed(false);
+        watchViewReward.setClaimedTime(currentDateTime);
+        timerStatus.setWatchViewReward(watchViewReward);
+
         return  timerStatus;
     }
+
 
 
     public void updateTimerStatus(TimerStatus.DailyBonus dailyBonus)
@@ -474,7 +415,7 @@ public class HomeActivity extends BasicActivity {
                             {
 
                                 NetWorkTimerResult netWorkTimerResult  = new Gson().fromJson(response.toString(),NetWorkTimerResult.class);
-                                runTimerSample(netWorkTimerResult.toString(), dailyBonus);
+                                checkDailyBonus(netWorkTimerResult.toString(), dailyBonus);
                             }
 
 
@@ -535,19 +476,18 @@ public class HomeActivity extends BasicActivity {
     }
     private void  setTimerStatus(UserProfile userProfile)
     {
-
-
-        if(userProfile.getTimerStatus()==null)
-            return;
-
-
             TimerStatus.DailyBonus dailyBonus = userProfile.getTimerStatus().getDailyBonus();
-
 
             if(dailyBonus!=null)
             {
 
-                getTimeApi(dailyBonus);
+                // when the daily bonus is claimed then check for the time
+                if(dailyBonus.getClaimed())
+                   getTimeApi(dailyBonus);
+                else
+                {
+                    showBottomSheet();
+                }
 
 
             }
@@ -561,20 +501,20 @@ public class HomeActivity extends BasicActivity {
         {
             WatchViewReward watchViewReward = new WatchViewReward();
             watchViewReward.setClaimed(false);
-            watchViewReward.setClaimedTime(DateTimeHelper.datePojo().getGetCurrentDateString());
+            watchViewReward.setClaimedTime(DateTimeHelper.getDatePojo().getGetCurrentDateString());
 
             userProfile.getTimerStatus().setWatchViewReward(watchViewReward);
         }
+        else {
+
+            WatchViewReward watchViewReward = userProfile.getTimerStatus().getWatchViewReward();
+
+            if(!watchViewReward.isClaimed())
+            {
+                showBottomSheet();
+            }
         }
-
-
-
-
-
-
-
-
-
+        }
 
 
     public void setCategory()
@@ -603,17 +543,10 @@ public class HomeActivity extends BasicActivity {
 
     public void startIntent()
     {
-        if(interstitialAd!=null && ConstantsHelper.ShowAds)
-        {
-//           showInterstitial();
-            showInterstitial2();
-        }
-        else {
 
-            Intent intent = new Intent(HomeActivity.this, GameDetailActivity2.class);
-        //    intent.putExtra(gameDataObject, SelectedGameObject);
-            startActivity(intent);
-        }
+          showInterstitialAdNew(interstitialAdListener());
+
+
     }
     public void setUpBannerAd()
     {
@@ -623,7 +556,7 @@ public class HomeActivity extends BasicActivity {
 
     }
 
-    public  void runTimerSample(String currentTime,TimerStatus.DailyBonus dailyBonus) {
+    public  void checkDailyBonus(String currentTime, TimerStatus.DailyBonus dailyBonus) {
 
         String lastModifiedTime = dailyBonus.getLastResetDateTime();
         Log.d("pResponse","current time "+currentTime);
@@ -647,14 +580,17 @@ public class HomeActivity extends BasicActivity {
 
 
             // reset the time to 8 pm when the time difference is 24 hours
+            // enable the daily bonus
             if(hours>=24)
             {
+                showBottomSheet();
                 dailyBonus.setClaimed(false);
-                dailyBonus.setClaimedDate(DateTimeHelper.datePojo().getSimpleDateFormat().format(date1CurrentDate1)+"");
+                dailyBonus.setClaimedDate(DateTimeHelper.getDatePojo().getSimpleDateFormat().format(date1CurrentDate1)+"");
                 dailyBonus.setLastResetDateTime(DateTimeHelper.resetDateToATime(date1CurrentDate1,DateTimeHelper.time_7_am));
 
-                Log.d("pTimer","Calender timer " +  DateTimeHelper.datePojo().getSimpleDateFormat().format(date1CurrentDate1));
+                Log.d("pTimer","Calender timer " +  DateTimeHelper.getDatePojo().getSimpleDateFormat().format(date1CurrentDate1));
                 updateTimerStatus(dailyBonus);
+
 
                 //     dailyBonus.setLastResetDateTime();
             }
@@ -668,27 +604,7 @@ public class HomeActivity extends BasicActivity {
 
 
     }
-    @Override
-    public void onStart() {
-        super.onStart();
-        UserOperations.getFirestoreUser().addSnapshotListener(HomeActivity.this, new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                if(error!=null)
-                {
-                    Toast.makeText(HomeActivity.this, "error while getting doc 211", Toast.LENGTH_SHORT).show();
-                }
-                if(value!=null && value.exists())
-                {
-                    UserProfile  userProfile=   value.toObject(UserProfile.class);
 
-                    UserProfile.ProfileData profileData = userProfile.profileData;
-
-                }
-            }
-        });
-
-    }
 
     @Override
     public void onPause() {
@@ -708,10 +624,7 @@ public class HomeActivity extends BasicActivity {
             googleBannerAdView.resume();
 
         }
-//        // load the ad again
-//        if(interstitialAd==null)
-//            loadInterstitialAd();
-//
+
 
     }
 
@@ -721,6 +634,7 @@ public class HomeActivity extends BasicActivity {
         if (googleBannerAdView != null) {
             googleBannerAdView.destroy();
         }
+
         super.onDestroy();
     }
 
@@ -735,134 +649,18 @@ public class HomeActivity extends BasicActivity {
 
     }
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-
-    }
-    private void loadRewardedAd() {
-        if (rewardedAd == null) {
-            isLoading = true;
-            AdRequest adRequest = new AdRequest.Builder().build();
-            RewardedAd.load(
-                    this,
-                    getString(R.string.admob_reward),
-                    adRequest,
-                    new RewardedAdLoadCallback() {
-                        @Override
-                        public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                            // Handle the error.
-                            Log.d("rewardedAd", "onAdFailedToLoad "+loadAdError.getMessage());
-                            rewardedAd = null;
-                            HomeActivity.this.isLoading = false;
-                        }
-
-                        @Override
-                        public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
-                            HomeActivity.this.rewardedAd = rewardedAd;
-                            Log.d("rewardedAd", "onAdLoaded");
-                            HomeActivity.this.isLoading = false;
-                        }
-                    });
-        }
-    }
 
 
-
-    private void showRewardedVideo() {
-
-        if (rewardedAd == null) {
-            Toast.makeText(this, "The ad is not loaded yet , try again", Toast.LENGTH_SHORT).show();
-            Log.d("TAG", "The rewarded ad wasn't ready yet.");
-            return;
-        }
-
-        rewardedAd.setFullScreenContentCallback(
-                new FullScreenContentCallback() {
-                    @Override
-                    public void onAdShowedFullScreenContent() {
-                        // Called when ad is shown.
-                        Log.d("rewardedAd", "onAdShowedFullScreenContent");
-
-                    }
-
-                    @Override
-                    public void onAdFailedToShowFullScreenContent(AdError adError) {
-                        // Called when ad fails to show.
-                        Log.d("rewardedAd", "onAdFailedToShowFullScreenContent");
-                        // Don't forget to set the ad reference to null so you
-                        // don't show the ad a second time.
-                        rewardedAd = null;
-                        Toast.makeText(HomeActivity.this, "Ad loading failed please try again", Toast.LENGTH_SHORT)
-                                .show();
-                    }
-
-                    @Override
-                    public void onAdDismissedFullScreenContent() {
-                        // Called when ad is dismissed.
-                        // Don't forget to set the ad reference to null so you
-                        // don't show the ad a second time.
-                        rewardedAd = null;
-
-                        HomeActivity.this.loadRewardedAd();
-                    }
-                });
-        Activity activityContext = HomeActivity.this;
-        rewardedAd.show(
-                activityContext,
-                new OnUserEarnedRewardListener() {
-                    @Override
-                    public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
-                        // Handle the reward.
-                        Toast.makeText(HomeActivity.this, "Congrats the ads are disabled for now", Toast.LENGTH_SHORT)
-                                .show();
-                        // Preload the next rewarded ad.
-                        ConstantsHelper.ShowAds = false;
-                        int rewardAmount = rewardItem.getAmount();
-                        String rewardType = rewardItem.getType();
-                    }
-                });
-    }
-    public void logOutDialog()
-    {
-
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(HomeActivity.this);
-        android.app.AlertDialog deleteDialog = builder.create();
-
-
-        builder.setMessage("Do you want to logout?");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                googleSignOut();
-            }
-        });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        });
-
-        builder.show();
-
-    }
 
     public void setHeader()
     {
 
 
-        TextView profileName = findViewById(R.id.profileName);
-        CircleImageView profileIcon =findViewById(R.id.profileIcon);
-
-     //   profileName.setText("hahahhaha");
 
         if(getGoogleSignInAccount()!=null) {
 
             Log.d("pResonse","google id name"+getGoogleSignInAccount().getDisplayName()+" image "+getGoogleSignInAccount().getPhotoUrl());
-            profileName.setText(getGoogleSignInAccount().getDisplayName());
-         //   if(!Objects.requireNonNull(getGoogleSignInAccount().getPhotoUrl()).equals("null"))
-          //  Picasso.get().load(getGoogleSignInAccount().getPhotoUrl()).into(profileIcon);
+
         }
         else {
             Toast.makeText(this, "current user is null", Toast.LENGTH_SHORT).show();
@@ -886,6 +684,73 @@ public class HomeActivity extends BasicActivity {
         bottomNavigationView= findViewById(R.id.bottomNavigationView);
 
 
+    }
+
+    public GetUserProfileDataListener getUserProfileDataListener()
+    {
+        return  new GetUserProfileDataListener() {
+            @Override
+            public void onTaskSuccessful(UserProfile userProfile) {
+
+
+                getGamersHubData(new GetUserProfileDataListener() {
+                    @Override
+                    public void onTaskSuccessful(UserProfile userProfile) {
+
+                    }
+                });
+
+
+                if (userProfile.getTimerStatus() != null) {
+
+                    setTimerStatus(userProfile);
+
+
+                } else {
+                    userProfile.setTimerStatus(createTimerStatus());
+                }
+
+                if (userProfile.getAdViewedStats() == null) {
+                    userProfile.setAdViewedStats(new AdViewedStats());
+                }
+
+                UserProfile.ProfileData profileData = userProfile.profileData;
+
+                if (profileData != null) {
+
+                    if(profileData.getName()==null|| profileData.getName().trim().isEmpty())
+                    {
+                        profileData.setName(UserProfile.ProfileData.getProfileData().getName());
+                    }
+                    if(profileData.getEmail()==null|| profileData.getEmail().trim().isEmpty())
+                    {
+                        profileData.setEmail(UserProfile.ProfileData.getProfileData().getEmail());
+                    }
+
+                    profileData.setLastOpened(DateTimeHelper.getDatePojo().getGetCurrentDateString());
+                    profileData.setDeviceInfo(DeviceHelper.getDeviceNameAndVersion());
+                    if (profileData.getCreatedAt().trim().isEmpty()) {
+                        profileData.setCreatedAt(DateTimeHelper.getDatePojo().getGetCurrentDateString());
+                    }
+                    userProfile.setProfileData(profileData);
+
+
+                }
+                else {
+                    UserProfile.ProfileData profileData1 = new UserProfile.ProfileData();
+                    userProfile.setProfileData(profileData1);
+                }
+
+                setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
+                    @Override
+                    public void onTaskSuccessful() {
+
+                    }
+                });
+
+            }
+
+        };
     }
 
 

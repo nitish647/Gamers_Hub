@@ -1,7 +1,6 @@
 package com.nitish.gamershub.Adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,13 +8,11 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.nitish.gamershub.Activities.CategoryActivity;
-import com.nitish.gamershub.Activities.GameDetailActivity2;
 import com.nitish.gamershub.Activities.HomeActivity;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.Pojo.AllGamesItemsSerializable;
@@ -73,7 +70,7 @@ public class NewAndPopularGamesAdapter  extends RecyclerView.Adapter<NewAndPopul
                     ((HomeActivity)context).startIntent();
                 }
                 else {
-                    ((CategoryActivity)context).startIntent();
+                    ((CategoryActivity)context).categoryItemClick();
                 }
 
             }

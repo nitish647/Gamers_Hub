@@ -1,10 +1,16 @@
 package com.nitish.gamershub.Utils;
 
+import com.nitish.gamershub.Pojo.FireBase.AdViewedStats;
+
 public class ConstantsHelper {
     public static  String gameDataObject = "gameDataObject";
     public  static boolean ShowAds = true;
     public static String UserMail ="UserMail";
     public static String GamersHub_ParentCollection ="Gamers Hub";
+
+    public static String GamersHub_DATA ="Gamers Hub Data";
+
+
     public static  String FavouriteList = "FavouriteList";
     public static  String MainGamesList = "MainGamesList";
     public static  String NewGamesList = "NewGamesList";
@@ -14,7 +20,15 @@ public class ConstantsHelper {
     // general reward coins to reward after a game
     public static  String GeneralRewardCoins = "GeneralRewardCoins";
 
+    public static  String DailyBonus = "DailyBonus";
+    public static  String WatchViewReward = "WatchViewReward";
+    public static  String UserProfileGlobal = "userProfileGlobal";
+    public static  String GamersHubDataGlobal = "GamersHubDataGlobal";
+    public static  String AdViewedStatsGlobal = "AdViewedStatsGlobal";
 
+    public static  String From = "From";
+
+    public static String timerHourMinuteSecond ="00:00:00";
     public static enum ConnectionSignalStatus{
         NO_CONNECTIVITY,GOOD_STRENGTH,FAIR_STRENGTH,POOR_STRENGTH
 

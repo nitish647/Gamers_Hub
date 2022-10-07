@@ -4,14 +4,17 @@ import android.util.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public  class DateTimeHelper {
 
   public   static String time_7_am = "07:00:00";
   public static String simpleDateFormatPattern ="yyyy-MM-dd HH:mm:ss";
-    public static DatePojo datePojo()
+    public static DatePojo getDatePojo()
     {
 
 
@@ -20,10 +23,10 @@ public  class DateTimeHelper {
 
         DatePojo datePojo = new DatePojo();
 
-        datePojo.setGetCurrentDateString(new SimpleDateFormat(simpleDateFormatPattern).format(new Date()));
 
 
-
+        datePojo.setGetCurrentDateString(getSimpleDateFormat().format(new Date()));
+        datePojo.setGetCurrentDate(new Date());
 
 
         return datePojo;
@@ -31,10 +34,23 @@ public  class DateTimeHelper {
 
 
     }
+    public static  SimpleDateFormat getSimpleDateFormat()
+    {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(simpleDateFormatPattern);
+        simpleDateFormat.setTimeZone(TimeZone.getDefault());
+        return simpleDateFormat;
+
+    }
+
+    public float convertSecondsToMinute(int seconds)
+    {
+
+        return  (float) seconds/60;
+    }
     public static String  convertDateToString(Date date)
     {
 
-        return  DateTimeHelper.datePojo().getSimpleDateFormat().format(date);
+        return  DateTimeHelper.getDatePojo().getSimpleDateFormat().format(date);
     }
     public static Date convertStringIntoDate(String dateString)
     {

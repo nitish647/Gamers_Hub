@@ -4,39 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/frameLayout"
     tools:context=".Activities.GameDetailActivity2">
 
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <Button
-            android:visibility="gone"
-            android:id="@+id/checkVisibilityButton"
-            android:text="Check Visibility"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </Button>
-
-        <fragment
 
 
-            android:id="@+id/gameDescFrag"
-            class ="com.nitish.gamershub.Fragments.GameDetailsFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </fragment>
-
-        <fragment
-
-            android:id="@+id/gamePlayFrag"
-            class ="com.nitish.gamershub.Fragments.GamePlayFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </fragment>
-    </LinearLayout>
 </FrameLayout>

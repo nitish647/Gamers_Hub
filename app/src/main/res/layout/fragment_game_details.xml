@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout>
+
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -167,10 +171,10 @@
             android:paddingVertical="10dp">
 
             <TextView
-
+                android:id="@+id/gamePlayTimeTextview"
                 style="@style/contentTextview"
                 android:textSize="15sp"
-                android:text="Play this game for 30 seconds to get rewarded"
+                android:text="Play this game for 60 seconds to get rewarded"
                 android:textColor="@android:color/white">
 
             </TextView>
@@ -186,3 +190,4 @@
         </LinearLayout>
     </RelativeLayout>
 </RelativeLayout>
+</layout>

@@ -37,7 +37,7 @@
             android:layout_marginStart="5dp"
             android:text="₹ 50 Paytm"
             android:textColor="#08bbef"
-            android:textSize="25sp"
+            android:textSize="20sp"
             android:textStyle="bold">
 
         </TextView>

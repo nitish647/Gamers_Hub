@@ -99,7 +99,7 @@ public class ProfileFragment extends Fragment {
     public void onResume() {
 
 
-        binding.redeemCoinsTextview.setText(userProfile.profileData.gameCoins+" coins");
+        binding.redeemCoinsTextview.setText( parentHomeActivity.getUserProfileGlobalData().profileData.getGameCoins() +" coins");
 
         super.onResume();
     }
@@ -116,7 +116,7 @@ public class ProfileFragment extends Fragment {
 
         }
 
-        binding.redeemCoinsTextview.setText(userProfile.profileData.gameCoins+" coins");
+        binding.redeemCoinsTextview.setText( parentHomeActivity.getUserProfileGlobalData().profileData.getGameCoins() +" coins");
 
 
     }
@@ -162,4 +162,6 @@ public class ProfileFragment extends Fragment {
 
 
     }
+
+
 }

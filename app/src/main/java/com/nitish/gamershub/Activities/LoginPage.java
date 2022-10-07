@@ -9,7 +9,6 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,8 +21,6 @@ import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -36,7 +33,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.nitish.gamershub.Pojo.FireBase.UserProfile;
 import com.nitish.gamershub.R;
-import com.nitish.gamershub.Utils.ConstantsHelper;
+import com.nitish.gamershub.Utils.AppHelper;
 import com.nitish.gamershub.Utils.DateTimeHelper;
 import com.nitish.gamershub.Utils.DeviceHelper;
 
@@ -126,7 +123,15 @@ public class LoginPage extends BasicActivity    implements ActivityResultCallbac
             // Successfully signed in
 //            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if(googleSignInAccountUser !=null && googleSignInAccountUser.getEmail()!=null) {
+                AppHelper.saveGoogleSignInAccountUser(googleSignInAccountUser);
 
+
+                getUserProfileGlobal(new GetUserProfileDataListener() {
+                    @Override
+                    public void onTaskSuccessful(UserProfile userProfile) {
+
+                    }
+                });
                 firestoreDb.collection(GamersHub_ParentCollection).document(googleSignInAccountUser.getEmail()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -141,10 +146,11 @@ public class LoginPage extends BasicActivity    implements ActivityResultCallbac
 
                                 UserProfile userProfile =  documentSnapshot.toObject(UserProfile.class);
 
+
                                 UserProfile.ProfileData profileData = userProfile.getProfileData();
 
 
-                                profileData.setLastLogin(DateTimeHelper.datePojo().getGetCurrentDateString());
+                                profileData.setLastLogin(DateTimeHelper.getDatePojo().getGetCurrentDateString());
 
 
                                 userProfile.setProfileData(profileData);
@@ -159,11 +165,12 @@ public class LoginPage extends BasicActivity    implements ActivityResultCallbac
                                         Toast.makeText(LoginPage.this, "Welcome Back", Toast.LENGTH_SHORT).show();
 
                                         Paper.book().write(UserInfo,userProfile);
+
                                         Paper.book().write(UserMail, googleSignInAccountUser.getEmail());
-                                        Paper.book().write(GoogleSignInAccountUser,googleSignInAccountUser);
-                                        Intent intent = new Intent(LoginPage.this, HomeActivity.class);
-                                        startActivity(intent);
-                                        finish();
+
+
+                                        startIntentForHome();
+
                                     }
                                 });
                             } else {
@@ -178,7 +185,7 @@ public class LoginPage extends BasicActivity    implements ActivityResultCallbac
 
 
                                 // Find todays date
-                                profileData.setLastLogin(DateTimeHelper.datePojo().getGetCurrentDateString());
+                                profileData.setLastLogin(DateTimeHelper.getDatePojo().getGetCurrentDateString());
                                 profileData.setCreatedAt(googleSignInAccountUser.getDisplayName());
                                 profileData.setDeviceInfo(DeviceHelper.getDeviceNameAndVersion());
                                 profileData.setEmail(googleSignInAccountUser.getEmail());
@@ -193,9 +200,7 @@ public class LoginPage extends BasicActivity    implements ActivityResultCallbac
                                         Paper.book().write(UserMail, googleSignInAccountUser.getEmail());
                                         Paper.book().write(UserInfo,userProfile);
                                         Paper.book().write(GoogleSignInAccountUser,googleSignInAccountUser);
-                                        Intent intent = new Intent(LoginPage.this, HomeActivity.class);
-                                        startActivity(intent);
-                                        finish();
+                                        startIntentForHome();
                                     }
                                 });
 
@@ -223,6 +228,13 @@ public class LoginPage extends BasicActivity    implements ActivityResultCallbac
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.w("pResponse", "signInResult:failed code=" + e.getStatusCode());
         }
+    }
+    public void startIntentForHome()
+    {
+
+
+        startActivityIntent(LoginPage.this, HomeActivity.class);
+        finish();
     }
     private void signIn() {
         Intent signInIntent = getGoogleSignInClient().getSignInIntent();
@@ -253,7 +265,7 @@ public class LoginPage extends BasicActivity    implements ActivityResultCallbac
                                 UserProfile.ProfileData profileData = userProfile.profileData;
 
 
-                                profileData.setLastLogin(DateTimeHelper.datePojo().getGetCurrentDateString());
+                                profileData.setLastLogin(DateTimeHelper.getDatePojo().getGetCurrentDateString());
 
 
                                 userProfile.setProfileData(profileData);
@@ -286,7 +298,7 @@ public class LoginPage extends BasicActivity    implements ActivityResultCallbac
 
 
                                // Find todays date
-                                profileData.setLastLogin(DateTimeHelper.datePojo().getGetCurrentDateString());
+                                profileData.setLastLogin(DateTimeHelper.getDatePojo().getGetCurrentDateString());
                                 profileData.setCreatedAt(user.getDisplayName());
                                 profileData.setDeviceInfo(DeviceHelper.getDeviceNameAndVersion());
                                 profileData.setEmail(user.getEmail());

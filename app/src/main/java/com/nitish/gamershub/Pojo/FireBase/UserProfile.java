@@ -1,13 +1,21 @@
 package com.nitish.gamershub.Pojo.FireBase;
 
+import static com.nitish.gamershub.Utils.ConstantsHelper.GoogleSignInAccountUser;
+
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.nitish.gamershub.Utils.AppHelper;
+import com.nitish.gamershub.Utils.DateTimeHelper;
+import com.nitish.gamershub.Utils.DeviceHelper;
+
+import io.paperdb.Paper;
+
 public class UserProfile {
 
 
     public ProfileData profileData;
     public TimerStatus timerStatus;
     public UserTransactions userTransactions;
-
-
+    public AdViewedStats adViewedStats;
 
 
 
@@ -19,6 +27,13 @@ public class UserProfile {
 
     }
 
+    public AdViewedStats getAdViewedStats() {
+        return adViewedStats;
+    }
+
+    public void setAdViewedStats(AdViewedStats adViewedStats) {
+        this.adViewedStats = adViewedStats;
+    }
 
     public UserTransactions getUserTransactions() {
         return userTransactions;
@@ -61,16 +76,23 @@ public class UserProfile {
 
 
     public static class ProfileData {
-        public String name ="";
-        public String email="";
+
+        public String name =AppHelper.getGoogleSignInAccountUser().getDisplayName();;
+        public String email= AppHelper.getGoogleSignInAccountUser().getEmail();
         public int gameCoins = 0;
 
-        public String lastLogin="";
-        public String lastOpened="";
-        public String deviceInfo="";
-        public String createdAt="";
-        public ProfileData() {
+        public String lastLogin=DateTimeHelper.getDatePojo().getGetCurrentDateString();
+        public String lastOpened=DateTimeHelper.getDatePojo().getGetCurrentDateString();
+        public String deviceInfo= DeviceHelper.getDeviceNameAndVersion();
+        public String createdAt= DateTimeHelper.getDatePojo().getGetCurrentDateString();
 
+        public  ProfileData() {
+
+        }
+
+        public static ProfileData  getProfileData()
+        {
+            return new ProfileData();
         }
 
 

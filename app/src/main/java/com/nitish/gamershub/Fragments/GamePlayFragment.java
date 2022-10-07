@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.nitish.gamershub.Activities.GameDetailActivity2;
+import com.nitish.gamershub.Activities.HomeActivity;
 import com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter;
 import com.nitish.gamershub.Helper_class;
 import com.nitish.gamershub.Pojo.AllGamesItems;
@@ -65,6 +66,15 @@ public     String timerMinuteSecond="00:00";
 
     private boolean wasRunning;
     GameDetailActivity2 parentActivity;
+
+
+    public static GamePlayFragment newInstance() {
+        GamePlayFragment fragment = new GamePlayFragment();
+
+        return fragment;
+    }
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -75,7 +85,6 @@ public     String timerMinuteSecond="00:00";
         dismissButton = view.findViewById(R.id.dismissButton);
         parentActivity = (GameDetailActivity2) view.getContext();
         loadGame();
-
         allGamesItems = NewAndPopularGamesAdapter.SelectedGameObject;
 
 

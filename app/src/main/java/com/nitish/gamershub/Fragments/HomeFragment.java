@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -50,7 +51,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 import com.nitish.gamershub.Activities.HomeActivity;
@@ -59,9 +62,11 @@ import com.nitish.gamershub.Activities.Splash_Screen;
 import com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.Pojo.Categories;
+import com.nitish.gamershub.Pojo.FireBase.UserProfile;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.NotificationHelper;
 import com.nitish.gamershub.Utils.ProgressBarHelper;
+import com.nitish.gamershub.Utils.UserOperations;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -148,11 +153,6 @@ public class HomeFragment extends Fragment {
     ProgressDialog progressDialog;
 
 
-    // firebase auth
-    private FirebaseAuth mAuth;
-
-    FirebaseFirestore firestoreDb;
-
     BottomNavigationView bottomNavigationView;
     
     
@@ -191,9 +191,7 @@ public class HomeFragment extends Fragment {
         requestQueue = Volley.newRequestQueue(view.getContext());
         allGamesRecyclerView = view.findViewById(R.id.allGamesRecyclerView);
         // Initialize Firebase Auth
-        mAuth = FirebaseAuth.getInstance();
 
-        firestoreDb = FirebaseFirestore.getInstance();
         logoutButton= view.findViewById(R.id.logoutButton);
         searchView = view.findViewById(R.id.searchView);
         progressDialog = ProgressBarHelper.setProgressBarDialog(view.getContext());
@@ -208,10 +206,9 @@ public class HomeFragment extends Fragment {
         categoriesList = new ArrayList<>();
         mainGamesArrayList = new ArrayList<>();
 
-        FirebaseApp.initializeApp(view.getContext());
         NotificationHelper.generateFcmToken(view.getContext());
         setOnClickListens();
-        getGamersHubData();
+
         setSearchView();
         bannerImagesApi();
 
@@ -251,94 +248,9 @@ public class HomeFragment extends Fragment {
     }
 
 
-    public void getGamersHubData()
-    {
-
-        firestoreDb.collection("Gamers Hub Data").document("rewardCoins"+"").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful())
-                {
-                    DocumentSnapshot documentSnapshot = task.getResult();
-
-                    if(documentSnapshot.exists())
-                    {
-
-                        HashMap<String,Object> hashMap=   (HashMap<String, Object>) documentSnapshot.getData();
-
-                        HashMap<String,Object> rewardCoinsHashmap=   (HashMap<String, Object>) hashMap.get("rewardCoinsList");
-
-                        Object generalCoins =  rewardCoinsHashmap.get(rewardCoinsHashmap.keySet().toArray()[0]);
-
-                        int intGeneralCoins  = Integer.parseInt( generalCoins+"");
-                        Paper.book().write(GeneralRewardCoins,generalCoins);
-
-
-                    }
-                    else {
-                        Toast.makeText(view.getContext(), "document does not exist", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(view.getContext(), "couldn't get the documents ", Toast.LENGTH_SHORT).show();
-            }
-        });
 
 
 
-    }
-
-    public void setUpViewPager(String allGamesListJsonArray, String popularGamesJsonArray, String newGamesJsonArray)
-    {
-        //sending the titles in bundle
-        Bundle bundle = new Bundle();
-        Bundle bundle2 = new Bundle();
-        //   Bundle bundle3 = new Bundle();
-
-        bundle.putString("data", allGamesListJsonArray);
-        bundle.putString("title","All Games");
-        bundle.putString("masterData",Paper.book().read(Splash_Screen.MaterData)+"");
-
-        bundle2.putString("data", newGamesJsonArray);
-        bundle2.putString("title","Favourites");
-        bundle2.putString("masterData",Paper.book().read(Splash_Screen.MaterData)+"");
-
-//
-//        bundle3.putString("data", newGamesJsonArray);
-//        bundle3.putString("title","Favourites");
-//       bundle3.putString("masterData",Paper.book().read(Splash_Screen.MaterData)+"");
-//
-
-        // when there is no fragment added in viewpager adapter then only add the fragment
-
-
-    }
-
-
-
-    // post method
-    public void parseAllGamesData( JSONArray allGamesJsonArray)
-    {
-
-
-        try {
-            JSONObject masterObject =  allGamesJsonArray.getJSONObject(0);
-
-            JSONArray mainObject  = masterObject.getJSONArray("main");
-
-
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-
-    }
     public void setSearchView()
     {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -473,35 +385,7 @@ public class HomeFragment extends Fragment {
 
         requestQueue.add(jsonObjectRequest);
     }
-    public void setUpBannerAd()
-    {
 
-        AdRequest adRequest = new AdRequest.Builder().build();
-        googleBannerAdView.loadAd(adRequest);
-
-    }
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        UserOperations.getFirestoreUser().addSnapshotListener(parentHomeActivity, new EventListener<DocumentSnapshot>() {
-//            @Override
-//            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-//                if(error!=null)
-//                {
-//                    Toast.makeText(view.getContext(), "error while getting doc 211", Toast.LENGTH_SHORT).show();
-//                }
-//                if(value!=null && value.exists())
-//                {
-//                    UserProfile  userProfile=   value.toObject(UserProfile.class);
-//
-//                    UserProfile.ProfileData profileData = userProfile.profileData;
-//
-//                    totalPointsTextview.setText(profileData.gameCoins +"");
-//                }
-//            }
-//        });
-//
-//    }
 
     @Override
     public void onPause() {
@@ -525,90 +409,10 @@ public class HomeFragment extends Fragment {
 
 
 
-    public void logOutDialog()
-    {
 
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(view.getContext());
-        android.app.AlertDialog deleteDialog = builder.create();
-
-
-        builder.setMessage("Do you want to logout?");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-                dialogInterface.dismiss();
-
-                progressDialog.show();
-
-                AuthUI.getInstance()
-                        .signOut(view.getContext())
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            public void onComplete(@NonNull Task<Void> task) {
-                                // ...
-                                progressDialog.dismiss();
-                                startActivity(new Intent(view.getContext(), LoginPage.class));
-                                parentHomeActivity.finish();
-
-                            }
-                        });
-
-
-            }
-        });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        });
-
-        builder.show();
-
-    }
-    public void setHeader()
-    {
-
-
-        TextView profileName = view.findViewById(R.id.profileName);
-        CircleImageView profileIcon =view.findViewById(R.id.profileIcon);
-
-        //   profileName.setText("hahahhaha");
-
-        if(mAuth!=null &&  mAuth.getCurrentUser()!=null) {
-
-
-            profileName.setText(mAuth.getCurrentUser().getDisplayName());
-            Picasso.get().load(mAuth.getCurrentUser().getPhotoUrl()).into(profileIcon);
-        }
-        else {
-            Toast.makeText(view.getContext(), "current user is null", Toast.LENGTH_SHORT).show();
-        }
-
-
-
-
-
-    }
     public void setViews()
     {
         bottomNavigationView= view.findViewById(R.id.bottomNavigationView);
     }
-    public void copyCollection()
-    {
 
-        firestoreDb.collection(GamersHub_ParentCollection).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful())
-                {
-                    List<DocumentSnapshot> documentSnapshotList =  task.getResult().getDocuments();
-
-                    firestoreDb.collection(GamersHub_ParentCollection+"2");
-                }
-            }
-        });
-
-
-    }
 }

@@ -1,13 +1,21 @@
 package com.nitish.gamershub.Activities;
 
+import static com.nitish.gamershub.Utils.ConstantsHelper.AdViewedStatsGlobal;
+import static com.nitish.gamershub.Utils.ConstantsHelper.From;
+import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHubDataGlobal;
+import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHub_DATA;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHub_ParentCollection;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GoogleSignInAccountUser;
 import static com.nitish.gamershub.Utils.ConstantsHelper.UserMail;
+import static com.nitish.gamershub.Utils.ConstantsHelper.UserProfileGlobal;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,14 +46,22 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.SetOptions;
+import com.nitish.gamershub.Fragments.BottomSheetDialog;
 import com.nitish.gamershub.Interface.AdmobInterstitialAdListener;
+import com.nitish.gamershub.Pojo.FireBase.AdViewedStats;
+import com.nitish.gamershub.Pojo.FireBase.GamersHubData;
 import com.nitish.gamershub.Pojo.FireBase.TimerStatus;
 import com.nitish.gamershub.Pojo.FireBase.UserProfile;
+import com.nitish.gamershub.Pojo.FireBase.UserTransactions;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.ConstantsHelper;
+import com.nitish.gamershub.Utils.DataPassingHelper;
 import com.nitish.gamershub.Utils.ProgressBarHelper;
+import com.nitish.gamershub.Utils.UserOperations;
 import com.nitish.gamershub.databinding.GameRewardDialogBinding;
 import com.nitish.gamershub.databinding.ShowWebviewDialogBinding;
 
@@ -57,13 +73,19 @@ abstract class BasicActivity extends AppCompatActivity {
     // google ads
     private InterstitialAd interstitialAd;
     private RewardedAd rewardedAd;
-    boolean isLoading;
+   static boolean isLoading;
 
 
 
+  static boolean isHomeActivityDestroyed =false;
+   BottomSheetDialog bottomSheetDialog;
     ProgressDialog progressDialog;
     GoogleSignInOptions gso;
     AlertDialog logOutDialog;
+ private    UserProfile userProfileGlobal;
+ private GamersHubData gamersHubDataGlobal;
+
+   static   boolean bottomSheetDialogShown=false;
     @Nullable
     @Override
 
@@ -73,11 +95,25 @@ abstract class BasicActivity extends AppCompatActivity {
         Paper.init(this);
          progressDialog = ProgressBarHelper.setProgressBarDialog(BasicActivity.this);
         logOutDialog2();
-
+        loadInterstitialAdNew();
         loadRewardedAd2();
         getGoogleSignInOptions();
 
 
+    }
+
+    //----------------- Intent------------///
+
+    public void startActivityIntent(Activity fromActivity , Class toActivity)
+    {
+        Intent intent = new Intent(this,toActivity);
+        intent.putExtra(From, fromActivity.getClass().getSimpleName());
+        startActivity(intent);
+    }
+    public void startIntentWithFlags(Intent intent ,Activity fromActivity)
+    {
+        intent.putExtra(From,fromActivity.getClass().getSimpleName());
+        startActivity(intent);
     }
 
     protected  void getGoogleSignInOptions(){
@@ -93,8 +129,53 @@ abstract class BasicActivity extends AppCompatActivity {
 
 
 
+    public void getGamersHubData(GetUserProfileDataListener getUserDataListener)
+    {
 
-    public void getUserProfile(GetUserProfileDataListener getUserDataListener)
+
+        getFirebaseGamersHubData().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                dismissProgressBar();
+
+                if(task.isSuccessful())
+                {
+                    DocumentSnapshot documentSnapshot = task.getResult();
+
+                    if(documentSnapshot.exists())
+                    {
+
+
+
+                        if(progressDialog.isShowing())
+                            dismissProgressBar();
+
+
+                        GamersHubData gamersHubData =   documentSnapshot.toObject(GamersHubData.class);
+                        saveGamersHubDataGlobal(gamersHubData);
+
+
+
+
+                    }
+                    else {
+                        Toast.makeText(BasicActivity.this, "document does not exist", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+                dismissProgressBar();
+                Toast.makeText(BasicActivity.this, "couldn't get the documents ", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
+    }
+    public void getUserProfileGlobal(GetUserProfileDataListener getUserDataListener)
     {
 
 
@@ -113,9 +194,14 @@ abstract class BasicActivity extends AppCompatActivity {
 
 
 
+                        if(progressDialog.isShowing())
+                            dismissProgressBar();
+
 
                         UserProfile userProfile =   documentSnapshot.toObject(UserProfile.class);
 
+
+                       saveUserProfileGlobal(userProfile);
                         getUserDataListener.onTaskSuccessful(userProfile);
 
 
@@ -139,39 +225,91 @@ abstract class BasicActivity extends AppCompatActivity {
 
 
     }
-
-
-    public void setUserProfile(UserProfile userProfile, SetUserDataListener setUserDataListener)
+    public interface GetUserProfileDataListener
     {
+        public void onTaskSuccessful(UserProfile userProfile);
+    }
+
+    public UserProfile updateUserWaller2(int amount, SetUserDataOnCompleteListener setUserDataOnCompleteListener)
+    {
+
+        UserProfile userProfile = getUserProfileGlobalData();
+        UserProfile.ProfileData profileData = userProfile.getProfileData();
+        int gameCoins =   profileData.getGameCoins();
+        int totalCoins = gameCoins+amount;
+        profileData.setGameCoins(totalCoins);
+        userProfile.setProfileData(profileData);
+
+
+
+
+        showProgressBar();
+        setUserProfile(userProfile, setUserDataOnCompleteListener);
+
+        return  userProfile;
+    }
+
+    public UserProfile updateUserWalletForTransaction(int amount, SetUserDataOnCompleteListener setUserDataOnCompleteListener , UserTransactions userTransactions)
+    {
+
+        UserProfile userProfile = getUserProfileGlobalData();
+        UserProfile.ProfileData profileData = userProfile.getProfileData();
+        int gameCoins =   profileData.getGameCoins();
+        int totalCoins = gameCoins+amount;
+        profileData.setGameCoins(totalCoins);
+        userProfile.setProfileData(profileData);
+
+        userProfile.setUserTransactions(userTransactions);
+
+
+
+        showProgressBar();
+        setUserProfile(userProfile, setUserDataOnCompleteListener);
+
+        return  userProfile;
+    }
+
+    public void setUserProfile(UserProfile userProfile, SetUserDataOnCompleteListener setUserDataOnCompleteListener)
+    {
+
         getFirebaseUser().set(userProfile, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful())
                 {
 
+                    if(progressDialog.isShowing())
+                    {
+                        progressDialog.dismiss();
+                    }
 
-                    setUserDataListener.onTaskSuccessful();
+                   saveUserProfileGlobal(userProfile);
+
+                    setUserDataOnCompleteListener.onTaskSuccessful();
 
                 }
             }
         });
     }
 
-    public interface SetUserDataListener
+
+    public interface SetUserDataOnCompleteListener
     {
         public void onTaskSuccessful();
     }
 
-    public interface GetUserProfileDataListener
-    {
-        public void onTaskSuccessful(UserProfile userProfile);
-    }
+
 
 
 
     public DocumentReference getFirebaseUser()
     {
        return FirebaseFirestore.getInstance().collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail)+"");
+    }
+
+    public DocumentReference getFirebaseGamersHubData()
+    {
+        return FirebaseFirestore.getInstance().collection(GamersHub_DATA).document("gamersHubData");
     }
 
 
@@ -195,7 +333,7 @@ abstract class BasicActivity extends AppCompatActivity {
 
         addRewardDialog.show();
 
-        gameRewardDialogBinding.earnedCoinsTextview.setText("Redeem request generated for  ₹"+amount);
+        gameRewardDialogBinding.earnedCoinsTextview.setText(getString(R.string.earned_reward_message)+ " "+amount+" coins");
 
         gameRewardDialogBinding.gameCoinsImage.setAnimation(R.raw.redeem_pocket_money);
 
@@ -208,12 +346,64 @@ abstract class BasicActivity extends AppCompatActivity {
 
 
     }
-    public abstract class OnDialogLister
+    public void showRewardDialog(String message)
     {
+        GameRewardDialogBinding gameRewardDialogBinding;
+        LayoutInflater factory = LayoutInflater.from(BasicActivity.this);
 
-        public abstract void onDialogDismissLister();
+        gameRewardDialogBinding =  DataBindingUtil.inflate(factory,R.layout.game_reward_dialog,null,false);
+
+        final AlertDialog addRewardDialog = new AlertDialog.Builder(BasicActivity.this).create();
+
+
+        addRewardDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
+        addRewardDialog.setView(gameRewardDialogBinding.getRoot());
+
+        addRewardDialog.show();
+
+        gameRewardDialogBinding.earnedCoinsTextview.setText(message);
+
+        gameRewardDialogBinding.gameCoinsImage.setAnimation(R.raw.redeem_pocket_money);
+
+        gameRewardDialogBinding.cancelImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addRewardDialog.dismiss();
+            }
+        });
+
+
     }
+    public void showRewardDialog(int amount,int rawAnimation)
+    {
+        GameRewardDialogBinding gameRewardDialogBinding;
+        LayoutInflater factory = LayoutInflater.from(BasicActivity.this);
 
+        gameRewardDialogBinding =  DataBindingUtil.inflate(factory,R.layout.game_reward_dialog,null,false);
+
+        final AlertDialog addRewardDialog = new AlertDialog.Builder(BasicActivity.this).create();
+
+
+        addRewardDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
+        addRewardDialog.setView(gameRewardDialogBinding.getRoot());
+
+        addRewardDialog.show();
+
+        gameRewardDialogBinding.earnedCoinsTextview.setText(getString(R.string.earned_reward_message)+ " "+amount+" coins");
+
+        gameRewardDialogBinding.gameCoinsImage.setAnimation(rawAnimation);
+
+        gameRewardDialogBinding.gameCoinsImage.setAnimation(R.raw.redeem_pocket_money);
+
+        gameRewardDialogBinding.cancelImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                addRewardDialog.dismiss();
+            }
+        });
+
+
+    }
     public void showRewardDialog(String message ,int rawAnimation ,OnDialogLister onDialogLister)
     {
         GameRewardDialogBinding gameRewardDialogBinding;
@@ -245,6 +435,12 @@ abstract class BasicActivity extends AppCompatActivity {
 
 
     }
+    public abstract class OnDialogLister
+    {
+
+        public abstract void onDialogDismissLister();
+    }
+
 
 
     public void showWebviewDialog()
@@ -350,7 +546,7 @@ abstract class BasicActivity extends AppCompatActivity {
                         public void onAdShowedFullScreenContent() {
                             // Called when fullscreen content is shown.
                             Log.d("gInterstitialAd", "The ad was shown.");
-
+                            incrementInterstitialAdAdCount();
                             interstitialAdListener.onAdShown();
                         }
                     });
@@ -361,7 +557,7 @@ abstract class BasicActivity extends AppCompatActivity {
             interstitialAdListener.onAdLoading();
         }
     }
-    public void loadInterstitialAdNew() {
+    public InterstitialAd loadInterstitialAdNew() {
 
 
 
@@ -395,73 +591,62 @@ abstract class BasicActivity extends AppCompatActivity {
                         Log.d("gInterstitialAd","Ad loading failed : "+error);
                     }
                 });
+
+        return interstitialAd;
     }
+    public void incrementInterstitialAdAdCount()
+    {
 
-    public void loadInterstitialAd2(AdmobInterstitialAdListener interstitialAdListener) {
+        AdViewedStats adViewedStats;
 
+        if(getAdViewedStatsGlobal()==null)
+        {
+            UserProfile userProfile =getUserProfileGlobalData();
+            adViewedStats = userProfile.getAdViewedStats()   ;
+        }
+        else {
+            adViewedStats = getAdViewedStatsGlobal();
+        }
+        int interstitialAdCount = adViewedStats.getAdMobInterstitialAdViewed();
+         interstitialAdCount++;
 
-        AdRequest adRequest = new AdRequest.Builder().build();
-        InterstitialAd.load(
-                this,
-                getString(R.string.admob_inter),
-                adRequest,
-                new InterstitialAdLoadCallback() {
-                    @Override
-                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                        // The mInterstitialAd reference will be null until
-                        // an ad is loaded.
-                        BasicActivity.this.interstitialAd = interstitialAd;
-                        Log.i("gInterstitialAd", "onAdLoaded");
+        adViewedStats.setAdMobInterstitialAdViewed(interstitialAdCount);
+        saveAdViewedStatsGlobal(adViewedStats);
 
-                        interstitialAd.setFullScreenContentCallback(
-                                new FullScreenContentCallback() {
-                                    @Override
-                                    public void onAdDismissedFullScreenContent() {
-                                        // Called when fullscreen content is dismissed.
-                                        // Make sure to set your reference to null so you don't
-                                        // show it a second time.
-                                        BasicActivity.this.interstitialAd = null;
+//        userProfile.setAdViewedStats(adViewedStats);
+//
+//        setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
+//            @Override
+//            public void onTaskSuccessful() {
+//
+//            }
+//        });
 
-                                        interstitialAdListener.onAdDismissed();
-
-
-
-                                    }
-
-                                    @Override
-                                    public void onAdFailedToShowFullScreenContent(AdError adError) {
-                                        // Called when fullscreen content failed to show.
-                                        // Make sure to set your reference to null so you don't
-                                        // show it a second time.
-                                        BasicActivity.this.interstitialAd = null;
-                                        Log.d("gInterstitialAd", "The ad failed to show.");
-                                    }
-
-                                    @Override
-                                    public void onAdShowedFullScreenContent() {
-                                        interstitialAdListener.onAdShown();
-                                        // Called when fullscreen content is shown.
-                                        Log.d("gInterstitialAd", "The ad was shown.");
-                                    }
-                                });
-                    }
-
-
-                    @Override
-                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        // Handle the error
-                        Log.i("gInterstitialAd", "ad loading failed : "+loadAdError.getMessage());
-                        interstitialAd = null;
-
-                        String error = String.format(
-                                "domain: %s, code: %d, message: %s",
-                                loadAdError.getDomain(), loadAdError.getCode(), loadAdError.getMessage());
-
-                        Log.d("gInterstitialAd","Ad loading failed : "+error);
-                    }
-                });
     }
+    public void logOutDialog()
+    {
 
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(BasicActivity.this);
+        android.app.AlertDialog deleteDialog = builder.create();
+
+
+        builder.setMessage("Do you want to logout?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                googleSignOut();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        builder.show();
+
+    }
 
     public void loadRewardedAd2() {
         if (rewardedAd == null) {
@@ -505,6 +690,7 @@ abstract class BasicActivity extends AppCompatActivity {
                     @Override
                     public void onAdShowedFullScreenContent() {
                         // Called when ad is shown.
+
                         Log.d("rewardedAd", "onAdShowedFullScreenContent");
 
 
@@ -540,7 +726,7 @@ abstract class BasicActivity extends AppCompatActivity {
                     @Override
                     public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
                         // Handle the reward.
-
+                        incrementRewardAdCount();
                         rewardedAdListener.onRewardGrantedListener();
 
 
@@ -557,6 +743,37 @@ abstract class BasicActivity extends AppCompatActivity {
 
         public void onRewardGrantedListener();
 
+
+    }
+
+    public void incrementRewardAdCount()
+    {
+
+        AdViewedStats adViewedStats;
+
+        if(getAdViewedStatsGlobal()==null)
+        {
+            UserProfile userProfile =getUserProfileGlobalData();
+            adViewedStats = userProfile.getAdViewedStats()   ;
+        }
+        else {
+            adViewedStats = getAdViewedStatsGlobal();
+        }
+   int rewardAdCount = adViewedStats.getAdMobRewardedAdViewed();
+       rewardAdCount++;
+
+      adViewedStats.setAdMobRewardedAdViewed(rewardAdCount);
+        saveAdViewedStatsGlobal(adViewedStats);
+
+
+//      userProfile.setAdViewedStats(adViewedStats);
+//
+//      setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
+//          @Override
+//          public void onTaskSuccessful() {
+//
+//          }
+//      });
 
     }
     public interface PaytmUpiDialogListener{
@@ -606,5 +823,153 @@ abstract class BasicActivity extends AppCompatActivity {
                         finish();
                     }
                 });
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        UserOperations.getFirestoreUser().addSnapshotListener(BasicActivity.this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                if(error!=null)
+                {
+                    Toast.makeText(BasicActivity.this, "error while getting doc 211", Toast.LENGTH_SHORT).show();
+                }
+                if(value!=null && value.exists())
+                {
+                    UserProfile  userProfile=   value.toObject(UserProfile.class);
+
+                    if(userProfile!=null) {
+                        saveUserProfileGlobal(userProfile);
+
+                        
+                    }
+
+                }
+            }
+        });
+
+    }
+
+
+    public void saveGamersHubDataGlobal(GamersHubData gamersHubData)
+    {
+
+          gamersHubDataGlobal=gamersHubData;
+        Paper.book().write(GamersHubDataGlobal,gamersHubDataGlobal);
+
+
+
+    }
+    public GamersHubData getGamersHubDataGlobal()
+    {
+        return (GamersHubData) Paper.book().read(GamersHubDataGlobal);
+    }
+
+
+    public void saveAdViewedStatsGlobal(AdViewedStats adViewedStats)
+    {
+        Paper.book().write(AdViewedStatsGlobal,adViewedStats);
+
+    }
+    public AdViewedStats getAdViewedStatsGlobal()
+    {
+       return (AdViewedStats) Paper.book().read(AdViewedStatsGlobal);
+
+    }
+
+    public void saveUserProfileGlobal(UserProfile userProfile)
+    {
+        userProfileGlobal = userProfile;
+        Paper.book().write(UserProfileGlobal,userProfileGlobal);
+
+
+    }
+    public UserProfile getUserProfileGlobalData()
+    {
+
+        return (UserProfile)Paper.book().read(UserProfileGlobal);
+    }
+    public void showBottomSheet()
+    {
+
+        // will show the bottom sheet only once the app is started
+
+        if(isHomeActivityDestroyed)
+            return;
+
+         if (bottomSheetDialog == null) {
+
+                    String timerDataString = DataPassingHelper.ConvertObjectToString(userProfileGlobal.getTimerStatus());
+
+                    bottomSheetDialog = BottomSheetDialog.newInstance(timerDataString);
+                }
+
+
+                if (bottomSheetDialogShown) {
+                    if (bottomSheetDialog.isAdded())
+                        bottomSheetDialog.dismiss();
+
+
+                    bottomSheetDialog.show(getSupportFragmentManager(), "");
+                }
+
+
+                bottomSheetDialogShown = true;
+
+            }
+
+
+
+    public void hideBottomSheet()
+    {
+        if(bottomSheetDialog!=null)
+          bottomSheetDialog.dismiss();
+        bottomSheetDialogShown = false;
+    }
+    public BottomSheetDialog getBottomSheetDialog()
+    {
+        return bottomSheetDialog;
+    }
+
+    // will check if the ad view is changed
+   public boolean adStatsChanged()
+   {
+    AdViewedStats adViewedStats =   getUserProfileGlobalData().getAdViewedStats()  ;
+
+    if(getAdViewedStatsGlobal()==null)
+        return false;
+    else {
+        if(getAdViewedStatsGlobal().getAdMobRewardedAdViewed()>adViewedStats.getAdMobRewardedAdViewed()
+         ||getAdViewedStatsGlobal().getAdMobInterstitialAdViewed()>adViewedStats.getAdMobInterstitialAdViewed()
+            ||getAdViewedStatsGlobal().getFaceBookInterstitialAdViewed()>adViewedStats.getFaceBookInterstitialAdViewed()
+            ||getAdViewedStatsGlobal().getFaceBookRewardedAdViewed()>adViewedStats.getFaceBookRewardedAdViewed())
+        {
+            return true;
+        }
+        else
+            return false;
+    }
+   }
+    @Override
+    protected void onDestroy() {
+        if(this.getClass().getSimpleName().equals(HomeActivity.class.getSimpleName()))
+        {  isHomeActivityDestroyed = true;
+               UserProfile userProfile =   getUserProfileGlobalData() ;
+            // upload the ad viewed status when exiting from the app
+            if(adStatsChanged())
+            {
+
+                userProfile.setAdViewedStats(getAdViewedStatsGlobal());
+                setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
+                    @Override
+                    public void onTaskSuccessful() {
+                        saveAdViewedStatsGlobal(getAdViewedStatsGlobal());
+                    }
+                });
+
+            }
+
+        }
+        super.onDestroy();
     }
 }

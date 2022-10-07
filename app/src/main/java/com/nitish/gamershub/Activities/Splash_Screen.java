@@ -1,5 +1,7 @@
 package com.nitish.gamershub.Activities;
 
+import static com.nitish.gamershub.Utils.ConstantsHelper.From;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -89,36 +91,6 @@ public class Splash_Screen extends BasicActivity {
     }
 
 
-    public void get_data() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference noteref = db.document("nitish/gamers hub");
-        noteref.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
-                    data = documentSnapshot.getString("json_data");
-                         gameData =  documentSnapshot.getString("gameData");
-                    Paper.book().write(MaterData,gameData);
-
-                } else {
-                    Toast.makeText(getBaseContext(), "document does not exists", Toast.LENGTH_LONG).show();
-
-                }
-
-                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                intent.putExtra("json", data);
-                startActivity(intent);
-                finish();
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-                Log.d("error11",e.toString());
-            }
-        });
-    }
     public void getMaterData()
     {
 
@@ -158,9 +130,9 @@ public class Splash_Screen extends BasicActivity {
                     {
                         Toast.makeText(Splash_Screen.this, "hello "+ getGoogleSignInAccount().getEmail(), Toast.LENGTH_SHORT).show();
 
-                        intent = new Intent(getApplicationContext(), HomeActivity.class);
+                        intent = new Intent(getApplicationContext(), HomeActivity.class).putExtra(From,Splash_Screen.this.getClass().getSimpleName());
                     }
-                    startActivity(intent);
+                   startIntentWithFlags(intent,Splash_Screen.this);
                     finish();
 
                 } catch (Exception e) {

@@ -1,15 +1,15 @@
 package com.nitish.gamershub.Pojo.FireBase;
 
+import com.nitish.gamershub.Utils.DateTimeHelper;
+
+import java.util.Timer;
+
 public class WatchViewReward {
 
-    String claimedTime ="";
+    String claimedTime = DateTimeHelper.getDatePojo().getGetCurrentDateString();
     boolean claimed = false;
 
 
-    {
-        claimed=false;
-        claimedTime ="";
-    }
     public WatchViewReward() {
     }
 

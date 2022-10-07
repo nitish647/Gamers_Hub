@@ -70,4 +70,11 @@
 
     <string name="googleAccountWebClientID">1058533668645-87ngkdds23afa0ehib47oe2e5ro1r6pk.apps.googleusercontent.com</string>
 
+
+
+
+    <string name="earned_reward_message">
+       Congratulations , You have earned
+    </string>
+
 </resources>
