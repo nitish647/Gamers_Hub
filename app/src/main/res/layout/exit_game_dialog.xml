@@ -50,7 +50,7 @@
 
                 android:id="@+id/yesButton"
                 android:textColor="@android:color/white"
-                android:backgroundTint="#0f70ff"
+                android:backgroundTint="@color/material_dark_blue"
                 android:text="Yes"
                 android:layout_margin="10dp"
                 android:background="@drawable/round_corners"
@@ -63,10 +63,9 @@
             </Button>
             <Button
                 android:id="@+id/noButton"
-
                 android:backgroundTint="#eef1f7"
                 android:background="@drawable/round_corners"
-                android:textColor="#0f70ff"
+                android:textColor="@color/material_dark_blue"
                 android:text="No"
                 android:layout_weight="5"
                 android:gravity="center"

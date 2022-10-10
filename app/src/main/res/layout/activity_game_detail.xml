@@ -7,7 +7,4 @@
     android:id="@+id/frameLayout"
     tools:context=".Activities.GameDetailActivity2">
 
-
-
-
 </FrameLayout>

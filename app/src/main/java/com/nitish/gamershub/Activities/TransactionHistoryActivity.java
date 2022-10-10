@@ -61,43 +61,20 @@ public class TransactionHistoryActivity extends BasicActivity {
         showProgressBar().setMessage("Loading transaction");
 
 
-      getFirebaseUser().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+
+        getUserProfileGlobal(new GetUserProfileDataListener() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful())
-                {
-                    dismissProgressBar();
-                    DocumentSnapshot documentSnapshot = task.getResult();
+            public void onTaskSuccessful(UserProfile userProfile) {
+                if(userProfile!=null && userProfile.getUserTransactions()!=null ) {
 
-                    if(documentSnapshot.exists())
-                    {
+                    getUserTransactionList(userProfile.getUserTransactions().getTransactionRequestArrayList());
 
-                        UserProfile userProfile=   documentSnapshot.toObject(UserProfile.class);
-
-
-                        if(userProfile!=null && userProfile.getUserTransactions()!=null ) {
-
-                            getUserTransactionList(userProfile.getUserTransactions().getTransactionRequestArrayList());
-
-                        }
-                        else {
-                            binding.noTransactionRelative.setVisibility(View.VISIBLE);
-
-                        }
-
-
-                    }
-                    else {
-                        dismissProgressBar();
-                        Toast.makeText(TransactionHistoryActivity.this, "document does not exist", Toast.LENGTH_SHORT).show();
-                    }
                 }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                dismissProgressBar();
-                Toast.makeText(TransactionHistoryActivity.this, "couldn't get the documents ", Toast.LENGTH_SHORT).show();
+                else {
+                    binding.noTransactionRelative.setVisibility(View.VISIBLE);
+
+                }
+
             }
         });
 

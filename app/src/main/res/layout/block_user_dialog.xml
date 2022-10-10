@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+
+<RelativeLayout
+    android:padding="10dp"
+    android:layout_margin="10dp"
+    android:backgroundTint="@color/material_light_grey"
+    android:background="@drawable/round_corners"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_marginTop="50dp"
+            android:layout_gravity="center"
+            android:src="@drawable/block_icon"
+            android:layout_width="80dp"
+            android:layout_height="80dp">
+
+        </de.hdodenhof.circleimageview.CircleImageView>
+
+        <TextView
+
+            android:id="@+id/titleTextview"
+            android:textColor="@android:color/holo_red_light"
+            android:gravity="center"
+            android:text="Suspended"
+            android:textStyle="bold"
+            android:layout_marginTop="15dp"
+            android:textSize="35sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </TextView>
+        <TextView
+
+            android:id="@+id/bodyTextview"
+            android:textColor="#14579a"
+            android:gravity="center"
+            android:text="@string/suspensionMessage"
+            android:layout_marginTop="15dp"
+            android:textSize="20sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </TextView>
+
+        <Button
+
+
+            android:id="@+id/understandButton"
+            android:elevation="@dimen/cardview_default_elevation"
+            android:textColor="@android:color/black"
+            android:text="I understand"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/round_corners"
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+
+        </Button>
+        <TextView
+
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/darkGrey"
+            android:gravity="center"
+            android:text="Contact us"
+            android:layout_marginTop="15dp"
+            android:textSize="18sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </TextView>
+    </LinearLayout>
+</RelativeLayout>
+</layout>

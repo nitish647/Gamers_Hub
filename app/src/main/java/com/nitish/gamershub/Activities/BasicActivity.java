@@ -1,21 +1,22 @@
 package com.nitish.gamershub.Activities;
 
-import static com.nitish.gamershub.Utils.ConstantsHelper.AdViewedStatsGlobal;
+import static com.nitish.gamershub.Utils.AppHelper.getAdViewedStatsGlobal;
+import static com.nitish.gamershub.Utils.AppHelper.getUserProfileGlobalData;
+import static com.nitish.gamershub.Utils.AppHelper.saveAdViewedStatsGlobal;
+import static com.nitish.gamershub.Utils.AppHelper.saveUserProfileGlobal;
 import static com.nitish.gamershub.Utils.ConstantsHelper.From;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHubDataGlobal;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHub_DATA;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHub_ParentCollection;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GoogleSignInAccountUser;
 import static com.nitish.gamershub.Utils.ConstantsHelper.UserMail;
-import static com.nitish.gamershub.Utils.ConstantsHelper.UserProfileGlobal;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,10 +59,13 @@ import com.nitish.gamershub.Pojo.FireBase.TimerStatus;
 import com.nitish.gamershub.Pojo.FireBase.UserProfile;
 import com.nitish.gamershub.Pojo.FireBase.UserTransactions;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.Utils.AppHelper;
 import com.nitish.gamershub.Utils.ConstantsHelper;
 import com.nitish.gamershub.Utils.DataPassingHelper;
 import com.nitish.gamershub.Utils.ProgressBarHelper;
 import com.nitish.gamershub.Utils.UserOperations;
+import com.nitish.gamershub.databinding.BlockUserDialogBinding;
+import com.nitish.gamershub.databinding.ConfirmationDialogLayoutBinding;
 import com.nitish.gamershub.databinding.GameRewardDialogBinding;
 import com.nitish.gamershub.databinding.ShowWebviewDialogBinding;
 
@@ -82,6 +86,7 @@ abstract class BasicActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
     GoogleSignInOptions gso;
     AlertDialog logOutDialog;
+    AlertDialog confirmationDialog;
  private    UserProfile userProfileGlobal;
  private GamersHubData gamersHubDataGlobal;
 
@@ -116,6 +121,12 @@ abstract class BasicActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void openPlayStore()
+    {
+        Intent intent  = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(getString(R.string.play_store_link)));
+        startActivity(intent);
+    }
     protected  void getGoogleSignInOptions(){
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -129,7 +140,7 @@ abstract class BasicActivity extends AppCompatActivity {
 
 
 
-    public void getGamersHubData(GetUserProfileDataListener getUserDataListener)
+    public void getGamersHubData(GetGamersHubDataListener gamersHubDataListener)
     {
 
 
@@ -147,12 +158,14 @@ abstract class BasicActivity extends AppCompatActivity {
 
 
 
+
                         if(progressDialog.isShowing())
                             dismissProgressBar();
 
 
                         GamersHubData gamersHubData =   documentSnapshot.toObject(GamersHubData.class);
                         saveGamersHubDataGlobal(gamersHubData);
+                        gamersHubDataListener.onTaskSuccessful(gamersHubData);
 
 
 
@@ -229,6 +242,10 @@ abstract class BasicActivity extends AppCompatActivity {
     {
         public void onTaskSuccessful(UserProfile userProfile);
     }
+    public interface GetGamersHubDataListener
+    {
+        public void onTaskSuccessful(GamersHubData gamersHubData);
+    }
 
     public UserProfile updateUserWaller2(int amount, SetUserDataOnCompleteListener setUserDataOnCompleteListener)
     {
@@ -282,8 +299,7 @@ abstract class BasicActivity extends AppCompatActivity {
                     {
                         progressDialog.dismiss();
                     }
-
-                   saveUserProfileGlobal(userProfile);
+                    saveUserProfileGlobal(userProfile);
 
                     setUserDataOnCompleteListener.onTaskSuccessful();
 
@@ -404,6 +420,72 @@ abstract class BasicActivity extends AppCompatActivity {
 
 
     }
+
+
+
+    //------------------------- dialog boxes -------------------------------//
+
+    public void logOutDialog2()
+    {
+        LayoutInflater factory = LayoutInflater.from(BasicActivity.this);
+
+        View logOutView = factory.inflate(R.layout.activity_fav,null);
+        logOutDialog = new AlertDialog.Builder(BasicActivity.this).create();
+
+        logOutDialog.setView(logOutView);
+
+    }
+    public void logOutDialog()
+    {
+
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(BasicActivity.this);
+        android.app.AlertDialog deleteDialog = builder.create();
+
+
+        builder.setMessage("Do you want to logout?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                googleSignOut();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        builder.show();
+
+    }
+    public void showWebviewDialog()
+    {
+        ShowWebviewDialogBinding showWebviewDialogBinding;
+        LayoutInflater factory = LayoutInflater.from(BasicActivity.this);
+
+        showWebviewDialogBinding =  DataBindingUtil.inflate(factory,R.layout.show_webview_dialog,null,false);
+
+        final AlertDialog showWebviewDialog = new AlertDialog.Builder(BasicActivity.this).create();
+
+
+        showWebviewDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
+        showWebviewDialog.setView(showWebviewDialogBinding.getRoot());
+
+        showWebviewDialog.show();
+
+        showWebviewDialogBinding.webView.loadUrl("file:///android_asset/policy.html");
+
+
+        showWebviewDialogBinding.okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showWebviewDialog.dismiss();
+            }
+        });
+
+
+    }
     public void showRewardDialog(String message ,int rawAnimation ,OnDialogLister onDialogLister)
     {
         GameRewardDialogBinding gameRewardDialogBinding;
@@ -435,41 +517,120 @@ abstract class BasicActivity extends AppCompatActivity {
 
 
     }
+    public void showSuspendDialog(String message)
+    {
+        BlockUserDialogBinding blockUserDialogBinding;
+        LayoutInflater factory = LayoutInflater.from(BasicActivity.this);
+
+        blockUserDialogBinding =  DataBindingUtil.inflate(factory,R.layout.block_user_dialog,null,false);
+
+        final AlertDialog addRewardDialog = new AlertDialog.Builder(BasicActivity.this).create();
+
+        addRewardDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
+        addRewardDialog.setView(blockUserDialogBinding.getRoot());
+
+        addRewardDialog.show();
+
+        addRewardDialog.setMessage(message);
+        blockUserDialogBinding.understandButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+        addRewardDialog.setCancelable(false);
+
+
+    }
+
+    public void showConfirmationDialog(String title,String message,ConfirmationDialogListener confirmationDialogListener)
+    {
+
+        setConfirmationDialog(title,message,confirmationDialogListener);
+
+        confirmationDialog.show();
+
+    }
+
+    public void showConfirmationDialogSingleButton(String buttonTitle,String title,String message,ConfirmationDialogListener confirmationDialogListener)
+    {
+
+        ConfirmationDialogLayoutBinding confirmationDialogLayoutBinding=    setConfirmationDialog(title,message,confirmationDialogListener);
+
+        confirmationDialogLayoutBinding.NoButton.setVisibility(View.GONE);
+
+
+            confirmationDialogLayoutBinding.yesButton.setText(buttonTitle);
+            // for update disable the dismiss
+        if(buttonTitle.toLowerCase().contains("update")) {
+            confirmationDialogLayoutBinding.yesButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    confirmationDialogListener.onYesClick();
+                }
+            });
+        }
+        confirmationDialog.show();
+
+    }
+    public ConfirmationDialogLayoutBinding setConfirmationDialog(String title,String message,ConfirmationDialogListener confirmationDialogListener)
+    {
+        ConfirmationDialogLayoutBinding confirmationDialogLayoutBinding;
+        LayoutInflater factory = LayoutInflater.from(BasicActivity.this);
+
+        confirmationDialogLayoutBinding =  DataBindingUtil.inflate(factory,R.layout.confirmation_dialog_layout,null,false);
+
+          confirmationDialog = new AlertDialog.Builder(BasicActivity.this).create();
+
+        confirmationDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
+        confirmationDialog.setView(confirmationDialogLayoutBinding.getRoot());
+        confirmationDialog.setCancelable(false);
+        confirmationDialog.show();
+        confirmationDialogLayoutBinding.titleTextview.setText(title);
+        confirmationDialogLayoutBinding.messageTextview.setText(message);
+
+
+        confirmationDialogLayoutBinding.yesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                confirmationDialog.dismiss();
+                confirmationDialogListener.onYesClick();
+            }
+        });
+        confirmationDialogLayoutBinding.NoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                confirmationDialog.dismiss();
+                confirmationDialogListener.onNoClick();
+            }
+        });
+
+        return confirmationDialogLayoutBinding;
+
+
+    }
+    public interface ConfirmationDialogListener
+    {
+        public void onDismissListener();
+
+        public void onYesClick();
+        public void onNoClick();
+
+        public void onRewardGrantedListener();
+
+
+    }
+
+
+    //------------------------- dialog boxes -------------------------------//
+
+
     public abstract class OnDialogLister
     {
 
         public abstract void onDialogDismissLister();
     }
 
-
-
-    public void showWebviewDialog()
-    {
-        ShowWebviewDialogBinding showWebviewDialogBinding;
-        LayoutInflater factory = LayoutInflater.from(BasicActivity.this);
-
-        showWebviewDialogBinding =  DataBindingUtil.inflate(factory,R.layout.show_webview_dialog,null,false);
-
-        final AlertDialog showWebviewDialog = new AlertDialog.Builder(BasicActivity.this).create();
-
-
-        showWebviewDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        showWebviewDialog.setView(showWebviewDialogBinding.getRoot());
-
-        showWebviewDialog.show();
-
-        showWebviewDialogBinding.webView.loadUrl("file:///android_asset/policy.html");
-
-
-        showWebviewDialogBinding.okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showWebviewDialog.dismiss();
-            }
-        });
-
-
-    }
 
     public TimerStatus.DailyBonus getDailyBonusFromProfile(UserProfile userProfile )
     {
@@ -490,16 +651,8 @@ abstract class BasicActivity extends AppCompatActivity {
 
 
     }
-    public void logOutDialog2()
-    {
-        LayoutInflater factory = LayoutInflater.from(BasicActivity.this);
 
-        View logOutView = factory.inflate(R.layout.activity_fav,null);
-        logOutDialog = new AlertDialog.Builder(BasicActivity.this).create();
 
-        logOutDialog.setView(logOutView);
-
-    }
 
     public void showInterstitial2() {
         // Show the ad if it's ready. Otherwise toast and restart the game.
@@ -623,30 +776,6 @@ abstract class BasicActivity extends AppCompatActivity {
 //        });
 
     }
-    public void logOutDialog()
-    {
-
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(BasicActivity.this);
-        android.app.AlertDialog deleteDialog = builder.create();
-
-
-        builder.setMessage("Do you want to logout?");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                googleSignOut();
-            }
-        });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        });
-
-        builder.show();
-
-    }
 
     public void loadRewardedAd2() {
         if (rewardedAd == null) {
@@ -766,14 +895,6 @@ abstract class BasicActivity extends AppCompatActivity {
         saveAdViewedStatsGlobal(adViewedStats);
 
 
-//      userProfile.setAdViewedStats(adViewedStats);
-//
-//      setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
-//          @Override
-//          public void onTaskSuccessful() {
-//
-//          }
-//      });
 
     }
     public interface PaytmUpiDialogListener{
@@ -819,6 +940,7 @@ abstract class BasicActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         progressDialog.dismiss();
+                        AppHelper.destroyAllPaperData();
                         startActivity(new Intent(BasicActivity.this,LoginPage.class));
                         finish();
                     }
@@ -860,61 +982,36 @@ abstract class BasicActivity extends AppCompatActivity {
 
 
     }
-    public GamersHubData getGamersHubDataGlobal()
-    {
-        return (GamersHubData) Paper.book().read(GamersHubDataGlobal);
-    }
 
 
-    public void saveAdViewedStatsGlobal(AdViewedStats adViewedStats)
-    {
-        Paper.book().write(AdViewedStatsGlobal,adViewedStats);
-
-    }
-    public AdViewedStats getAdViewedStatsGlobal()
-    {
-       return (AdViewedStats) Paper.book().read(AdViewedStatsGlobal);
-
-    }
-
-    public void saveUserProfileGlobal(UserProfile userProfile)
-    {
-        userProfileGlobal = userProfile;
-        Paper.book().write(UserProfileGlobal,userProfileGlobal);
 
 
-    }
-    public UserProfile getUserProfileGlobalData()
-    {
-
-        return (UserProfile)Paper.book().read(UserProfileGlobal);
-    }
     public void showBottomSheet()
     {
 
         // will show the bottom sheet only once the app is started
 
-        if(isHomeActivityDestroyed)
+        if(isHomeActivityDestroyed||bottomSheetDialogShown)
             return;
 
          if (bottomSheetDialog == null) {
 
-                    String timerDataString = DataPassingHelper.ConvertObjectToString(userProfileGlobal.getTimerStatus());
+//                    String timerDataString = DataPassingHelper.ConvertObjectToString(getUserProfileGlobalData().getTimerStatus());
 
-                    bottomSheetDialog = BottomSheetDialog.newInstance(timerDataString);
+                    bottomSheetDialog = BottomSheetDialog.newInstance("");
                 }
 
 
                 if (bottomSheetDialogShown) {
                     if (bottomSheetDialog.isAdded())
                         bottomSheetDialog.dismiss();
-
-
-                    bottomSheetDialog.show(getSupportFragmentManager(), "");
                 }
 
+             bottomSheetDialog.show(getSupportFragmentManager(), "");
 
-                bottomSheetDialogShown = true;
+
+
+        bottomSheetDialogShown = true;
 
             }
 

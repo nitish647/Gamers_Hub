@@ -1,11 +1,16 @@
 package com.nitish.gamershub.Services;
 
+import static com.nitish.gamershub.Utils.ConstantsHelper.FirebaseFCMToken;
+
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.nitish.gamershub.Utils.AppHelper;
+
+import io.paperdb.Paper;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public String TAG ="FirebaseNotification";
@@ -41,5 +46,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
+        AppHelper.saveFireBaseFcmToken(token);
     }
 }

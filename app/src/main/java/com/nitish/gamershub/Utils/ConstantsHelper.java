@@ -25,8 +25,13 @@ public class ConstantsHelper {
     public static  String UserProfileGlobal = "userProfileGlobal";
     public static  String GamersHubDataGlobal = "GamersHubDataGlobal";
     public static  String AdViewedStatsGlobal = "AdViewedStatsGlobal";
-
+    public static  String FirebaseFCMToken = "FirebaseFCMToken";
     public static  String From = "From";
+
+
+    public static  int AccountActive =0;
+    public static  int AccountSuspended =1;
+    public static  int AccountBanned =2;
 
     public static String timerHourMinuteSecond ="00:00:00";
     public static enum ConnectionSignalStatus{

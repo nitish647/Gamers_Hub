@@ -1,5 +1,7 @@
 package com.nitish.gamershub.Utils;
 
+import static com.nitish.gamershub.Utils.ConstantsHelper.FirebaseFCMToken;
+
 import android.content.Context;
 import android.util.Log;
 
@@ -10,9 +12,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import io.paperdb.Paper;
+
 public class NotificationHelper {
 
-    public static void generateFcmToken(Context context)
+    public static void generateFcmToken()
     {
 
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
@@ -25,7 +29,7 @@ public class NotificationHelper {
                     String fcmToken = task.getResult();
 
                     Log.d("fcmToken","fcmToken generated successfully "+fcmToken);
-         //           Paper.book().write("token",fcmToken);
+                  AppHelper.saveFireBaseFcmToken(fcmToken);
 
                 }
 
@@ -40,4 +44,6 @@ public class NotificationHelper {
         });
 
     }
+
+
 }

@@ -1,13 +1,9 @@
 package com.nitish.gamershub.Pojo.FireBase;
 
-import static com.nitish.gamershub.Utils.ConstantsHelper.GoogleSignInAccountUser;
-
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.nitish.gamershub.BuildConfig;
 import com.nitish.gamershub.Utils.AppHelper;
 import com.nitish.gamershub.Utils.DateTimeHelper;
 import com.nitish.gamershub.Utils.DeviceHelper;
-
-import io.paperdb.Paper;
 
 public class UserProfile {
 
@@ -16,7 +12,7 @@ public class UserProfile {
     public TimerStatus timerStatus;
     public UserTransactions userTransactions;
     public AdViewedStats adViewedStats;
-
+    public UserAccountStatus userAccountStatus;
 
 
 
@@ -25,6 +21,14 @@ public class UserProfile {
     public UserProfile() {
 
 
+    }
+
+    public UserAccountStatus getUserAccountStatus() {
+        return userAccountStatus;
+    }
+
+    public void setUserAccountStatus(UserAccountStatus userAccountStatus) {
+        this.userAccountStatus = userAccountStatus;
     }
 
     public AdViewedStats getAdViewedStats() {
@@ -79,8 +83,10 @@ public class UserProfile {
 
         public String name =AppHelper.getGoogleSignInAccountUser().getDisplayName();;
         public String email= AppHelper.getGoogleSignInAccountUser().getEmail();
+        public String versionName = BuildConfig.VERSION_NAME+"";
         public int gameCoins = 0;
 
+        public String firebaseFcmToken;
         public String lastLogin=DateTimeHelper.getDatePojo().getGetCurrentDateString();
         public String lastOpened=DateTimeHelper.getDatePojo().getGetCurrentDateString();
         public String deviceInfo= DeviceHelper.getDeviceNameAndVersion();
@@ -90,11 +96,27 @@ public class UserProfile {
 
         }
 
+
         public static ProfileData  getProfileData()
         {
             return new ProfileData();
         }
 
+        public String getFirebaseFcmToken() {
+            return firebaseFcmToken;
+        }
+
+        public String getVersionName() {
+            return versionName;
+        }
+
+        public void setVersionName(String versionName) {
+            this.versionName = versionName;
+        }
+
+        public void setFirebaseFcmToken(String firebaseFcmToken) {
+            this.firebaseFcmToken = firebaseFcmToken;
+        }
 
         public String getCreatedAt() {
             return createdAt;

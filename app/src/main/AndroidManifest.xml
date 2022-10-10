@@ -12,6 +12,9 @@
         android:roundIcon="@mipmap/vector_icon2"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".FaqActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activities.RewardsActivity"
             android:exported="false" />
         <activity

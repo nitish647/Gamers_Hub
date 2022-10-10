@@ -4,7 +4,6 @@ import static com.nitish.gamershub.Adapters.CategoriesAdapter.context;
 import static com.nitish.gamershub.Utils.ConstantsHelper.FavouriteList;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHub_ParentCollection;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GoogleSignInAccountUser;
-import static com.nitish.gamershub.Utils.ConstantsHelper.UserInfo;
 import static com.nitish.gamershub.Utils.ConstantsHelper.UserMail;
 
 import androidx.annotation.NonNull;
@@ -15,7 +14,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -23,7 +21,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -51,24 +48,29 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
 import com.nitish.gamershub.Adapters.CategoriesAdapter;
+import com.nitish.gamershub.BuildConfig;
 import com.nitish.gamershub.Fragments.HomeFragment;
 import com.nitish.gamershub.Fragments.ProfileFragment;
 import com.nitish.gamershub.Interface.AdmobInterstitialAdListener;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.Pojo.Categories;
 import com.nitish.gamershub.Pojo.FireBase.AdViewedStats;
+import com.nitish.gamershub.Pojo.FireBase.GamersHubData;
+import com.nitish.gamershub.Pojo.FireBase.UserAccountStatus;
 import com.nitish.gamershub.Pojo.FireBase.WatchViewReward;
 import com.nitish.gamershub.Pojo.NetWorkTimerResult;
 import com.nitish.gamershub.Pojo.FireBase.TimerStatus;
 import com.nitish.gamershub.Pojo.FireBase.UserProfile;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.Utils.AppHelper;
+import com.nitish.gamershub.Utils.ConstantsHelper;
 import com.nitish.gamershub.Utils.DateTimeHelper;
 import com.nitish.gamershub.Utils.DeviceHelper;
 import com.nitish.gamershub.Utils.NotificationHelper;
 import com.nitish.gamershub.Utils.ProgressBarHelper;
-import com.nitish.gamershub.Utils.ToastHelper;
 
 import org.json.JSONObject;
 
@@ -78,7 +80,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import io.paperdb.Paper;
 
 public class HomeActivity extends BasicActivity {
@@ -138,18 +139,18 @@ public class HomeActivity extends BasicActivity {
         setViews();
 
 
+        String playStoreVersionCode = FirebaseRemoteConfig.getInstance().getString(
+                "appVersion");
 
-
-
-
-        Log.d("pResponse","server timer response "+  Timestamp.now().toDate().toString());
+        Log.d("pResponse","playStoreVersionCode "+  playStoreVersionCode);
         categoriesList = new ArrayList<>();
         navigationView.setVisibility(View.VISIBLE);
 
 
-        NotificationHelper.generateFcmToken(HomeActivity.this);
+        NotificationHelper.generateFcmToken();
         setHeader();
         updateUserInfo();
+
         loadInterstitialAdNew();
 
        MobileAds.initialize(this, new OnInitializationCompleteListener() {
@@ -296,6 +297,11 @@ public class HomeActivity extends BasicActivity {
 
 
 
+    public void onGetGamersHubData(GamersHubData gamersHubData)
+    {
+
+
+    }
     public void updateUserInfo()
     {
 
@@ -693,14 +699,18 @@ public class HomeActivity extends BasicActivity {
             public void onTaskSuccessful(UserProfile userProfile) {
 
 
-                getGamersHubData(new GetUserProfileDataListener() {
+
+
+                getGamersHubData(new GetGamersHubDataListener() {
                     @Override
-                    public void onTaskSuccessful(UserProfile userProfile) {
+                    public void onTaskSuccessful(GamersHubData gamersHubData) {
+
+                        if( !AppHelper.isAppUpdated()) {
+                            showUpdate(gamersHubData);
+                        }
 
                     }
                 });
-
-
                 if (userProfile.getTimerStatus() != null) {
 
                     setTimerStatus(userProfile);
@@ -710,11 +720,23 @@ public class HomeActivity extends BasicActivity {
                     userProfile.setTimerStatus(createTimerStatus());
                 }
 
+                if(userProfile.getUserAccountStatus()==null)
+                {
+                    UserAccountStatus userAccountStatus = new UserAccountStatus();
+                    userAccountStatus.setSuspensionInfo(getString(R.string.suspensionMessage));
+                    userProfile.setUserAccountStatus(userAccountStatus);
+                }
+                else {
+                    getUserAccountStatus(userProfile.getUserAccountStatus());
+                }
+
                 if (userProfile.getAdViewedStats() == null) {
                     userProfile.setAdViewedStats(new AdViewedStats());
                 }
 
-                UserProfile.ProfileData profileData = userProfile.profileData;
+                // update profile data
+
+                UserProfile.ProfileData profileData = userProfile.getProfileData();
 
                 if (profileData != null) {
 
@@ -726,7 +748,8 @@ public class HomeActivity extends BasicActivity {
                     {
                         profileData.setEmail(UserProfile.ProfileData.getProfileData().getEmail());
                     }
-
+                    profileData.setVersionName(BuildConfig.VERSION_NAME+"");
+                    profileData.setFirebaseFcmToken(AppHelper.getFireBaseFcmToken());
                     profileData.setLastOpened(DateTimeHelper.getDatePojo().getGetCurrentDateString());
                     profileData.setDeviceInfo(DeviceHelper.getDeviceNameAndVersion());
                     if (profileData.getCreatedAt().trim().isEmpty()) {
@@ -752,6 +775,51 @@ public class HomeActivity extends BasicActivity {
 
         };
     }
+
+    public void getUserAccountStatus(UserAccountStatus userAccountStatus)
+    {
+        if(userAccountStatus.getAccountStatus()!= ConstantsHelper.AccountActive)
+        {
+            showSuspendDialog(userAccountStatus.getSuspensionMessage());
+        }
+    }
+
+   public void showUpdate(GamersHubData gamersHubData){
+       ConfirmationDialogListener confirmationDialogListener = new ConfirmationDialogListener() {
+           @Override
+           public void onDismissListener() {
+
+           }
+
+           @Override
+           public void onYesClick() {
+               openPlayStore();
+           }
+
+           @Override
+           public void onNoClick() {
+
+           }
+
+           @Override
+           public void onRewardGrantedListener() {
+
+           }
+       };
+
+        if(gamersHubData.getGamesData().isForceUpdate())
+        {
+            showConfirmationDialogSingleButton("Update","Pending Update","A new update of the app has been released , please update ",confirmationDialogListener
+            );
+
+        }
+        else {
+            showConfirmationDialog("Pending Update","A new update of the app has been released , please update ",confirmationDialogListener
+            );
+        }
+
+
+   }
 
 
 }

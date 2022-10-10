@@ -20,7 +20,8 @@ public class GamersHubData {
         int gamePlaySecs =0;
         int gamePlayReward=0;
         int watchVideoReward =0;
-
+        boolean forceUpdate = false;
+        String latestVersionName;
 
 
         public GamesData() {
@@ -30,32 +31,26 @@ public class GamersHubData {
             return dailyCheckReward;
         }
 
-        public void setDailyCheckReward(int dailyCheckReward) {
-            this.dailyCheckReward = dailyCheckReward;
+
+        public String getLatestVersionName() {
+            return latestVersionName;
         }
 
         public int getGamePlaySecs() {
             return gamePlaySecs;
         }
 
-        public void setGamePlaySecs(int gamePlaySecs) {
-            this.gamePlaySecs = gamePlaySecs;
-        }
 
         public int getGamePlayReward() {
             return gamePlayReward;
-        }
-
-        public void setGamePlayReward(int gamePlayReward) {
-            this.gamePlayReward = gamePlayReward;
         }
 
         public int getWatchVideoReward() {
             return watchVideoReward;
         }
 
-        public void setWatchVideoReward(int watchVideoReward) {
-            this.watchVideoReward = watchVideoReward;
+        public boolean isForceUpdate() {
+            return forceUpdate;
         }
     }
 }

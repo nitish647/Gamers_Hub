@@ -42,6 +42,17 @@ public  class DateTimeHelper {
 
     }
 
+    public static String formatTimeToMMSS(int minutes , int seconds)
+    {
+
+        return String.format(Locale.getDefault(),"%02d:%02d",  minutes,seconds);
+    }
+    public static String formatTimeToMMSS( int seconds)
+    {
+
+        return String.format(Locale.getDefault(),"%02d:%02d",  (seconds / 60) % 60, seconds % 60);
+    }
+
     public float convertSecondsToMinute(int seconds)
     {
 

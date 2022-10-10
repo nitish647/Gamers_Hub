@@ -33,6 +33,7 @@ import com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter;
 import com.nitish.gamershub.Helper_class;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.Utils.DateTimeHelper;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -62,7 +63,7 @@ public class GamePlayFragment extends Fragment {
     ImageView dismissButton;
     // Is the stopwatch running?
     private boolean running;
-public     String timerMinuteSecond="00:00";
+public  String timerMinuteSecond="00:00";
 
     private boolean wasRunning;
     GameDetailActivity2 parentActivity;
@@ -253,8 +254,11 @@ public     String timerMinuteSecond="00:00";
     {
         running = false;
         seconds = 0;
-        return timerMinuteSecond;
+        String stopTimer =timerMinuteSecond;
+        timerMinuteSecond ="00:00";
+        return stopTimer;
     }
+
     public void timer()
     {
 
@@ -279,29 +283,8 @@ public     String timerMinuteSecond="00:00";
                 int minutes = (seconds % 3600) / 60;
                 int secs = seconds % 60;
 
-                // Format the seconds into hours, minutes,
-                // and seconds.
-                String time
-                        = String
-                        .format(Locale.getDefault(),
-                                "%d:%02d:%02d", hours,
-                                minutes, secs);
-//
-//                String seconds
-//                        = String
-//                        .format(Locale.getDefault(),
-//                                "%02d",  secs);
-
-
-          //      Toast.makeText(view.getContext(), "timer ran "+time, Toast.LENGTH_SHORT).show();
-
-
                  timerMinuteSecond
-                            = String
-                            .format(Locale.getDefault(),
-                                    "%02d:%02d",
-                                    minutes, secs);
-
+                            = DateTimeHelper.formatTimeToMMSS(minutes, secs);
                     timerTextview.setText(timerMinuteSecond);
 
                 // If running is true, increment the

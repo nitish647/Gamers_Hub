@@ -1,5 +1,6 @@
 package com.nitish.gamershub.Fragments;
 
+import static com.nitish.gamershub.Utils.AppHelper.getUserProfileGlobalData;
 import static com.nitish.gamershub.Utils.ConstantsHelper.UserInfo;
 
 import android.content.Intent;
@@ -99,7 +100,7 @@ public class ProfileFragment extends Fragment {
     public void onResume() {
 
 
-        binding.redeemCoinsTextview.setText( parentHomeActivity.getUserProfileGlobalData().profileData.getGameCoins() +" coins");
+        binding.redeemCoinsTextview.setText( getUserProfileGlobalData().profileData.getGameCoins() +" coins");
 
         super.onResume();
     }
@@ -116,7 +117,7 @@ public class ProfileFragment extends Fragment {
 
         }
 
-        binding.redeemCoinsTextview.setText( parentHomeActivity.getUserProfileGlobalData().profileData.getGameCoins() +" coins");
+        binding.redeemCoinsTextview.setText( getUserProfileGlobalData().profileData.getGameCoins() +" coins");
 
 
     }
@@ -144,9 +145,8 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                Intent intent  = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(getString(R.string.play_store_link)));
-                startActivity(intent);
+
+                parentHomeActivity.openPlayStore();
 
             }
         });

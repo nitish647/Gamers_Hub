@@ -11,6 +11,7 @@
         <entry key="app/src/main/res/drawable/top_round_corners.xml" value="0.1075" />
         <entry key="app/src/main/res/layout/activity_category.xml" value="0.18342391304347827" />
         <entry key="app/src/main/res/layout/activity_earn_more.xml" value="0.17119565217391305" />
+        <entry key="app/src/main/res/layout/activity_faq.xml" value="0.19427083333333334" />
         <entry key="app/src/main/res/layout/activity_favourite.xml" value="0.18342391304347827" />
         <entry key="app/src/main/res/layout/activity_frag_container.xml" value="0.18342391304347827" />
         <entry key="app/src/main/res/layout/activity_game_desc.xml" value="0.1" />
@@ -23,11 +24,14 @@
         <entry key="app/src/main/res/layout/activity_reddeem.xml" value="0.22" />
         <entry key="app/src/main/res/layout/activity_rewards.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_transaction_history.xml" value="0.17119565217391305" />
+        <entry key="app/src/main/res/layout/block_user_dialog.xml" value="0.25" />
         <entry key="app/src/main/res/layout/bottom_dialog_sheet.xml" value="0.16757246376811594" />
         <entry key="app/src/main/res/layout/categires_layout.xml" value="0.18342391304347827" />
         <entry key="app/src/main/res/layout/category_item.xml" value="0.18342391304347827" />
+        <entry key="app/src/main/res/layout/confirmation_dialog_layout.xml" value="0.1766304347826087" />
         <entry key="app/src/main/res/layout/custom_toast_layout.xml" value="0.1" />
         <entry key="app/src/main/res/layout/exit_game_dialog.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/faq_list_item.xml" value="0.19322916666666667" />
         <entry key="app/src/main/res/layout/fragment_category_list.xml" value="0.17119565217391305" />
         <entry key="app/src/main/res/layout/fragment_desc_frag.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_game_details.xml" value="0.18342391304347827" />

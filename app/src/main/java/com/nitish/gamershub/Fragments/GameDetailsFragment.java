@@ -34,6 +34,7 @@ import com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter;
 import com.nitish.gamershub.Helper_class;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.Utils.AppHelper;
 import com.nitish.gamershub.databinding.FragmentGameDetailsBinding;
 import com.squareup.picasso.Picasso;
 
@@ -46,18 +47,13 @@ public class GameDetailsFragment extends Fragment {
     View view;
 
     GameDetailActivity2 parentActivity;
-    ImageView gameImageImageVIew;
-    Button playButton;
-    ImageView backButton;
-    RelativeLayout gameImageContainerRelative;
+
     int vibrant ;
     int vibrantLight;
     int vibrantDark;
     int muted;
     int mutedLight;
     int mutedDark;
-    TextView gameDescTextview,gameNameTextview;
-    ImageView favButton;
 
     AllGamesItems allGamesItems;
     ArrayList<AllGamesItems> favouriteArrayList;
@@ -76,13 +72,7 @@ public class GameDetailsFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_game_details, container, false);
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_game_details,container,false);
         Paper.init(view.getContext());
-        backButton=  view.findViewById(R.id.backButton);
-        playButton = view.findViewById(R.id.playButton);
-        gameImageImageVIew = view.findViewById(R.id.gameImageImageVIew);
-        gameImageContainerRelative =view.findViewById(R.id.gameImageContainerRelative);
-        gameNameTextview =view.findViewById(R.id.gameNameTextview);
-        gameDescTextview =view.findViewById(R.id.gameDescTextview);
-        favButton =view.findViewById(R.id.favButton);
+
         parentActivity = (GameDetailActivity2) view.getContext();
 
         favouriteArrayList = new ArrayList<>();
@@ -94,12 +84,12 @@ public class GameDetailsFragment extends Fragment {
         ArrayList<AllGamesItems> itemsArrayList = (ArrayList<AllGamesItems>) Paper.book().read(FavouriteList);
         favouriteArrayList = itemsArrayList;
 
-
+        setOnClickListeners();
 
 
         setViews();
 
-        setOnClickListeners();
+
 
 
 
@@ -107,7 +97,7 @@ public class GameDetailsFragment extends Fragment {
     }
     public void setOnClickListeners()
     {
-        backButton.setOnClickListener(new View.OnClickListener() {
+        binding.backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getActivity().onBackPressed();
@@ -116,7 +106,7 @@ public class GameDetailsFragment extends Fragment {
 
 
 
-        favButton.setOnClickListener(new View.OnClickListener() {
+        binding.favButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // when it is in favourite then remove from favourites
@@ -125,18 +115,18 @@ public class GameDetailsFragment extends Fragment {
                 if(checkInFavList(allGamesItems))
                 {
                     deleteFromFavourite(allGamesItems);
-                    favButton.setImageResource(R.drawable.fav_of2);
+                    binding.favButton.setImageResource(R.drawable.fav_of2);
                 }
                 // when it is not in favourite then add in favourites
                 else {
                     saveToFavourite(allGamesItems);
-                    favButton.setImageResource(R.drawable.fav_on2);
+                    binding.favButton.setImageResource(R.drawable.fav_on2);
 
                 }
 
             }
         });
-        playButton.setOnClickListener(new View.OnClickListener() {
+        binding.playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 parentActivity.playButtonClick();
@@ -147,25 +137,25 @@ public class GameDetailsFragment extends Fragment {
     }
     public void setViews()
     {
-        gameDescTextview.setText(allGamesItems.getDescription());
+        binding.gameDescTextview.setText(allGamesItems.getDescription());
 
-        gameNameTextview.setText(allGamesItems.getName());
+        binding.gameNameTextview.setText(allGamesItems.getName());
         if(checkInFavList(allGamesItems))
         {
-            favButton.setImageResource(R.drawable.fav_on2);
+            binding.favButton.setImageResource(R.drawable.fav_on2);
 
         }
         // when it is not in favourite then add in favourites
         else {
-            favButton.setImageResource(R.drawable.fav_of2);
+            binding.favButton.setImageResource(R.drawable.fav_of2);
 
         }
-        Picasso.get().load(allGamesItems.getImg_file()).into(gameImageImageVIew,new com.squareup.picasso.Callback() {
+        Picasso.get().load(allGamesItems.getImg_file()).into( binding.gameImageImageVIew,new com.squareup.picasso.Callback() {
             @Override
             public void onSuccess() {
 
-                getDominantGradient(gameImageImageVIew);
-                gameImageContainerRelative.setBackgroundColor(vibrant);
+                getDominantGradient( binding.gameImageImageVIew);
+                binding.gameImageContainerRelative.setBackgroundColor(vibrant);
             }
 
             @Override
@@ -176,11 +166,11 @@ public class GameDetailsFragment extends Fragment {
         });
 
         String text =" Play this game for "+
-                parentActivity.getGamersHubDataGlobal().gamesData.getGamePlaySecs()+" seconds to get rewarded";
+                AppHelper.getGamersHubDataGlobal().gamesData.getGamePlaySecs()+" seconds to get rewarded";
         binding.gamePlayTimeTextview.setText(text);
 
 
-        playButton.setBackground(Helper_class.setSingleColorRoundBackground("#F0740D", 15.0F));
+        binding.playButton.setBackground(Helper_class.setSingleColorRoundBackground("#F0740D", 15.0F));
 
     }
     public void saveToFavourite(AllGamesItems allGamesItems)

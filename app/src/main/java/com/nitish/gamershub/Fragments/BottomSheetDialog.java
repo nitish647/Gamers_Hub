@@ -20,6 +20,7 @@ import com.nitish.gamershub.Activities.RewardsActivity;
 import com.nitish.gamershub.Pojo.FireBase.TimerStatus;
 import com.nitish.gamershub.Pojo.FireBase.UserProfile;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.Utils.AppHelper;
 import com.nitish.gamershub.Utils.DataPassingHelper;
 import com.nitish.gamershub.databinding.BottomDialogSheetBinding;
 
@@ -45,7 +46,7 @@ public class BottomSheetDialog extends BottomSheetDialogFragment {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.bottom_dialog_sheet,container,false);
         parentActivity =(HomeActivity) unwrap(binding.getRoot().getContext());
-        timerStatus =new Gson().fromJson( getArguments().getString(ARG_PARAM1), TimerStatus.class);
+        timerStatus = AppHelper.getUserProfileGlobalData().getTimerStatus();
         setViews();
         setOnClickListeners();
         return binding.getRoot();
@@ -59,6 +60,7 @@ public class BottomSheetDialog extends BottomSheetDialogFragment {
 
     public void setOnClickListeners()
     {
+
         binding.watchVideoRelative.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

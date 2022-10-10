@@ -1,5 +1,7 @@
 package com.nitish.gamershub.Activities;
 
+import static com.nitish.gamershub.Utils.AppHelper.getGamersHubDataGlobal;
+import static com.nitish.gamershub.Utils.AppHelper.getUserProfileGlobalData;
 import static com.nitish.gamershub.Utils.ConstantsHelper.timerHourMinuteSecond;
 import static com.nitish.gamershub.Utils.DateTimeHelper.simpleDateFormatPattern;
 
@@ -50,10 +52,6 @@ public class RewardsActivity extends BasicActivity {
 
     public void setOnclickListeners()
     {
-
-
-
-
 
         binding.watchVideoRelative.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,10 +163,6 @@ public class RewardsActivity extends BasicActivity {
 
             }
             else {
-
-
-
-
                 dailyBonus.setClaimed(true);
                 String currentDate = DateTimeHelper.getDatePojo().getGetCurrentDateString();
                 dailyBonus.setLastResetDateTime(DateTimeHelper.resetDateToATime(currentDate,DateTimeHelper.time_7_am));
@@ -208,6 +202,8 @@ public class RewardsActivity extends BasicActivity {
             }
         };
     }
+
+
     public RewardedAdListener setRewardedAdListener()
     {
         return new RewardedAdListener() {
@@ -225,14 +221,8 @@ public class RewardsActivity extends BasicActivity {
 
             }
 
-
-
-
-
         };
     }
-
-
 
 
     public AdmobInterstitialAdListener setInterstitialAdListener()
@@ -273,7 +263,7 @@ public class RewardsActivity extends BasicActivity {
         binding.watchVideoTextview.setText("watched");
       int coins =  userProfile.getProfileData().getGameCoins();
 
-      int getWatchVideoReward = getGamersHubDataGlobal().gamesData.getWatchVideoReward();
+      int getWatchVideoReward = getGamersHubDataGlobal().getGamesData().getWatchVideoReward();
       int totalCoins=coins+getWatchVideoReward;
       userProfile.getProfileData().setGameCoins(totalCoins);
         userProfile.getTimerStatus().setWatchViewReward(watchViewReward);
@@ -294,9 +284,6 @@ public class RewardsActivity extends BasicActivity {
        });
 
     }
-
-
-
 
     public void timerForRewardVideo()
     {
@@ -348,15 +335,19 @@ public class RewardsActivity extends BasicActivity {
                     String claimText  ="Next claim in "+timerHourMinuteSecond.replace("-","");
 
 
-
                     if(hours>=1||!userProfile.getTimerStatus().getWatchViewReward().isClaimed())
                     {
                        binding.watchVideoTextview.setText("Watch");
                        binding.timerTextview.setVisibility(View.GONE);
                         userProfile.getTimerStatus().getWatchViewReward().setClaimed(false);
 
+                        setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
+                            @Override
+                            public void onTaskSuccessful() {
 
-                        return;
+                            }
+                        });
+
                     }
                     else {
                         binding.watchVideoTextview.setText("Watched");

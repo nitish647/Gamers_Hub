@@ -13,11 +13,11 @@
     <color name="upiGreen">#00883a</color>
     <color name="upiGreenLight">#e5fff0</color>
 
-    <color name="material_dark_blue">#0064FF</color>
-
+    <color name="material_dark_blue">#0f70ff</color>
 
     <color name="light_purple">#f4e7fe</color>
-
+    <color name="material_light_grey">#f0f1f2</color>
+    <color name="material_light_grey2">#eef1f7</color>
 
 
     <color name="greyPrimary">#898989</color>

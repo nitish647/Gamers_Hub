@@ -1,5 +1,7 @@
 package com.nitish.gamershub.Activities;
 
+import static com.nitish.gamershub.Utils.AppHelper.getUserProfileGlobalData;
+
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;

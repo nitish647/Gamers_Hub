@@ -206,7 +206,6 @@ public class HomeFragment extends Fragment {
         categoriesList = new ArrayList<>();
         mainGamesArrayList = new ArrayList<>();
 
-        NotificationHelper.generateFcmToken(view.getContext());
         setOnClickListens();
 
         setSearchView();
