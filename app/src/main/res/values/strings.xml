@@ -76,5 +76,7 @@
     </string>
 
     <string name="suspensionMessage">Your account has been temporarily been suspended due to the wrong activities detected by us on your account</string>
-
+    <string name="contact_mail">
+       gamershub@dr.com
+    </string>
 </resources>

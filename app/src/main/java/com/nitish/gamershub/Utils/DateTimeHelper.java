@@ -2,6 +2,14 @@ package com.nitish.gamershub.Utils;
 
 import android.util.Log;
 
+import com.instacart.library.truetime.TrueTime;
+
+import org.apache.commons.net.ntp.NTPUDPClient;
+import org.apache.commons.net.ntp.TimeInfo;
+
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -9,6 +17,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import io.tempo.Tempo;
 
 public  class DateTimeHelper {
 
@@ -25,10 +35,17 @@ public  class DateTimeHelper {
 
 
 
-        datePojo.setGetCurrentDateString(getSimpleDateFormat().format(new Date()));
-        datePojo.setGetCurrentDate(new Date());
+//        datePojo.setGetCurrentDateString(getSimpleDateFormat().format(new Date()));
+//        datePojo.setGetCurrentDate(new Date());
 
+        datePojo.setGetCurrentDateString(getSimpleDateFormat().format(TrueTime.now()));
+        datePojo.setGetCurrentDate(TrueTime.now());
 
+//        datePojo.setGetCurrentDateString(getSimpleDateFormat().format(new Date(TimeManager.getInstance().getServerTime())));
+//        datePojo.setGetCurrentDate(new Date(TimeManager.getInstance().getServerTime()));
+
+//                datePojo.setGetCurrentDateString(getSimpleDateFormat().format(new Date(Tempo.nowOrNull())));
+//                datePojo.setGetCurrentDate(new Date(Tempo.nowOrNull()));
         return datePojo;
 
 
@@ -100,7 +117,6 @@ public  class DateTimeHelper {
         int mYear = cal.get(Calendar.YEAR); // current year
         int mMonth = cal.get(Calendar.MONTH)+1; //fixing the month starts from 0 issue
         int mDay = cal.get(Calendar.DAY_OF_MONTH); // current day
-
 
 
         String timeToReset =""+ mYear+"-"+mMonth +"-"+mDay;

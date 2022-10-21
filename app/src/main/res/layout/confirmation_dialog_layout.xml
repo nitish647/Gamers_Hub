@@ -30,11 +30,11 @@
                 android:id="@+id/titleTextview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:text="Confirmation"
                 android:textColor="@android:color/black"
-                android:textSize="25sp"
+                android:textSize="20sp"
                 android:textStyle="bold">
 
             </TextView>
@@ -44,12 +44,12 @@
                 android:id="@+id/messageTextview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:padding="5dp"
                 android:text="This is a sample message"
-
-                android:textSize="20sp">
+                android:textColor="@android:color/black"
+                android:textSize="16sp">
 
             </TextView>
 
@@ -58,8 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:padding="5dp"
-                android:paddingBottom="10dp">
+                android:paddingBottom="15dp">
 
                 <Button
 

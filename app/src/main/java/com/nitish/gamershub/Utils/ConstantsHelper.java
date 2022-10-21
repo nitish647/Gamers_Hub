@@ -10,7 +10,7 @@ public class ConstantsHelper {
 
     public static String GamersHub_DATA ="Gamers Hub Data";
 
-
+    public static  String DateTimeGlobal = "DateTimeGlobal";
     public static  String FavouriteList = "FavouriteList";
     public static  String MainGamesList = "MainGamesList";
     public static  String NewGamesList = "NewGamesList";

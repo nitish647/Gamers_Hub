@@ -1,11 +1,13 @@
 package com.nitish.gamershub.Fragments;
 
+import static com.nitish.gamershub.Utils.AppHelper.getUserProfileGlobalData;
 import static com.nitish.gamershub.Utils.ConstantsHelper.FavouriteList;
 import static com.nitish.gamershub.Utils.ConstantsHelper.gameDataObject;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.core.content.ContextCompat;
@@ -32,7 +34,10 @@ import com.nitish.gamershub.Activities.GamePlayActivity;
 import com.nitish.gamershub.Activities.HomeActivity;
 import com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter;
 import com.nitish.gamershub.Helper_class;
+import com.nitish.gamershub.Interface.ConfirmationDialogListener2;
 import com.nitish.gamershub.Pojo.AllGamesItems;
+import com.nitish.gamershub.Pojo.DialogHelperPojo;
+import com.nitish.gamershub.Pojo.FireBase.UserProfile;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.AppHelper;
 import com.nitish.gamershub.databinding.FragmentGameDetailsBinding;
@@ -64,6 +69,7 @@ public class GameDetailsFragment extends Fragment {
 
         return fragment;
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -126,10 +132,18 @@ public class GameDetailsFragment extends Fragment {
 
             }
         });
+
         binding.playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 parentActivity.playButtonClick();
+            }
+        });
+
+        binding.reportButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showGameReportDialog();
             }
         });
 
@@ -207,6 +221,30 @@ public class GameDetailsFragment extends Fragment {
         }
         return isInFavList;
     }
+
+    public void showGameReportDialog()
+    {
+        DialogHelperPojo dialogHelperPojo = new DialogHelperPojo();
+        dialogHelperPojo.setYesButton("Send");
+        dialogHelperPojo.setTitle("Confirmation");
+        dialogHelperPojo.setMessage("Do you want to report this game? ");
+        parentActivity.getConfirmationDialog(dialogHelperPojo, new ConfirmationDialogListener2() {
+            @Override
+            public void onYesClick() {
+                   String subject = "Issue in the game : "+allGamesItems.getName();
+              Uri uri =  AppHelper.getMailMessageUri(parentActivity,subject,"");
+                Intent intent = new Intent(Intent.ACTION_SENDTO,uri);
+
+                startActivity(Intent.createChooser(intent,"Send us email "));
+            }
+
+            @Override
+            public void onNoClick() {
+
+            }
+        });
+    }
+
     public void getDominantGradient(ImageView imageView)
     {
         Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();

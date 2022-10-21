@@ -12,7 +12,25 @@
         android:roundIcon="@mipmap/vector_icon2"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".FaqActivity"
+            android:name=".Activities.ContactUsActivity"
+            android:exported="false" />
+
+        <receiver
+            android:exported="true"
+            android:name=".BroadCastReceiver.TimeChangedReceiver"
+            >
+            <intent-filter>
+
+                <action android:name="android.intent.action.BATTERY_CHANGED"/>
+                <action android:name="android.intent.action.AIRPLANE_MODE"/>
+                <action android:name="android.intent.action.DATE_CHANGED"/>
+                <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
+                <action android:name="android.intent.action.TIME_SET" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".Activities.FaqActivity"
             android:exported="false" />
         <activity
             android:name=".Activities.RewardsActivity"

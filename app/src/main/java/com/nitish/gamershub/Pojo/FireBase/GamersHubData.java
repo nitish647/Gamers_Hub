@@ -1,8 +1,13 @@
 package com.nitish.gamershub.Pojo.FireBase;
 
+import com.nitish.gamershub.Pojo.FaqPojo;
+
+import java.util.ArrayList;
+
 public class GamersHubData {
 
     public GamesData gamesData;
+
 
     public GamersHubData() {
     }
@@ -14,6 +19,9 @@ public class GamersHubData {
     public void setGamesData(GamesData gamesData) {
         this.gamesData = gamesData;
     }
+
+
+
 
     public static class GamesData {
         int dailyCheckReward=0;
@@ -53,5 +61,6 @@ public class GamersHubData {
             return forceUpdate;
         }
     }
+
 }
 

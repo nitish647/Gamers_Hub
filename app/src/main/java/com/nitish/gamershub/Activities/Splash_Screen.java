@@ -2,8 +2,10 @@ package com.nitish.gamershub.Activities;
 
 import static com.nitish.gamershub.Utils.ConstantsHelper.From;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -31,17 +33,21 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.instacart.library.truetime.TrueTime;
 import com.nitish.gamershub.Activities.HomeActivity;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.Utils.TimeCalibrationInterceptor;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import io.paperdb.Paper;
+import io.tempo.Tempo;
 
 public class Splash_Screen extends BasicActivity {
     SharedPreferences sh;
@@ -51,38 +57,26 @@ public class Splash_Screen extends BasicActivity {
     String    gameData;
     RequestQueue requestQueue;
 
+    static Context context;
     public static String MaterData = "MasterData";
     private FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash__screen);
-        Paper.init(this);
         requestQueue = Volley.newRequestQueue(this);
         mAuth = FirebaseAuth.getInstance();
         textView = findViewById(R.id.warning);
+        context = Splash_Screen.this;
+        Paper.init(this);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-//                get_data();
-                getMaterData();
+        TimeCalibrationInterceptor timeCalibrationInterceptor = new TimeCalibrationInterceptor();
 
-            }
-        }, 1000);
+      new GetNetworkTimeAsync().execute();
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                textView.setText("Internet is slow...");
-            }
-        }, 7000);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                textView.setText("PLease check your internet connection and try again");
-            }
-        }, 11000);
+
+
+
     }
 
     @Override
@@ -91,6 +85,52 @@ public class Splash_Screen extends BasicActivity {
     }
 
 
+    public class GetNetworkTimeAsync extends AsyncTask<Object,Object,Object>
+    {
+
+
+        @Override
+        protected Object doInBackground(Object... objects) {
+
+      //      Tempo.initialize(getApplication());
+            try {
+                TrueTime.build().initialize();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+
+
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+//                get_data();
+                    Splash_Screen.this.getMaterData();
+
+                }
+            }, 1000);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    textView.setText("Internet is slow...");
+                }
+            }, 7000);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    textView.setText("PLease check your internet connection and try again");
+                }
+            }, 11000);
+            super.onPostExecute(o);
+        }
+    }
     public void getMaterData()
     {
 

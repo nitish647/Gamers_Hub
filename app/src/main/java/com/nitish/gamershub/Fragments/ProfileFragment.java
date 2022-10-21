@@ -14,12 +14,17 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.nitish.gamershub.Activities.FaqActivity;
 import com.nitish.gamershub.Activities.HomeActivity;
 import com.nitish.gamershub.Activities.RewardsActivity;
+import com.nitish.gamershub.Interface.ConfirmationDialogListener2;
+import com.nitish.gamershub.Pojo.DialogHelperPojo;
 import com.nitish.gamershub.Pojo.FireBase.UserProfile;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.Utils.AppHelper;
 import com.nitish.gamershub.databinding.FragmentProfileBinding;
 import com.squareup.picasso.Picasso;
 
@@ -133,6 +138,15 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        binding.rewardsRelative.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Toast.makeText(parentHomeActivity, "clicked", Toast.LENGTH_SHORT).show();
+                AppHelper.readCalenderData();
+                return false;
+            }
+        });
+
         binding.logOutRelative.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -150,7 +164,13 @@ public class ProfileFragment extends Fragment {
 
             }
         });
-
+        binding.faqRelative.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(parentHomeActivity, FaqActivity.class);
+                startActivity(intent);
+            }
+        });
         binding.privacyPolicy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -158,10 +178,45 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        binding.contactUsRelative.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                showContactConfirmDialog();
+
+            }
+        });
+
 
 
 
     }
+    public void showContactConfirmDialog()
+    {
+        DialogHelperPojo dialogHelperPojo = new DialogHelperPojo();
+        dialogHelperPojo.setYesButton("Send");
+        dialogHelperPojo.setTitle("Confirmation");
+        dialogHelperPojo.setMessage("You can contact us on or email <b>"+getString(R.string.contact_mail)+ "</b> in case of any doubt or issue. We will reach try to reach you out as soon as we can.");
+        parentHomeActivity.getConfirmationDialog(dialogHelperPojo, new ConfirmationDialogListener2() {
+            @Override
+            public void onYesClick() {
+                UserProfile.ProfileData profileData = getUserProfileGlobalData().getProfileData();
+
+                String body = "Hi I am  "+profileData.getName()+", my user id is "+profileData.getEmail()+" \n I have a doubt regarding ...";
+
+                Uri uri =  AppHelper.getMailMessageUri(parentHomeActivity,"",body);
+                Intent intent = new Intent(Intent.ACTION_SENDTO,uri);
+
+                startActivity(Intent.createChooser(intent,"Send us email "));
+            }
+
+            @Override
+            public void onNoClick() {
+
+            }
+        });
+    }
+
 
 
 }

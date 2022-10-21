@@ -8,11 +8,11 @@ import com.nitish.gamershub.Utils.DeviceHelper;
 public class UserProfile {
 
 
-    public ProfileData profileData;
-    public TimerStatus timerStatus;
-    public UserTransactions userTransactions;
-    public AdViewedStats adViewedStats;
-    public UserAccountStatus userAccountStatus;
+    public static ProfileData profileData;
+    public static TimerStatus timerStatus;
+    public static UserTransactions userTransactions;
+    public static AdViewedStats adViewedStats;
+    public static UserAccountStatus userAccountStatus;
 
 
 

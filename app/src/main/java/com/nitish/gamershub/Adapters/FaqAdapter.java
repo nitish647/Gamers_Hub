@@ -35,6 +35,9 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.MyViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
+        FaqPojo faqPojo = faqPojoArrayList.get(position);
+        holder.faqListItemBinding.questionTextview.setText(faqPojo.getQuestion());
+        holder.faqListItemBinding.answerTextview.setText(faqPojo.getAnswer());
     }
 
     @Override

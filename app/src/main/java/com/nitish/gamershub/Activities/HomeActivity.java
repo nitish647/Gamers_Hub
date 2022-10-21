@@ -14,7 +14,13 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,6 +56,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
+import com.instacart.library.truetime.TrueTime;
 import com.nitish.gamershub.Adapters.CategoriesAdapter;
 import com.nitish.gamershub.BuildConfig;
 import com.nitish.gamershub.Fragments.HomeFragment;
@@ -71,14 +78,20 @@ import com.nitish.gamershub.Utils.DateTimeHelper;
 import com.nitish.gamershub.Utils.DeviceHelper;
 import com.nitish.gamershub.Utils.NotificationHelper;
 import com.nitish.gamershub.Utils.ProgressBarHelper;
+import com.nitish.gamershub.Utils.SNTPClient;
 
+import org.apache.commons.net.ntp.NTPUDPClient;
+import org.apache.commons.net.ntp.TimeInfo;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import io.paperdb.Paper;
 
@@ -146,6 +159,8 @@ public class HomeActivity extends BasicActivity {
         categoriesList = new ArrayList<>();
         navigationView.setVisibility(View.VISIBLE);
 
+        new AsyncTaskExample().execute("","","");
+
 
         NotificationHelper.generateFcmToken();
         setHeader();
@@ -153,6 +168,14 @@ public class HomeActivity extends BasicActivity {
 
         loadInterstitialAdNew();
 
+        SNTPClient.getDate(TimeZone.getTimeZone("Asia/Kolkata"), new SNTPClient.Listener() {
+
+            @Override
+            public void onTimeResponse(String rawDate, Date date, Exception ex) {
+
+                Log.d("SNTPClient",DateTimeHelper.convertDateToString(date));
+            }
+        });
        MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(@NonNull InitializationStatus initializationStatus) {
@@ -196,6 +219,9 @@ public class HomeActivity extends BasicActivity {
     protected int getLayoutResourceId() {
         return R.layout.activity_home;
     }
+
+
+
 
 
     public AdmobInterstitialAdListener interstitialAdListener()
@@ -427,7 +453,7 @@ public class HomeActivity extends BasicActivity {
 
                         } catch (Exception e) {
 
-                            Toast.makeText(context, " Error333 , could generate the bill ", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, " Error333 ,  ", Toast.LENGTH_LONG).show();
 
                             Log.e("pError3223",e.toString());
                             e.printStackTrace();
@@ -625,6 +651,13 @@ public class HomeActivity extends BasicActivity {
     @Override
     public void onResume() {
         super.onResume();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_TIME_CHANGED);
+        filter.addAction(Intent.ACTION_DATE_CHANGED);
+        filter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+        filter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
+        registerReceiver(timeChangedReceiver2, filter);
+
 
         if (googleBannerAdView != null) {
             googleBannerAdView.resume();
@@ -649,6 +682,7 @@ public class HomeActivity extends BasicActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        unregisterReceiver(timeChangedReceiver2);
         interstitialAdDismissed = false;
      //   Toast.makeText(this, "On stop", Toast.LENGTH_SHORT).show();
 
@@ -820,6 +854,35 @@ public class HomeActivity extends BasicActivity {
 
 
    }
+    private class AsyncTaskExample extends AsyncTask<String, String, String> {
+        public static final String TIME_SERVER = "time-a.nist.gov";
 
 
-}
+        @Override
+        protected String doInBackground(String... strings) {
+
+                 NTPUDPClient timeClient = new NTPUDPClient();
+               InetAddress inetAddress;
+
+                try {
+                    inetAddress = InetAddress.getByName(TIME_SERVER);
+                    TimeInfo timeInfo = timeClient.getTime(inetAddress);
+                    long returnTime = timeInfo.getReturnTime();
+                    Date time = new Date(returnTime);
+                    Log.d("ServerResponse"," "+ DateTimeHelper.convertDateToString(time));
+
+
+                    return  DateTimeHelper.convertDateToString(time);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.d("ServerResponse","exception "+ e);
+
+                    return  "exception "+e;
+                }
+            }
+
+        }
+    }
+
+

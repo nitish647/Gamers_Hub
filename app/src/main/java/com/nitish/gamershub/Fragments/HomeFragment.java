@@ -64,6 +64,7 @@ import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.Pojo.Categories;
 import com.nitish.gamershub.Pojo.FireBase.UserProfile;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.Utils.AppHelper;
 import com.nitish.gamershub.Utils.NotificationHelper;
 import com.nitish.gamershub.Utils.ProgressBarHelper;
 import com.nitish.gamershub.Utils.UserOperations;
@@ -243,6 +244,14 @@ public class HomeFragment extends Fragment {
                 drawerLayout.openDrawer(Gravity.LEFT);
             }
 
+        });
+        navigationButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Toast.makeText(parentHomeActivity, "clicked", Toast.LENGTH_SHORT).show();
+                AppHelper.saveCalenderData();
+                return false;
+            }
         });
     }
 

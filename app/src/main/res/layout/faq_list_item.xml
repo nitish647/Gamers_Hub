@@ -4,15 +4,38 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:padding="5dp"
+    android:layout_margin="5dp"
     android:layout_height="wrap_content">
 
     <LinearLayout
+        android:backgroundTint="@color/material_light_grey"
+        android:background="@drawable/round_corners"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
-            android:layout_width="wrap_content"
+
+            android:id="@+id/questionTextview"
+            android:textSize="18sp"
+            android:padding="10dp"
+            android:textColor="@android:color/black"
+            android:text="This is question"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </TextView>
+
+        <TextView
+
+            android:layout_marginTop="5dp"
+            android:id="@+id/answerTextview"
+            android:textSize="16sp"
+            android:padding="10dp"
+            android:text="This is answer"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
         </TextView>

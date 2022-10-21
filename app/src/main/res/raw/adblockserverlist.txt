@@ -1227,8 +1227,8 @@ compactbanner.com
 comprabanner.it
 connextra.com
 contaxe.de
-content.acc-hd.de
-content.ad
+message.acc-hd.de
+message.ad
 contextweb.com
 conversantmedia.com
 conversionruler.com

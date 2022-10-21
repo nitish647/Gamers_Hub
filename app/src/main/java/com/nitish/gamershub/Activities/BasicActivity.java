@@ -13,10 +13,15 @@ import static com.nitish.gamershub.Utils.ConstantsHelper.UserMail;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,8 +56,11 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.SetOptions;
+import com.nitish.gamershub.BroadCastReceiver.TimeChangedReceiver;
 import com.nitish.gamershub.Fragments.BottomSheetDialog;
 import com.nitish.gamershub.Interface.AdmobInterstitialAdListener;
+import com.nitish.gamershub.Interface.ConfirmationDialogListener2;
+import com.nitish.gamershub.Pojo.DialogHelperPojo;
 import com.nitish.gamershub.Pojo.FireBase.AdViewedStats;
 import com.nitish.gamershub.Pojo.FireBase.GamersHubData;
 import com.nitish.gamershub.Pojo.FireBase.TimerStatus;
@@ -61,7 +69,6 @@ import com.nitish.gamershub.Pojo.FireBase.UserTransactions;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.AppHelper;
 import com.nitish.gamershub.Utils.ConstantsHelper;
-import com.nitish.gamershub.Utils.DataPassingHelper;
 import com.nitish.gamershub.Utils.ProgressBarHelper;
 import com.nitish.gamershub.Utils.UserOperations;
 import com.nitish.gamershub.databinding.BlockUserDialogBinding;
@@ -89,7 +96,7 @@ abstract class BasicActivity extends AppCompatActivity {
     AlertDialog confirmationDialog;
  private    UserProfile userProfileGlobal;
  private GamersHubData gamersHubDataGlobal;
-
+  TimeChangedReceiver2 timeChangedReceiver2;
    static   boolean bottomSheetDialogShown=false;
     @Nullable
     @Override
@@ -99,6 +106,7 @@ abstract class BasicActivity extends AppCompatActivity {
         setContentView(getLayoutResourceId());
         Paper.init(this);
          progressDialog = ProgressBarHelper.setProgressBarDialog(BasicActivity.this);
+         timeChangedReceiver2 = new TimeChangedReceiver2();
         logOutDialog2();
         loadInterstitialAdNew();
         loadRewardedAd2();
@@ -609,7 +617,50 @@ abstract class BasicActivity extends AppCompatActivity {
 
 
     }
-    public interface ConfirmationDialogListener
+
+
+    public ConfirmationDialogLayoutBinding getConfirmationDialog(DialogHelperPojo dialogHelperPojo, ConfirmationDialogListener2 confirmationDialogListener2)
+    {
+        ConfirmationDialogLayoutBinding confirmationDialogLayoutBinding;
+        LayoutInflater factory = LayoutInflater.from(BasicActivity.this);
+
+        confirmationDialogLayoutBinding =  DataBindingUtil.inflate(factory,R.layout.confirmation_dialog_layout,null,false);
+
+        confirmationDialog = new AlertDialog.Builder(BasicActivity.this).create();
+
+        confirmationDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
+        confirmationDialog.setView(confirmationDialogLayoutBinding.getRoot());
+        confirmationDialog.setCancelable(false);
+        confirmationDialog.show();
+        confirmationDialogLayoutBinding.titleTextview.setText(dialogHelperPojo.getTitle());
+        confirmationDialogLayoutBinding.messageTextview.setText(Html.fromHtml(dialogHelperPojo.getMessage()));
+        confirmationDialogLayoutBinding.yesButton.setText(dialogHelperPojo.getYesButton());
+        confirmationDialogLayoutBinding.NoButton.setText(dialogHelperPojo.getNoButton());
+
+        confirmationDialogLayoutBinding.yesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                confirmationDialog.dismiss();
+                confirmationDialogListener2.onYesClick();
+
+
+            }
+        });
+        confirmationDialogLayoutBinding.NoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                confirmationDialog.dismiss();
+                confirmationDialogListener2.onNoClick();
+
+            }
+        });
+
+        return confirmationDialogLayoutBinding;
+
+
+    }
+    public static interface ConfirmationDialogListener
     {
         public void onDismissListener();
 
@@ -946,9 +997,26 @@ abstract class BasicActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    @Override
+    protected void onResume() {
+
+
+
+
+        super.onResume();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+    }
+
     @Override
     public void onStart() {
         super.onStart();
+
         UserOperations.getFirestoreUser().addSnapshotListener(BasicActivity.this, new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -963,7 +1031,7 @@ abstract class BasicActivity extends AppCompatActivity {
                     if(userProfile!=null) {
                         saveUserProfileGlobal(userProfile);
 
-                        
+
                     }
 
                 }
@@ -972,7 +1040,20 @@ abstract class BasicActivity extends AppCompatActivity {
 
     }
 
+    public static class TimeChangedReceiver2 extends BroadcastReceiver {
 
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //   Toast.makeText(context,"time changed",Toast.LENGTH_LONG).show();
+            StringBuilder sb = new StringBuilder();
+            sb.append("Action: " + intent.getAction() + "\n");
+            sb.append("URI: " + intent.toUri(Intent.URI_INTENT_SCHEME).toString() + "\n");
+            String log = sb.toString();
+            Log.d("pResponse", "time changed broadcast "+log);
+            Toast.makeText(context, log, Toast.LENGTH_LONG).show();
+        }
+
+    }
     public void saveGamersHubDataGlobal(GamersHubData gamersHubData)
     {
 
@@ -1007,7 +1088,7 @@ abstract class BasicActivity extends AppCompatActivity {
                         bottomSheetDialog.dismiss();
                 }
 
-             bottomSheetDialog.show(getSupportFragmentManager(), "");
+          //   bottomSheetDialog.show(getSupportFragmentManager(), "");
 
 
 

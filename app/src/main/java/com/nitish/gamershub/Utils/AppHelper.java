@@ -6,10 +6,19 @@ import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHubDataGlobal;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GoogleSignInAccountUser;
 import static com.nitish.gamershub.Utils.ConstantsHelper.UserProfileGlobal;
 
+import android.content.Context;
+import android.net.Uri;
+import android.util.Log;
+import android.widget.Toast;
+
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.nitish.gamershub.Pojo.FireBase.AdViewedStats;
 import com.nitish.gamershub.Pojo.FireBase.GamersHubData;
 import com.nitish.gamershub.Pojo.FireBase.UserProfile;
+import com.nitish.gamershub.R;
+
+import java.util.Calendar;
+import java.util.Date;
 
 import io.paperdb.Paper;
 
@@ -89,4 +98,54 @@ public class AppHelper {
 
 
     }
+
+    ////------------------------time helper-----------------------///
+
+    public static void saveCalenderData()
+    {
+        Date date= new Date();
+        Calendar cal = Calendar.getInstance();
+
+        cal.setTime(date);
+        cal.set(Calendar.SECOND, 0);
+
+        Log.d("savedTime",DateTimeHelper.convertDateToString(cal.getTime()));
+        Paper.book().write("TimeHelperCalender",cal);
+
+
+    }
+
+    public static void readCalenderData()
+    {
+        Date date= new Date();
+        Calendar cal =      (Calendar) Paper.book().read("TimeHelperCalender");
+
+        Log.d("savedTimeReturn",DateTimeHelper.convertDateToString(cal.getTime()));
+
+
+
+    }
+
+                     /////---------------- Messages string --------------------////
+
+
+    public static Uri getMailMessageUri(Context context ,String subject , String body)
+    {
+
+
+        if(body.equals(""))
+         body = "Hi I am  "+AppHelper.getUserProfileGlobalData().getProfileData().getName()+", my user name is "+AppHelper.getUserProfileGlobalData().getProfileData().getEmail()+" \n I have a doubt regarding ...";
+
+
+        String mailTo = "mailto:" + context.getString(R.string.contact_mail) +
+                "?&subject=" + subject +
+                "&body=" + Uri.encode(body);
+
+
+
+        return Uri.parse(mailTo);
+    }
+
+
+
 }
