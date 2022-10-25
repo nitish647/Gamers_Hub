@@ -9,8 +9,6 @@
     android:layout_width="match_parent"
 
     android:layout_height="match_parent"
-    android:background="@color/gamers_hub_theme"
-    android:backgroundTint="@color/gamers_hub_theme"
 
     tools:context=".Activities.RedeemActivity">
     <RelativeLayout
@@ -64,6 +62,8 @@
          android:layout_width="match_parent"
          android:layout_height="140dp"
 
+
+         android:backgroundTint="#76a5fd"
          android:background="@drawable/round_corners"
 
          android:elevation="@dimen/cardview_default_elevation">
@@ -80,9 +80,11 @@
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
                  android:layout_marginTop="25dp"
-
-                 android:text="It generally takes 24-48 working hours to fulfil a redeem request"
-                 android:textSize="16sp">
+                 android:gravity="center"
+                 android:lineSpacingMultiplier="1.5"
+                 android:textColor="@android:color/white"
+                 android:text="@string/redeemRequestMessage"
+                 android:textSize="18sp">
 
              </TextView>
          </LinearLayout>

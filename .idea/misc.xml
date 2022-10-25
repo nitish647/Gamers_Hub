@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.19255222524977295" />
+        <entry key="app/src/main/res/drawable/bottom_navigation_selector.xml" value="0.1205" />
         <entry key="app/src/main/res/drawable/round_corner_10dp.xml" value="0.11" />
         <entry key="app/src/main/res/drawable/round_corners.xml" value="0.2035" />
         <entry key="app/src/main/res/drawable/simple_circle.xml" value="0.1" />

@@ -19,7 +19,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.text.Html;
 import android.util.Log;
@@ -56,6 +58,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.SetOptions;
+import com.instacart.library.truetime.TrueTime;
 import com.nitish.gamershub.BroadCastReceiver.TimeChangedReceiver;
 import com.nitish.gamershub.Fragments.BottomSheetDialog;
 import com.nitish.gamershub.Interface.AdmobInterstitialAdListener;
@@ -76,7 +79,10 @@ import com.nitish.gamershub.databinding.ConfirmationDialogLayoutBinding;
 import com.nitish.gamershub.databinding.GameRewardDialogBinding;
 import com.nitish.gamershub.databinding.ShowWebviewDialogBinding;
 
+import java.io.IOException;
+
 import io.paperdb.Paper;
+import io.tempo.Tempo;
 
 abstract class BasicActivity extends AppCompatActivity {
 
@@ -107,11 +113,34 @@ abstract class BasicActivity extends AppCompatActivity {
         Paper.init(this);
          progressDialog = ProgressBarHelper.setProgressBarDialog(BasicActivity.this);
          timeChangedReceiver2 = new TimeChangedReceiver2();
+        new GetNetworkTimeAsync().execute();
         logOutDialog2();
         loadInterstitialAdNew();
         loadRewardedAd2();
         getGoogleSignInOptions();
 
+
+    }
+
+
+    public class GetNetworkTimeAsync extends AsyncTask<Object,Object,Object>
+    {
+
+
+        @Override
+        protected Object doInBackground(Object... objects) {
+
+            //    Tempo.initialize(getApplication());
+            try {
+                TrueTime.build().initialize();
+
+            } catch (IOException e) {
+
+                e.printStackTrace();
+            }
+
+            return null;
+        }
 
     }
 
@@ -180,7 +209,7 @@ abstract class BasicActivity extends AppCompatActivity {
 
                     }
                     else {
-                        Toast.makeText(BasicActivity.this, "document does not exist", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(BasicActivity.this, "document does not exist 112", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -230,7 +259,7 @@ abstract class BasicActivity extends AppCompatActivity {
 
                     }
                     else {
-                        Toast.makeText(BasicActivity.this, "document does not exist", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(BasicActivity.this, "document does not exist 113", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -1025,8 +1054,16 @@ abstract class BasicActivity extends AppCompatActivity {
                     Toast.makeText(BasicActivity.this, "error while getting doc 211", Toast.LENGTH_SHORT).show();
                 }
                 if(value!=null && value.exists())
-                {
-                    UserProfile  userProfile=   value.toObject(UserProfile.class);
+                {UserProfile userProfile=null;
+                    userProfile=   value.toObject(UserProfile.class);
+                    try {
+
+                    }catch (Exception e)
+                    {
+                        Log.d("pError","User profile error "+e);
+
+                    }
+
 
                     if(userProfile!=null) {
                         saveUserProfileGlobal(userProfile);
@@ -1112,6 +1149,8 @@ abstract class BasicActivity extends AppCompatActivity {
     // will check if the ad view is changed
    public boolean adStatsChanged()
    {
+       if(getUserProfileGlobalData()==null)
+           return false;
     AdViewedStats adViewedStats =   getUserProfileGlobalData().getAdViewedStats()  ;
 
     if(getAdViewedStatsGlobal()==null)

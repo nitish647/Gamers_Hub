@@ -1,10 +1,12 @@
 package com.nitish.gamershub.Utils;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.instacart.library.truetime.TrueTime;
 
 import org.apache.commons.net.ntp.NTPUDPClient;
+import org.apache.commons.net.ntp.NtpUtils;
 import org.apache.commons.net.ntp.TimeInfo;
 
 import java.io.IOException;
@@ -38,8 +40,17 @@ public  class DateTimeHelper {
 //        datePojo.setGetCurrentDateString(getSimpleDateFormat().format(new Date()));
 //        datePojo.setGetCurrentDate(new Date());
 
-        datePojo.setGetCurrentDateString(getSimpleDateFormat().format(TrueTime.now()));
-        datePojo.setGetCurrentDate(TrueTime.now());
+
+        try {
+            datePojo.setGetCurrentDateString(getSimpleDateFormat().format(TrueTime.now()));
+            datePojo.setGetCurrentDate(TrueTime.now());
+        }catch (Exception e)
+        {
+            datePojo.setGetCurrentDateString(getSimpleDateFormat().format(new Date(Tempo.nowOrNull())));
+            datePojo.setGetCurrentDate(new Date(Tempo.nowOrNull()));
+            Log.d("pError","error in time "+e);
+        }
+
 
 //        datePojo.setGetCurrentDateString(getSimpleDateFormat().format(new Date(TimeManager.getInstance().getServerTime())));
 //        datePojo.setGetCurrentDate(new Date(TimeManager.getInstance().getServerTime()));

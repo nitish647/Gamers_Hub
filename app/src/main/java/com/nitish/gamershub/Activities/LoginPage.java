@@ -1,7 +1,6 @@
 package com.nitish.gamershub.Activities;
 
 import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHub_ParentCollection;
-import static com.nitish.gamershub.Utils.ConstantsHelper.GoogleSignInAccountUser;
 import static com.nitish.gamershub.Utils.ConstantsHelper.UserInfo;
 import static com.nitish.gamershub.Utils.ConstantsHelper.UserMail;
 
@@ -125,6 +124,8 @@ public class LoginPage extends BasicActivity    implements ActivityResultCallbac
             if(googleSignInAccountUser !=null && googleSignInAccountUser.getEmail()!=null) {
                 AppHelper.saveGoogleSignInAccountUser(googleSignInAccountUser);
 
+                Paper.book().write(UserMail, googleSignInAccountUser.getEmail());
+
 
                 getUserProfileGlobal(new GetUserProfileDataListener() {
                     @Override
@@ -166,8 +167,6 @@ public class LoginPage extends BasicActivity    implements ActivityResultCallbac
 
                                         Paper.book().write(UserInfo,userProfile);
 
-                                        Paper.book().write(UserMail, googleSignInAccountUser.getEmail());
-
 
                                         startIntentForHome();
 
@@ -197,9 +196,9 @@ public class LoginPage extends BasicActivity    implements ActivityResultCallbac
                                     public void onComplete(@NonNull Task<Void> task) {
 
                                         Toast.makeText(LoginPage.this, "Welcome User", Toast.LENGTH_SHORT).show();
-                                        Paper.book().write(UserMail, googleSignInAccountUser.getEmail());
                                         Paper.book().write(UserInfo,userProfile);
-                                        Paper.book().write(GoogleSignInAccountUser,googleSignInAccountUser);
+
+                                        AppHelper.saveGoogleSignInAccountUser(googleSignInAccountUser);
                                         startIntentForHome();
                                     }
                                 });

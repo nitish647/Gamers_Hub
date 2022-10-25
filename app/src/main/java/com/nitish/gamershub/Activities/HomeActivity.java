@@ -2,6 +2,7 @@ package com.nitish.gamershub.Activities;
 
 import static com.nitish.gamershub.Adapters.CategoriesAdapter.context;
 import static com.nitish.gamershub.Utils.ConstantsHelper.FavouriteList;
+import static com.nitish.gamershub.Utils.ConstantsHelper.From;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHub_ParentCollection;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GoogleSignInAccountUser;
 import static com.nitish.gamershub.Utils.ConstantsHelper.UserMail;
@@ -16,7 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -35,6 +38,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.ads.AdRequest;
@@ -53,6 +57,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
@@ -82,6 +87,7 @@ import com.nitish.gamershub.Utils.SNTPClient;
 
 import org.apache.commons.net.ntp.NTPUDPClient;
 import org.apache.commons.net.ntp.TimeInfo;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -152,6 +158,18 @@ public class HomeActivity extends BasicActivity {
         setViews();
 
 
+
+// enable network
+        firestoreDb.enableNetwork()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        // Do online things
+                        // ...
+                    }
+                });
+
+
         String playStoreVersionCode = FirebaseRemoteConfig.getInstance().getString(
                 "appVersion");
 
@@ -159,23 +177,17 @@ public class HomeActivity extends BasicActivity {
         categoriesList = new ArrayList<>();
         navigationView.setVisibility(View.VISIBLE);
 
-        new AsyncTaskExample().execute("","","");
-
-
         NotificationHelper.generateFcmToken();
         setHeader();
         updateUserInfo();
 
         loadInterstitialAdNew();
+        setUpBannerAd();
 
-        SNTPClient.getDate(TimeZone.getTimeZone("Asia/Kolkata"), new SNTPClient.Listener() {
+        //     AdsHelper.loadInterstitialAd(this);
 
-            @Override
-            public void onTimeResponse(String rawDate, Date date, Exception ex) {
+        setCategory();
 
-                Log.d("SNTPClient",DateTimeHelper.convertDateToString(date));
-            }
-        });
        MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(@NonNull InitializationStatus initializationStatus) {
@@ -203,11 +215,6 @@ public class HomeActivity extends BasicActivity {
             setBottomNavigationView();
 
 
-        setUpBannerAd();
-
-   //     AdsHelper.loadInterstitialAd(this);
-
-        setCategory();
 
 
 
@@ -258,6 +265,8 @@ public class HomeActivity extends BasicActivity {
     }
     public void setBottomNavigationView()
     {
+
+
         homeFragment = HomeFragment.newInstance("","");
         showHideFragment(homeFragment,homeFragment.getTag());
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -407,7 +416,7 @@ public class HomeActivity extends BasicActivity {
 
                     }
                     else {
-                        Toast.makeText(HomeActivity.this, "document does not exist", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(HomeActivity.this, "document does not exist11221", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -854,35 +863,6 @@ public class HomeActivity extends BasicActivity {
 
 
    }
-    private class AsyncTaskExample extends AsyncTask<String, String, String> {
-        public static final String TIME_SERVER = "time-a.nist.gov";
-
-
-        @Override
-        protected String doInBackground(String... strings) {
-
-                 NTPUDPClient timeClient = new NTPUDPClient();
-               InetAddress inetAddress;
-
-                try {
-                    inetAddress = InetAddress.getByName(TIME_SERVER);
-                    TimeInfo timeInfo = timeClient.getTime(inetAddress);
-                    long returnTime = timeInfo.getReturnTime();
-                    Date time = new Date(returnTime);
-                    Log.d("ServerResponse"," "+ DateTimeHelper.convertDateToString(time));
-
-
-                    return  DateTimeHelper.convertDateToString(time);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    Log.d("ServerResponse","exception "+ e);
-
-                    return  "exception "+e;
-                }
-            }
-
-        }
     }
 
 

@@ -112,17 +112,16 @@ public class ProfileFragment extends Fragment {
 
     public void setViews()
     {
-        if( parentHomeActivity.getGoogleSignInAccount()!=null) {
 
 
-            binding.profileName.setText(parentHomeActivity.getGoogleSignInAccount().getDisplayName());
-            if(parentHomeActivity.getGoogleSignInAccount().getPhotoUrl()!=null)
-                if(!(parentHomeActivity.getGoogleSignInAccount().getPhotoUrl()+"").equals("null"))
-                    Picasso.get().load(parentHomeActivity.getGoogleSignInAccount().getPhotoUrl()).into(binding.profileIcon);
 
-        }
+            binding.profileName.setText(AppHelper.getGoogleSignInAccountUser().getDisplayName());
+            if(AppHelper.getGoogleSignInUserProfile()!=null)
+                if(!(AppHelper.getGoogleSignInUserProfile()+"").equals("null"))
+                    Picasso.get().load(AppHelper.getGoogleSignInUserProfile()).into(binding.profileIcon);
 
-        binding.redeemCoinsTextview.setText( getUserProfileGlobalData().profileData.getGameCoins() +" coins");
+
+        binding.redeemCoinsTextview.setText( getUserProfileGlobalData().getProfileData().getGameCoins() +" coins");
 
 
     }

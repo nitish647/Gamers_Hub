@@ -74,6 +74,7 @@
     <string name="earned_reward_message">
        Congratulations , You have earned
     </string>
+    <string name="redeemRequestMessage">It generally takes 24–48 working hours to fulfil a redeem request</string>
 
     <string name="suspensionMessage">Your account has been temporarily been suspended due to the wrong activities detected by us on your account</string>
     <string name="contact_mail">

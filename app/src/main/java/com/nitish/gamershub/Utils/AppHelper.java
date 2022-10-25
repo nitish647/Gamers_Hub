@@ -4,6 +4,7 @@ import static com.nitish.gamershub.Utils.ConstantsHelper.AdViewedStatsGlobal;
 import static com.nitish.gamershub.Utils.ConstantsHelper.FirebaseFCMToken;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHubDataGlobal;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GoogleSignInAccountUser;
+import static com.nitish.gamershub.Utils.ConstantsHelper.GoogleSignInUserProfile;
 import static com.nitish.gamershub.Utils.ConstantsHelper.UserProfileGlobal;
 
 import android.content.Context;
@@ -30,12 +31,19 @@ public class AppHelper {
     //--------------------login page -----------------//
     public static void saveGoogleSignInAccountUser(GoogleSignInAccount googleSignInAccount)
     {
+
+        Log.d("pResponse","GoogleSignInUserProfile "+googleSignInAccount.getPhotoUrl());
+        Paper.book().write(GoogleSignInUserProfile,googleSignInAccount.getPhotoUrl()+"");
         Paper.book().write(GoogleSignInAccountUser,googleSignInAccount);
     }
 
     public static GoogleSignInAccount getGoogleSignInAccountUser()
     {
        return (GoogleSignInAccount) Paper.book().read(GoogleSignInAccountUser);
+    }
+    public static String getGoogleSignInUserProfile()
+    {
+        return (String) Paper.book().read(GoogleSignInUserProfile);
     }
 
 
@@ -98,6 +106,8 @@ public class AppHelper {
 
 
     }
+
+
 
     ////------------------------time helper-----------------------///
 

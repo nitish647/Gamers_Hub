@@ -34,6 +34,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.denzcoskun.imageslider.ImageSlider;
@@ -216,6 +217,16 @@ public class HomeFragment extends Fragment {
         allGamesRecyclerView.setLayoutManager(gridLayoutManager);
 
 
+        if(Paper.book().read(Splash_Screen.MaterData)==null|| !Paper.book().contains(Splash_Screen.MaterData))
+            getMaterData();
+        else
+            saveGameData();
+
+        return view;
+        
+    }
+    public void saveGameData()
+    {
         try {
             masterDataJsonObject = new JSONObject(Paper.book().read(Splash_Screen.MaterData)+"");
             JSONArray mainGameJsonArray = masterDataJsonObject.getJSONArray("main");
@@ -228,12 +239,11 @@ public class HomeFragment extends Fragment {
 
 
         } catch (Exception e) {
+            Log.d("gError","exception in data 112 "+e);
             Toast.makeText(view.getContext(), "Some error has occurred : gError223", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
 
-        return view;
-        
     }
 
     public void setOnClickListens()
@@ -415,7 +425,56 @@ public class HomeFragment extends Fragment {
     }
 
 
+    public void getMaterData()
+    {
 
+        String url = getString(R.string.dbGitUrl)+"gamers_hub_data/masterData.json";
+
+        Log.d("url",url);
+
+        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+
+
+            @Override
+            public void onResponse(JSONArray response) {
+
+                Log.d("gResponse","response json array of mater data "+response);
+
+                //    Toast.makeText(Splash_Screen.this, response+"", Toast.LENGTH_SHORT).show();
+                try {
+                    JSONObject jsonObject =  response.getJSONObject(0);
+                    Log.d("gResponse","response jsonObject of mater data "+jsonObject);
+                    Paper.book().write(Splash_Screen.MaterData,jsonObject+"");
+
+                    saveGameData();
+
+                } catch (Exception e) {
+                    Log.d("gError","error in  mater data "+e.toString());
+                    e.printStackTrace();
+                }
+
+
+
+
+
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("gError","error in mater data "+error);
+
+            }
+        });
+
+        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
+                6000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        requestQueue.add(jsonObjectRequest);
+    }
 
 
     public void setViews()

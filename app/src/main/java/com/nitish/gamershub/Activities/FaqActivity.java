@@ -4,6 +4,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.os.Bundle;
+import android.view.View;
 
 import com.nitish.gamershub.Adapters.FaqAdapter;
 import com.nitish.gamershub.Pojo.FaqPojo;
@@ -25,6 +26,7 @@ public class FaqActivity extends BasicActivity {
 
         setFaqPojoArrayList();
         setRecyclerview();
+        setOnClickListeners();
 
 
     }
@@ -34,12 +36,22 @@ public class FaqActivity extends BasicActivity {
         return  R.layout.activity_faq;
     }
 
+    public void setOnClickListeners()
+    {
+        binding.backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+    }
     public void setRecyclerview()
     {
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         FaqAdapter faqAdapter = new FaqAdapter(faqPojoArrayList);
         binding.recyclerView.setAdapter(faqAdapter);
     }
+
     public void setFaqPojoArrayList()
     {
         faqPojoArrayList.add(new FaqPojo("How to earn coins by playing games at Gamers Hub ?",

@@ -53,6 +53,7 @@ tools:context=".Activities.HomeActivity">
             android:layout_alignParentBottom="true"
             android:background="@drawable/round_corners"
             android:backgroundTint="@android:color/white"
+            app:itemIconTint="@drawable/bottom_navigation_selector"
             app:menu="@menu/bottom_navigation_menu">
 
         </com.google.android.material.bottomnavigation.BottomNavigationView>

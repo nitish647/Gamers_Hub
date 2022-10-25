@@ -81,8 +81,9 @@ public class UserProfile {
 
     public static class ProfileData {
 
-        public String name =AppHelper.getGoogleSignInAccountUser().getDisplayName();;
-        public String email= AppHelper.getGoogleSignInAccountUser().getEmail();
+
+        public String name =AppHelper.getGoogleSignInAccountUser()!=null? AppHelper.getGoogleSignInAccountUser().getDisplayName():"";
+        public String email=AppHelper.getGoogleSignInAccountUser()!=null? AppHelper.getGoogleSignInAccountUser().getEmail():"";
         public String versionName = BuildConfig.VERSION_NAME+"";
         public int gameCoins = 0;
 

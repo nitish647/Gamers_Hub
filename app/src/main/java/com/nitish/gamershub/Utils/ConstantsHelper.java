@@ -17,6 +17,7 @@ public class ConstantsHelper {
     public static  String PopularGamesList = "PopularGamesList";
     public static  String UserInfo = "UserInfo";
     public static  String GoogleSignInAccountUser = "GoogleSignInAccountUser";
+    public static  String GoogleSignInUserProfile = "GoogleSignInUserProfile";
     // general reward coins to reward after a game
     public static  String GeneralRewardCoins = "GeneralRewardCoins";
 

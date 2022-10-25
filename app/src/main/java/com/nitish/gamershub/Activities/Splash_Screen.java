@@ -70,8 +70,6 @@ public class Splash_Screen extends BasicActivity {
         context = Splash_Screen.this;
         Paper.init(this);
 
-        TimeCalibrationInterceptor timeCalibrationInterceptor = new TimeCalibrationInterceptor();
-
       new GetNetworkTimeAsync().execute();
 
 
@@ -92,10 +90,12 @@ public class Splash_Screen extends BasicActivity {
         @Override
         protected Object doInBackground(Object... objects) {
 
-      //      Tempo.initialize(getApplication());
+           Tempo.initialize(getApplication());
             try {
                 TrueTime.build().initialize();
+
             } catch (IOException e) {
+
                 e.printStackTrace();
             }
 
@@ -155,8 +155,6 @@ public class Splash_Screen extends BasicActivity {
 
 
               //      FirebaseUser currentUser = mAuth.getCurrentUser();
-
-
 
 
                     // when not singed in
