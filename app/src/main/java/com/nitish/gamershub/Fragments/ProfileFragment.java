@@ -118,7 +118,7 @@ public class ProfileFragment extends Fragment {
             binding.profileName.setText(AppHelper.getGoogleSignInAccountUser().getDisplayName());
             if(AppHelper.getGoogleSignInUserProfile()!=null)
                 if(!(AppHelper.getGoogleSignInUserProfile()+"").equals("null"))
-                    Picasso.get().load(AppHelper.getGoogleSignInUserProfile()).into(binding.profileIcon);
+                    Picasso.get().load(AppHelper.getGoogleSignInUserProfile()).placeholder(R.drawable.gamers_hub_icon15).into(binding.profileIcon);
 
 
         binding.redeemCoinsTextview.setText( getUserProfileGlobalData().getProfileData().getGameCoins() +" coins");
@@ -149,7 +149,7 @@ public class ProfileFragment extends Fragment {
         binding.logOutRelative.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                parentHomeActivity.logOutDialog();
+                parentHomeActivity.showLogOutDialog();
             }
         });
 
@@ -195,7 +195,7 @@ public class ProfileFragment extends Fragment {
         DialogHelperPojo dialogHelperPojo = new DialogHelperPojo();
         dialogHelperPojo.setYesButton("Send");
         dialogHelperPojo.setTitle("Confirmation");
-        dialogHelperPojo.setMessage("You can contact us on or email <b>"+getString(R.string.contact_mail)+ "</b> in case of any doubt or issue. We will reach try to reach you out as soon as we can.");
+        dialogHelperPojo.setMessage("You can contact us on or email <b>"+getString(R.string.contact_mail)+ "</b> in case of any doubt or issue. We will try to reach you out as soon as we can.");
         parentHomeActivity.getConfirmationDialog(dialogHelperPojo, new ConfirmationDialogListener2() {
             @Override
             public void onYesClick() {

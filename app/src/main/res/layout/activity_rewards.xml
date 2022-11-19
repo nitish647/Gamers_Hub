@@ -116,7 +116,7 @@
                 android:elevation="@dimen/cardview_default_elevation"
                 android:padding="5dp"
 
-                android:textSize="20sp">
+                android:textSize="16sp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -138,7 +138,7 @@
                         android:layout_marginStart="20dp"
                         android:text="Redeem Coins"
                         android:textColor="@android:color/black"
-                        android:textSize="20sp"
+                        android:textSize="16sp"
 
 
                         >
@@ -165,7 +165,7 @@
                 android:elevation="@dimen/cardview_default_elevation"
                 android:padding="5dp"
 
-                android:textSize="20sp">
+                android:textSize="16sp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -189,7 +189,7 @@
                         android:layout_marginStart="20dp"
                         android:text="Transactions History"
                         android:textColor="@android:color/black"
-                        android:textSize="20sp"
+                        android:textSize="16sp"
 
 
                         >
@@ -216,7 +216,7 @@
                 android:elevation="@dimen/cardview_default_elevation"
                 android:padding="5dp"
 
-                android:textSize="20sp">
+                android:textSize="16sp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -239,7 +239,7 @@
                         android:layout_marginStart="20dp"
                         android:text="Daily Bonus"
                         android:textColor="@android:color/black"
-                        android:textSize="20sp"
+                        android:textSize="16sp"
 
 
                         >
@@ -293,7 +293,7 @@
                         android:layout_marginStart="20dp"
                         android:text="Watch an Ad and Earn"
                         android:textColor="@android:color/black"
-                        android:textSize="20sp"
+                        android:textSize="16sp"
 
 
                         >

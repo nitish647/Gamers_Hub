@@ -5,49 +5,28 @@ import static com.nitish.gamershub.Utils.ConstantsHelper.From;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.instacart.library.truetime.TrueTime;
-import com.nitish.gamershub.Activities.HomeActivity;
+import com.nitish.gamershub.Interface.ConfirmationDialogListener2;
+import com.nitish.gamershub.Pojo.DialogHelperPojo;
 import com.nitish.gamershub.R;
-import com.nitish.gamershub.Utils.TimeCalibrationInterceptor;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import io.paperdb.Paper;
-import io.tempo.Tempo;
 
 public class Splash_Screen extends BasicActivity {
     SharedPreferences sh;
@@ -70,7 +49,7 @@ public class Splash_Screen extends BasicActivity {
         context = Splash_Screen.this;
         Paper.init(this);
 
-      new GetNetworkTimeAsync().execute();
+        handlerFunctions();
 
 
 
@@ -83,53 +62,32 @@ public class Splash_Screen extends BasicActivity {
     }
 
 
-    public class GetNetworkTimeAsync extends AsyncTask<Object,Object,Object>
+
+    private void handlerFunctions()
     {
 
+        new Handler().postDelayed(new Runnable() {
 
-        @Override
-        protected Object doInBackground(Object... objects) {
-
-           Tempo.initialize(getApplication());
-            try {
-                TrueTime.build().initialize();
-
-            } catch (IOException e) {
-
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-
-
-            new Handler().postDelayed(new Runnable() {
-
-                @Override
-                public void run() {
+            @Override
+            public void run() {
 //                get_data();
-                    Splash_Screen.this.getMaterData();
+                Splash_Screen.this.getMaterData();
 
-                }
-            }, 1000);
+            }
+        }, 1000);
 
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    textView.setText("Internet is slow...");
-                }
-            }, 7000);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    textView.setText("PLease check your internet connection and try again");
-                }
-            }, 11000);
-            super.onPostExecute(o);
-        }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                textView.setText("Internet is slow...");
+            }
+        }, 7000);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                textView.setText("PLease check your internet connection and try again");
+            }
+        }, 11000);
     }
     public void getMaterData()
     {
@@ -174,9 +132,28 @@ public class Splash_Screen extends BasicActivity {
                     finish();
 
                 } catch (Exception e) {
+                    if(e.toString().toLowerCase().contains("connection"))
+                    {
+                        DialogHelperPojo dialogHelper = new DialogHelperPojo();
+                        dialogHelper.setMessage("Change in default time detected , please set the time to default network time");
+
+                        getConfirmationDialogSingleButton(dialogHelper, new ConfirmationDialogListener2() {
+                            @Override
+                            public void onYesClick() {
+                                finish();
+                            }
+
+                            @Override
+                            public void onNoClick() {
+
+                            }
+                        });
+
+                    }
                     Log.d("gError","error in  mater data "+e.toString());
                     e.printStackTrace();
                 }
+
 
 
 
@@ -200,6 +177,7 @@ public class Splash_Screen extends BasicActivity {
 
         requestQueue.add(jsonObjectRequest);
     }
+
 
 
 }

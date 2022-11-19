@@ -137,17 +137,28 @@ public class RewardsActivity extends BasicActivity {
        TimerStatus timerStatus = userProfile.getTimerStatus();
      TimerStatus.DailyBonus dailyBonus = timerStatus.getDailyBonus();
 
+
         binding.coinsTextview.setText( profileData.getGameCoins()+"");
 
       if(dailyBonus.getClaimed())
         {
             binding.claimTextview.setText("claimed");
+
         }
       else {
           binding.claimTextview.setText("claim");
+      //    binding.timerTextview.setVisibility(View.GONE);
 
       }
-        timerForRewardVideo();
+        WatchViewReward watchViewReward = timerStatus.getWatchViewReward();
+      if(!watchViewReward.isClaimed())
+      {
+          binding.watchVideoTextview.setText("Watch");
+          binding.timerTextview.setVisibility(View.GONE);
+      }
+      else {
+          timerForRewardVideo();
+      }
 
     }
 
@@ -335,8 +346,10 @@ public class RewardsActivity extends BasicActivity {
                     String claimText  ="Next claim in "+timerHourMinuteSecond.replace("-","");
 
 
-                    if(hours>=1||!userProfile.getTimerStatus().getWatchViewReward().isClaimed())
+                    if(hours>=1 )
                     {
+                        if(!userProfile.getTimerStatus().getWatchViewReward().isClaimed())
+                            return;
                        binding.watchVideoTextview.setText("Watch");
                        binding.timerTextview.setVisibility(View.GONE);
                         userProfile.getTimerStatus().getWatchViewReward().setClaimed(false);
@@ -347,6 +360,7 @@ public class RewardsActivity extends BasicActivity {
 
                             }
                         });
+                        return;
 
                     }
                     else {
@@ -357,7 +371,7 @@ public class RewardsActivity extends BasicActivity {
                     }
 
                 } catch ( Exception e) {
-                    Log.d("pTimer","Hello, error ! " + e);
+                    Log.d("pError","Hello, error 112221 ! " + e);
 
                     e.printStackTrace();
                 }
@@ -377,6 +391,7 @@ public class RewardsActivity extends BasicActivity {
     protected void onResume() {
         super.onResume();
         userProfile = getUserProfileGlobalData();
+        if(userProfile.getTimerStatus()!=null)
         updateViews(userProfile);
     }
 }

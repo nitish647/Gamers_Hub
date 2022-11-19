@@ -1,5 +1,6 @@
 package com.nitish.gamershub.Fragments;
 
+import static com.nitish.gamershub.Utils.AppHelper.getGamersHubDataGlobal;
 import static com.nitish.gamershub.Utils.AppHelper.getUserProfileGlobalData;
 import static com.nitish.gamershub.Utils.ConstantsHelper.FavouriteList;
 import static com.nitish.gamershub.Utils.ConstantsHelper.gameDataObject;
@@ -49,7 +50,7 @@ import io.paperdb.Paper;
 
 public class GameDetailsFragment extends Fragment {
 
-    View view;
+
 
     GameDetailActivity2 parentActivity;
 
@@ -75,11 +76,10 @@ public class GameDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_game_details, container, false);
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_game_details,container,false);
-        Paper.init(view.getContext());
+        Paper.init(binding.getRoot().getContext());
 
-        parentActivity = (GameDetailActivity2) view.getContext();
+        parentActivity = (GameDetailActivity2) binding.getRoot().getContext();
 
         favouriteArrayList = new ArrayList<>();
          allGamesItems = NewAndPopularGamesAdapter.SelectedGameObject;
@@ -179,8 +179,9 @@ public class GameDetailsFragment extends Fragment {
 
         });
 
+        int min =  getGamersHubDataGlobal().gamesData.getGamePlaySecs()/60;
         String text =" Play this game for "+
-                AppHelper.getGamersHubDataGlobal().gamesData.getGamePlaySecs()+" seconds to get rewarded";
+                min+" Minutes to get rewarded";
         binding.gamePlayTimeTextview.setText(text);
 
 

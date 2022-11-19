@@ -125,6 +125,18 @@ public class UserTransactions implements Serializable {
         public void setAmount(int amount) {
             this.amount = amount;
         }
+
+        public void setPaid(boolean paid) {
+            isPaid = paid;
+        }
+
+        public String getTransactionId() {
+            return transactionId;
+        }
+
+        public void setTransactionId(String transactionId) {
+            this.transactionId = transactionId;
+        }
     }
 
 

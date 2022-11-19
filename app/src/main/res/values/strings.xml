@@ -35,28 +35,28 @@
     </string>
 
     // production live ads
-    <!--    <string name="admob_inter">-->
-    <!--        ca-app-pub-5584279718709862/1146858340-->
-    <!--    </string>-->
-    <!--    <string name="admob_banner">-->
-    <!--        ca-app-pub-5584279718709862/7324226210-->
-    <!--    </string>-->
-    <!--    <string name="admob_reward">-->
-    <!--        ca-app-pub-5584279718709862/4033478773-->
-    <!--    </string>-->
+        <string name="admob_inter">
+            ca-app-pub-5584279718709862/1146858340
+        </string>
+        <string name="admob_banner">
+            ca-app-pub-5584279718709862/7324226210
+        </string>
+        <string name="admob_reward">
+            ca-app-pub-5584279718709862/4033478773
+        </string>
 
 
     // test ads
 
-    <string name="admob_inter">
-        ca-app-pub-3940256099942544/1033173712
-    </string>
-    <string name="admob_banner">
-        ca-app-pub-3940256099942544/6300978111
-    </string>
-    <string name="admob_reward">
-        	ca-app-pub-3940256099942544/5224354917
-    </string>
+<!--    <string name="admob_inter">-->
+<!--        ca-app-pub-3940256099942544/1033173712-->
+<!--    </string>-->
+<!--    <string name="admob_banner">-->
+<!--        ca-app-pub-3940256099942544/6300978111-->
+<!--    </string>-->
+<!--    <string name="admob_reward">-->
+<!--        	ca-app-pub-3940256099942544/5224354917-->
+<!--    </string>-->
 
 
     <string name="admob_test_reward">
@@ -74,7 +74,7 @@
     <string name="earned_reward_message">
        Congratulations , You have earned
     </string>
-    <string name="redeemRequestMessage">It generally takes 24–48 working hours to fulfil a redeem request</string>
+    <string name="redeemRequestMessage">Most transaction get completed in 6 hours but , it can take up to 24 to 72 hours to complete a transaction request .</string>
 
     <string name="suspensionMessage">Your account has been temporarily been suspended due to the wrong activities detected by us on your account</string>
     <string name="contact_mail">

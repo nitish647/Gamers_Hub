@@ -1,11 +1,14 @@
 package com.nitish.gamershub.Pojo;
 
+import com.nitish.gamershub.R;
+
 public class DialogHelperPojo
 {
     String YesButton = "Confirm";
     String NoButton = "Cancel";
     String title = "";
     String message = "Are you sure ?";
+    int dialogIcon= R.drawable.gamers_hub_icon15;
 
     public DialogHelperPojo() {
     }
@@ -42,6 +45,11 @@ public class DialogHelperPojo
         this.message = message;
     }
 
+    public int getDialogIcon() {
+        return dialogIcon;
+    }
 
-
+    public void setDialogIcon(int dialogIcon) {
+        this.dialogIcon = dialogIcon;
+    }
 }

@@ -2,25 +2,37 @@ package com.nitish.gamershub.Activities;
 
 import static com.nitish.gamershub.Utils.AppHelper.getUserProfileGlobalData;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+import com.google.gson.Gson;
 import com.nitish.gamershub.Adapters.RedeemRecyclerviewAdapter;
-import com.nitish.gamershub.Adapters.UserTransactionListAdapter;
+import com.nitish.gamershub.Pojo.FireBase.RedeemCoins;
 import com.nitish.gamershub.Pojo.FireBase.UserTransactions;
 import com.nitish.gamershub.Pojo.FireBase.RedeemListItem;
 import com.nitish.gamershub.Pojo.FireBase.UserProfile;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.Utils.AppHelper;
 import com.nitish.gamershub.Utils.CommonMethods;
 import com.nitish.gamershub.Utils.Connectivity;
 import com.nitish.gamershub.Utils.ConstantsHelper;
@@ -28,12 +40,19 @@ import com.nitish.gamershub.Utils.DateTimeHelper;
 import com.nitish.gamershub.Utils.ProgressBarHelper;
 import com.nitish.gamershub.Utils.ToastHelper;
 import com.nitish.gamershub.Utils.ValidationHelper;
+import com.nitish.gamershub.databinding.ActivityReddeemBinding;
 import com.nitish.gamershub.databinding.PaytmUpiNumberLayoutBinding;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 public class RedeemActivity extends BasicActivity {
 
+    ActivityReddeemBinding binding;
+
+    String upiImageLink="https://i.ibb.co/JB3b9fc/upi-icon-1.png";
+    String paytmImageLink=  "https://i.ibb.co/C9VzmMx/paytm-icom.png";
   //  TextView walletCoinsTextview;
     FirebaseFirestore firebaseFirestore;
 
@@ -41,16 +60,16 @@ public class RedeemActivity extends BasicActivity {
     ArrayList<RedeemListItem> redeemListItemArrayList = new ArrayList<>();
     int totalGameCoins=0;
     ArrayList<UserTransactions.TransactionRequest> transactionRequestList;
-
+    RedeemCoins redeemCoins;
     RedeemListItem redeemListItem;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reddeem);
+    binding =   DataBindingUtil.setContentView(this,  R.layout.activity_reddeem);
         redeemRecyclerView = findViewById(R.id.redeemRecyclerView);
-
 
         firebaseFirestore = FirebaseFirestore.getInstance();
         progressDialog = ProgressBarHelper.setProgressBarDialog(this);
@@ -59,13 +78,19 @@ public class RedeemActivity extends BasicActivity {
 
 
 
-
         getCoins();
-
+        setUpBannerAd();
         totalGameCoins = getUserProfileGlobalData().getProfileData().getGameCoins();
-        setRedeemRecyclerView();
+        getRedeemListData();
+        setonClickListener();
+        setViews();
 
 
+
+    }
+
+    private void setViews() {
+        binding.redeemMessageText.setText(AppHelper.getGamersHubDataGlobal().getMessage().getPayoutMessage()+"");
     }
 
     @Override
@@ -75,31 +100,101 @@ public class RedeemActivity extends BasicActivity {
 
 
 
-
-
-    public void setRedeemRecyclerView()
+    private void setonClickListener()
     {
-        redeemListItemArrayList.add(new RedeemListItem("Upi50 ",10,1,R.drawable.upi_icon_1));
-        redeemListItemArrayList.add(new RedeemListItem("Paytm50 ",10,1,R.drawable.paytm_icom));
-        redeemListItemArrayList.add(new RedeemListItem("Upi100",10000,100,R.drawable.upi_icon_1));
-        redeemListItemArrayList.add(new RedeemListItem("Paytm100 ",10000,100,R.drawable.paytm_icom));
-        redeemListItemArrayList.add(new RedeemListItem("Upi25 ",2500,25,R.drawable.upi_icon_1));
-        redeemListItemArrayList.add(new RedeemListItem("Paytm25 ",2500,25,R.drawable.paytm_icom));
+        binding.backButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
 
+                setRedeemListData();
+                return true;
+
+            }
+        });
+    }
+    private void setRedeemRecyclerView()
+    {
+
+        if(redeemListItemArrayList==null || redeemListItemArrayList.size()==0)
+        {
+            binding.noTransactionRelative.setVisibility(View.VISIBLE);
+        }
+        else {
+            binding.noTransactionRelative.setVisibility(View.GONE);
+
+        }
         RedeemRecyclerviewAdapter redeemRecyclerviewAdapter = new RedeemRecyclerviewAdapter(this, redeemListItemArrayList);
         redeemRecyclerView.setAdapter(redeemRecyclerviewAdapter);
         redeemRecyclerView.setLayoutManager(new GridLayoutManager(this,2));
 
+
+
     }
 
+    private void getRedeemListData()
+    {
+        showProgressBar();
+        getGamersHubRedeemCoinsList(new OnFirestoreDataCompleteListener() {
+            @Override
+            public void OnComplete(DocumentSnapshot documentSnapshot) {
+
+
+                JSONObject jsonObject = new JSONObject(documentSnapshot.getData());
+                RedeemCoins redeemCoins = new Gson().fromJson(jsonObject.toString(),RedeemCoins.class);
+                redeemListItemArrayList =  redeemCoins.getRedeemListItemList();
+                setRedeemRecyclerView();
+            }
+        });
+    }
+    private void setRedeemListData()
+    {
+
+
+        redeemListItemArrayList = new ArrayList<>();
+        redeemListItemArrayList.add(new RedeemListItem("Upi10 ",1000,10,upiImageLink));
+        redeemListItemArrayList.add(new RedeemListItem("Paytm10 ",1000,10,paytmImageLink));
+        redeemListItemArrayList.add(new RedeemListItem("Upi25 ",2500,25,upiImageLink));
+        redeemListItemArrayList.add(new RedeemListItem("Paytm25 ",2500,25,paytmImageLink));
+        redeemListItemArrayList.add(new RedeemListItem("Upi50 ",5000,50,upiImageLink));
+        redeemListItemArrayList.add(new RedeemListItem("Paytm50 ",5000,50,paytmImageLink));
+        redeemListItemArrayList.add(new RedeemListItem("Upi100",10000,100,upiImageLink));
+        redeemListItemArrayList.add(new RedeemListItem("Paytm100 ",10000,100,paytmImageLink));
+
+
+        redeemCoins = new RedeemCoins();
+        redeemCoins.setRedeemListItemList(redeemListItemArrayList);
+
+
+        showProgressBar();
+        setGamersHubRedeemCoinsList(new OnFirestoreDataCompleteListener() {
+
+            @Override
+            public void OnComplete(DocumentSnapshot documentSnapshot) {
+                dismissProgressBar();
+                setGamersHubRedeemCoinsList().set(redeemCoins).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(RedeemActivity.this, "Added the data", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(RedeemActivity.this, "FAILED  the data "+e, Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+
+            }
+        });
+
+    }
     @RequiresApi(api = Build.VERSION_CODES.M)
-    public void redeemMoneyIcon(RedeemListItem redeemListItem)
+    public void redeemMoneyItemClick(RedeemListItem redeemListItem)
     {
         this.redeemListItem = redeemListItem;
         String connectivityStatus =Connectivity.getConnectionStatus(RedeemActivity.this);
 
-        if(connectivityStatus.equals(ConstantsHelper.ConnectionSignalStatus.NO_CONNECTIVITY+"")||
-                connectivityStatus.equals(ConstantsHelper.ConnectionSignalStatus.POOR_STRENGTH+"" ))
+        if(!isInternetAvailable())
         {
             Toast.makeText(this, "Network is not good "+connectivityStatus, Toast.LENGTH_SHORT).show();
             return;
@@ -143,13 +238,14 @@ public class RedeemActivity extends BasicActivity {
                     String paytmNumber =paytmUpiNumberLayoutBinding.paytmEdittext.getText().toString();
                     if(ValidationHelper.isValidIndianMobileNo(paytmNumber))
                     {
+                        paytmUpiDialog.dismiss();
                         redeemListItem.setPaytmNumber(paytmNumber+"");
 
                         UserTransactions userTransactions =   setUserTransactions(getUserProfileGlobalData().getUserTransactions(),redeemListItem);
                         updateUserWalletForTransaction(- redeemListItem.getCoins(),setUserDataLister(redeemListItem),userTransactions);
 
 
-                        paytmUpiDialog.dismiss();
+
                     }
                     else {
 
@@ -272,6 +368,9 @@ public class RedeemActivity extends BasicActivity {
             transactionRequest.setPaytmNumber(redeemListItem.getPaytmNumber());
 
         }
+        String transactionId =  redeemListItem.getName()+"_"+ AppHelper.generateRandomNumber();
+        transactionId = transactionId.replace(" ","");
+        transactionRequest.setTransactionId(transactionId);
         transactionRequest.setRemainingCoins(totalGameCoins);
         transactionRequest.setPaidDate(null);
 
@@ -292,7 +391,7 @@ public class RedeemActivity extends BasicActivity {
             public void onTaskSuccessful() {
 
 
-                String message= "Congratulations , Redeem request generated for "+redeemListItem.getMoney();
+                String message= "Congratulations , Redeem request generated for ₹"+redeemListItem.getMoney();
                 showRewardDialog(message);
                 Toast.makeText(RedeemActivity.this, "Request Raised successfully", Toast.LENGTH_SHORT).show();
 
@@ -300,6 +399,46 @@ public class RedeemActivity extends BasicActivity {
                 getCoins();
             }
         };
+
+    }
+
+
+    /** Called when returning to the activity */
+    @Override
+    public void onResume() {
+        super.onResume();
+
+
+
+            binding.googleBannerAdView.resume();
+
+
+
+
+    }
+
+    /** Called before the activity is destroyed */
+    @Override
+    public void onDestroy() {
+
+            binding.googleBannerAdView.destroy();
+
+
+        super.onDestroy();
+    }
+    @Override
+    protected void onPause() {
+
+            binding.googleBannerAdView.pause();
+
+        super.onPause();
+    }
+
+    public void setUpBannerAd()
+    {
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        binding.googleBannerAdView.loadAd(adRequest);
 
     }
 

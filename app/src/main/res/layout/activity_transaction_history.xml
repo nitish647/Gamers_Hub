@@ -58,7 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="100dp">
             <TextView
-                android:textSize="25sp"
+                android:textSize="20sp"
                 android:text="No transactions done yet"
                 android:layout_centerInParent="true"
                 android:gravity="center"

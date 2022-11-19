@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.nitish.gamershub.Pojo.FireBase.UserTransactions;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.Utils.AppHelper;
 import com.nitish.gamershub.databinding.UserTransactionListLayoutBinding;
 
 import java.util.List;
@@ -74,8 +77,18 @@ public class UserTransactionListAdapter extends RecyclerView.Adapter<UserTransac
         holder.binding.transactionAmount.setText("₹ "+userTransactionRequest.getAmount());
         holder.binding.transactionCoins.setText(""+userTransactionRequest.getCoins());
 
+        holder.binding.transactionIdTextView.setText("Id: "+userTransactionRequest.getTransactionId());
         holder.binding.transactionDate.setText(""+userTransactionRequest.getRequestDate());
+
+        holder.binding.clipboardText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AppHelper.copyToClipboard(context,userTransactionRequest.getTransactionId()+"");
+                Toast.makeText(context, "Id copied to clipboard", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
 
 
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
 <RelativeLayout
@@ -84,6 +84,7 @@
 
 
         <LinearLayout
+            android:id="@+id/amountLinear"
             android:orientation="vertical"
             android:layout_alignParentEnd="true"
             android:layout_width="wrap_content"
@@ -157,6 +158,31 @@
 
                 </TextView>
             </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/amountLinear"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:text="Id:  test229398298298239832"
+                android:id="@+id/transactionIdTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </TextView>
+            <ImageView
+                android:id="@+id/clipboardText"
+                android:layout_gravity="center"
+                app:tint="@color/darkGrey"
+                android:src="@drawable/copy_content"
+                android:layout_marginStart="5dp"
+                android:layout_width="15dp"
+                android:layout_height="15dp">
+
+            </ImageView>
         </LinearLayout>
 
     </RelativeLayout>

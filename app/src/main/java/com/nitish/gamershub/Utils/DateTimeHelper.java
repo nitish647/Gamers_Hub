@@ -1,5 +1,9 @@
 package com.nitish.gamershub.Utils;
 
+import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -22,10 +26,19 @@ import java.util.TimeZone;
 
 import io.tempo.Tempo;
 
-public  class DateTimeHelper {
+public  class DateTimeHelper extends Application {
 
+   public static Context context ;
   public   static String time_7_am = "07:00:00";
   public static String simpleDateFormatPattern ="yyyy-MM-dd HH:mm:ss";
+
+    public static String TimeStampPattern ="HHmmss";
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        context= getApplicationContext();
+    }
+
     public static DatePojo getDatePojo()
     {
 
@@ -42,13 +55,53 @@ public  class DateTimeHelper {
 
 
         try {
-            datePojo.setGetCurrentDateString(getSimpleDateFormat().format(TrueTime.now()));
-            datePojo.setGetCurrentDate(TrueTime.now());
+
+
+
+            if(TrueTime.isInitialized()) {
+                datePojo.setGetCurrentDateString(getSimpleDateFormat().format(TrueTime.now()));
+                datePojo.setGetCurrentDate(TrueTime.now());
+            }
+            else {
+                 AsyncTask.execute(new Runnable() {
+                     @Override
+                     public void run() {
+                         try {
+
+                             TrueTime.build().initialize();
+                         } catch (IOException e) {
+                             Log.d("pError","error in time114 "+e);
+                             e.printStackTrace();
+                         }
+                     }
+                 });
+
+                if(Tempo.isInitialized()) {
+
+                    datePojo.setGetCurrentDateString(getSimpleDateFormat().format(new Date(Tempo.nowOrNull())));
+                    datePojo.setGetCurrentDate(new Date(Tempo.nowOrNull()));
+                }
+                else {
+                    datePojo.setGetCurrentDateString(getSimpleDateFormat().format(new Date()));
+                    datePojo.setGetCurrentDate(new Date());
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Tempo.initialize(((Activity) context).getApplication());
+                            } catch (Exception e) {
+                                Log.d("pError","error in time112 "+e);
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            }
         }catch (Exception e)
         {
-            datePojo.setGetCurrentDateString(getSimpleDateFormat().format(new Date(Tempo.nowOrNull())));
-            datePojo.setGetCurrentDate(new Date(Tempo.nowOrNull()));
-            Log.d("pError","error in time "+e);
+
+
+            Log.d("pError","error in time113 "+e);
         }
 
 

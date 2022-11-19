@@ -5,30 +5,129 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+android:background="@color/gamers_hub_theme"
     tools:context=".Activities.LoginPage">
 
     <LinearLayout
 
         android:orientation="vertical"
-
-        android:layout_centerInParent="true"
-        android:gravity="center"
-        android:layout_marginHorizontal="20sp"
-        android:padding="15dp"
-        android:elevation="@dimen/cardview_default_elevation"
-        android:background="@drawable/round_corners"
+        android:id="@+id/bannerImageRelative"
+        android:backgroundTint="#53bcbd"
+        android:padding="10dp"
+        android:background="@drawable/bottom_round_corners"
         android:layout_width="match_parent"
-        android:layout_height="400dp">
+        android:layout_height="wrap_content"
+           >
+
+        <ImageView
+
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:src="@drawable/gaming_login">
+
+        </ImageView>
+        <TextView
+            android:textColor="@android:color/white"
+            android:text="𝐆𝐚𝐦𝐞𝐫𝐬 𝐇𝐮𝐛"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="30sp"
+
+            android:layout_marginBottom="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        </TextView>
+    </LinearLayout>
+    <LinearLayout
+
+        android:visibility="gone"
+        android:elevation="@dimen/cardview_default_elevation"
+        android:layout_marginTop="50dp"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:backgroundTint="@color/gamers_hub_theme"
+        android:background="@drawable/round_corners"
+        android:layout_marginHorizontal="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+
+        android:src="@drawable/gamers_hub_icon15"
+      android:layout_gravity="center"
+        android:layout_width="60dp"
+        android:layout_height="60dp">
+
+    </de.hdodenhof.circleimageview.CircleImageView>
+        <TextView
+            android:layout_gravity="center"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:text="Gamers Hub"
+            android:textColor="@android:color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        </TextView>
+    </LinearLayout>
+
+<!--    <View-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="200dp"-->
+<!--        android:background="#fdbf00">-->
+
+<!--    </View>-->
+
+    <RelativeLayout
+
+        android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        android:layout_below="@+id/bannerImageRelative"
+        android:layout_alignParentBottom="true"
+        android:layout_marginHorizontal="20sp"
+
+        android:layout_marginVertical="50dp"
+        android:background="@drawable/round_corners"
+        android:backgroundTint="@color/gamers_hub_theme"
+        android:elevation="@dimen/cardview_default_elevation"
+        android:orientation="vertical"
+        android:padding="15dp">
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="SignIn or SignUp"
+            android:textColor="@android:color/white"
+            android:textSize="22sp">
+
+        </TextView>
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/singInButton"
-            android:layout_gravity="center"
-
             android:layout_width="match_parent"
+
             android:layout_height="wrap_content"
 
-            />
-    </LinearLayout>
+            android:layout_centerInParent="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text="More sign in options are coming soon"
+            android:textColor="@android:color/white">
+
+        </TextView>
+    </RelativeLayout>
+
 
 
 </RelativeLayout>

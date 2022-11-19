@@ -10,7 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -29,14 +31,19 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.SetOptions;
+import com.instacart.library.truetime.TrueTime;
 import com.nitish.gamershub.Pojo.FireBase.UserProfile;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.AppHelper;
 import com.nitish.gamershub.Utils.DateTimeHelper;
 import com.nitish.gamershub.Utils.DeviceHelper;
 
+import java.io.IOException;
+
 import io.paperdb.Paper;
+import io.tempo.Tempo;
 
 public class LoginPage extends BasicActivity    implements ActivityResultCallback<FirebaseAuthUIAuthenticationResult>{
 
@@ -57,17 +64,22 @@ public class LoginPage extends BasicActivity    implements ActivityResultCallbac
         firestoreDb = FirebaseFirestore.getInstance();
 
 
+        showProgressBar();
+        new  GetNetworkTimeAsync().execute();
 
 
 
 
+    }
 
 
+    public void setonClickListeners()
+    {
         googleSingInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-               signIn();
+                signIn();
 
 //
 //                List<AuthUI.IdpConfig> providers = Arrays.asList(
@@ -228,6 +240,38 @@ public class LoginPage extends BasicActivity    implements ActivityResultCallbac
             Log.w("pResponse", "signInResult:failed code=" + e.getStatusCode());
         }
     }
+
+    public class GetNetworkTimeAsync extends AsyncTask<Object,Object,Object>
+    {
+
+
+
+        @Override
+        protected Object doInBackground(Object... objects) {
+
+
+            try {
+                if(!TrueTime.isInitialized())
+                 TrueTime.build().withSharedPreferencesCache(LoginPage.this);
+                if(!Tempo.isInitialized())
+                Tempo.initialize(getApplication());
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+
+            dismissProgressBar();
+            setonClickListeners();
+            super.onPostExecute(o);
+        }
+    }
     public void startIntentForHome()
     {
 
@@ -240,7 +284,7 @@ public class LoginPage extends BasicActivity    implements ActivityResultCallbac
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
-        IdpResponse response = result.getIdpResponse();
+
         if (result.getResultCode() == RESULT_OK) {
 
             // Successfully signed in
@@ -261,7 +305,7 @@ public class LoginPage extends BasicActivity    implements ActivityResultCallbac
 
                                 UserProfile userProfile =  documentSnapshot.toObject(UserProfile.class);
 
-                                UserProfile.ProfileData profileData = userProfile.profileData;
+                                UserProfile.ProfileData profileData = userProfile.getProfileData();
 
 
                                 profileData.setLastLogin(DateTimeHelper.getDatePojo().getGetCurrentDateString());
@@ -298,7 +342,7 @@ public class LoginPage extends BasicActivity    implements ActivityResultCallbac
 
                                // Find todays date
                                 profileData.setLastLogin(DateTimeHelper.getDatePojo().getGetCurrentDateString());
-                                profileData.setCreatedAt(user.getDisplayName());
+                                profileData.setCreatedAt(DateTimeHelper.getDatePojo().getGetCurrentDateString());
                                 profileData.setDeviceInfo(DeviceHelper.getDeviceNameAndVersion());
                                 profileData.setEmail(user.getEmail());
                                 profileData.setName(user.getDisplayName());

@@ -10,6 +10,7 @@ import com.nitish.gamershub.Adapters.FaqAdapter;
 import com.nitish.gamershub.Pojo.FaqPojo;
 import com.nitish.gamershub.Pojo.FireBase.GamersHubData;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.Utils.AppHelper;
 import com.nitish.gamershub.databinding.ActivityFaqBinding;
 
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class FaqActivity extends BasicActivity {
                 "You can redeem your coins into your payment or upi account ." ));
 
         faqPojoArrayList.add(new FaqPojo("How much time it will take to complete a transaction request?",
-                "Most transaction get completed in 6 hours but , it can take up to 24-48 hours to complete a transaction request ." ));
+                AppHelper.getGamersHubDataGlobal().getMessage().getPayoutMessage()));
 
         faqPojoArrayList.add(new FaqPojo("Do I need internet connection to play the game?",
                 "Yes , you need a proper internet connection to play the games. " ));
@@ -75,7 +76,7 @@ public class FaqActivity extends BasicActivity {
                 "No, you don't need to install anything else , you can play all the games within the app. " ));
 
         faqPojoArrayList.add(new FaqPojo("How do I delete an account ?",
-                "You can delete your account by selecting the delete option in the profile page. " ));
+                "You can delete your account by contacting us on our mail " ));
 
         faqPojoArrayList.add(new FaqPojo("Where I can contact if I need additional help?",
                 "You can contact in the contact us section in the profile page." ));

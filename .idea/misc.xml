@@ -21,6 +21,8 @@
         <entry key="app/src/main/res/layout/activity_game_play.xml" value="0.16757246376811594" />
         <entry key="app/src/main/res/layout/activity_game_play2.xml" value="0.17119565217391305" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.16485507246376813" />
+        <entry key="app/src/main/res/layout/activity_kotlin_test.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_kotlin_test_activty.xml" value="0.16770833333333332" />
         <entry key="app/src/main/res/layout/activity_login_page.xml" value="0.161231884057971" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.16485507246376813" />
         <entry key="app/src/main/res/layout/activity_reddeem.xml" value="0.22" />
@@ -50,7 +52,7 @@
         <entry key="app/src/main/res/layout/popular_and_new_layout.xml" value="0.17119565217391305" />
         <entry key="app/src/main/res/layout/redeem_item_layout.xml" value="0.22" />
         <entry key="app/src/main/res/layout/show_webview_dialog.xml" value="0.17119565217391305" />
-        <entry key="app/src/main/res/layout/user_transaction_list_layout.xml" value="0.22" />
+        <entry key="app/src/main/res/layout/user_transaction_list_layout.xml" value="0.5" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.19427083333333334" />
       </map>
     </option>

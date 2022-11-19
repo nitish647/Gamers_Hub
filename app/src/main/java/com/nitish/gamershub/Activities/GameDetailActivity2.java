@@ -2,8 +2,6 @@ package com.nitish.gamershub.Activities;
 
 import static com.nitish.gamershub.Utils.AppHelper.getGamersHubDataGlobal;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -11,16 +9,8 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.SetOptions;
 import com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter;
 import com.nitish.gamershub.Fragments.GameDetailsFragment;
 import com.nitish.gamershub.Fragments.GamePlayFragment;
@@ -82,6 +72,15 @@ public class GameDetailActivity2 extends BasicActivity {
 
     public void playButtonClick()
     {
+        if(!showNoInternetDialog())
+            return;
+
+        showInterstitialAdNew(interstitialAdListener(GamePlayFragment.class.getSimpleName()));
+
+
+    }
+    private void showGamePlayFragment()
+    {
         if(gamePlayFragment==null)
         {
             gamePlayFragment = GamePlayFragment.newInstance();
@@ -95,7 +94,6 @@ public class GameDetailActivity2 extends BasicActivity {
         gamePlayVisibility = true;
         gamePlayFragment.startTimer();
         // game play fragment is visible
-
     }
     public void showHideFragment(Fragment fragment , String tag)
     {
@@ -137,7 +135,7 @@ public class GameDetailActivity2 extends BasicActivity {
             @Override
             public void onYesClick() {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                showInterstitialAdNew(interstitialAdListener());
+                showInterstitialAdNew(interstitialAdListener(GameDetailsFragment.class.getSimpleName()));
             }
 
             @Override
@@ -209,39 +207,23 @@ public class GameDetailActivity2 extends BasicActivity {
     public void updateUserWallet(int amount)
     {
 
-        UserOperations.getFirestoreUser().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        getUserProfileGlobal(new GetUserProfileDataListener() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful())
-                {
-                    DocumentSnapshot documentSnapshot = task.getResult();
-                    UserProfile userProfile = documentSnapshot.toObject(UserProfile.class);
-                    userProfile.setProfileData(UserOperations.addCoinsToWallet(userProfile, amount));
-
-
-                        UserOperations.getFirestoreUser().set(userProfile, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful())
-                                {
-                                    showRewardDialog(amount,R.raw.rupee_reward_box);
-                                }
-                            }
-                        });
-
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(GameDetailActivity2.this, "can't add the reward as user document doesn't exists ", Toast.LENGTH_SHORT).show();
-
+            public void onTaskSuccessful(UserProfile userProfile) {
+                userProfile.setProfileData(UserOperations.addCoinsToWallet(userProfile, amount));
+                setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
+                    @Override
+                    public void onTaskSuccessful() {
+                        showRewardDialog(amount,R.raw.rupee_reward_box);
+                    }
+                });
             }
         });
 
+
     }
 
-    public AdmobInterstitialAdListener interstitialAdListener()
+    public AdmobInterstitialAdListener interstitialAdListener(String fragmentTag_ToShow)
     {
 
         return new AdmobInterstitialAdListener() {
@@ -250,7 +232,11 @@ public class GameDetailActivity2 extends BasicActivity {
             public void onAdDismissed() {
 
                 super.onAdDismissed();
+                if(fragmentTag_ToShow.equals(GameDetailsFragment.class.getSimpleName()))
                 showGameDetailsFrag();
+                else {
+                    showGamePlayFragment();
+                }
             }
 
             @Override
@@ -260,6 +246,11 @@ public class GameDetailActivity2 extends BasicActivity {
 
             @Override
             public void onAdFailed() {
+                if(fragmentTag_ToShow.equals(GameDetailsFragment.class.getSimpleName()))
+                    showGameDetailsFrag();
+                else {
+                    showGamePlayFragment();
+                }
                 super.onAdFailed();
             }
 
@@ -267,7 +258,11 @@ public class GameDetailActivity2 extends BasicActivity {
             public void onAdLoading() {
                 super.onAdLoading();
 
+                if(fragmentTag_ToShow.equals(GameDetailsFragment.class.getSimpleName()))
                     showGameDetailsFrag();
+                else {
+                    showGamePlayFragment();
+                }
 
             }
         };
