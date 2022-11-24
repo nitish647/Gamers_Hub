@@ -184,6 +184,7 @@ public class RewardsActivity extends BasicActivity {
                 setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
                     @Override
                     public void onTaskSuccessful() {
+
                         showRewardDialog("Successfully credited " + getDailyCheckReward + " coins for Daily bonus", R.raw.rupee_piggy_bank_award, new OnDialogLister() {
                             @Override
                             public void onDialogDismissLister() {

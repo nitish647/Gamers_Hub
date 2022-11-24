@@ -42,10 +42,6 @@ public  class DateTimeHelper extends Application {
     public static DatePojo getDatePojo()
     {
 
-
-
-
-
         DatePojo datePojo = new DatePojo();
 
 
@@ -114,6 +110,19 @@ public  class DateTimeHelper extends Application {
 
 
 
+    }
+    public static boolean isDateCorrect(String date)
+    {
+        // checking if the date is correct and is parsable
+        boolean isDateCorrect ;
+        try {
+            getSimpleDateFormat().parse(date);
+            isDateCorrect = true;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            isDateCorrect = false;
+        }
+        return isDateCorrect;
     }
     public static  SimpleDateFormat getSimpleDateFormat()
     {

@@ -284,8 +284,6 @@ abstract class BasicActivity extends AppCompatActivity {
     {
 
 
-
-
         showProgressBar();
         // if intent not available then return
         if( !showNoInternetDialog())
@@ -306,8 +304,6 @@ abstract class BasicActivity extends AppCompatActivity {
 
                         if(progressDialog.isShowing())
                             dismissProgressBar();
-
-
 
 
                         UserProfile userProfile=null;
@@ -625,7 +621,9 @@ abstract class BasicActivity extends AppCompatActivity {
         addRewardDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
         addRewardDialog.setView(gameRewardDialogBinding.getRoot());
 
-        addRewardDialog.show();
+
+        if(!BasicActivity.this.isFinishing())
+           addRewardDialog.show();
 
         addRewardDialog.setCancelable(false);
         gameRewardDialogBinding.earnedCoinsTextview.setText(message);
@@ -1113,8 +1111,14 @@ abstract class BasicActivity extends AppCompatActivity {
 
     public ProgressDialog showProgressBar()
     {
-        if(!BasicActivity.this.isFinishing())
-           progressDialog.show();
+        try {
+            if(!BasicActivity.this.isFinishing())
+                progressDialog.show();
+
+        }catch (Exception e)
+        {
+
+        }
 
         return progressDialog;
     }

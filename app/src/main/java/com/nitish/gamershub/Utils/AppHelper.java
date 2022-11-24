@@ -12,10 +12,13 @@ import static com.nitish.gamershub.Utils.DateTimeHelper.simpleDateFormatPattern;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.datatransport.runtime.BuildConfig;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.nitish.gamershub.Pojo.FireBase.AdViewedStats;
 import com.nitish.gamershub.Pojo.FireBase.GamersHubData;
@@ -110,10 +113,16 @@ public class AppHelper {
 
     public static  boolean isAppUpdated()
     {
-        float currentVersionName = Float.parseFloat(getUserProfileGlobalData().getProfileData().getVersionName());
-        float latestVersionName = Float.parseFloat(getGamersHubDataGlobal().getGamesData().getLatestVersionName());
+        try {
+            float currentVersionName = Float.parseFloat(getUserProfileGlobalData().getProfileData().getVersionName());
+            float latestVersionName = Float.parseFloat(getGamersHubDataGlobal().getGamesData().getLatestVersionName());
+            return currentVersionName>=latestVersionName ;
+        } catch (Exception e)
+        {
+            return false;
+        }
 
-        return currentVersionName>=latestVersionName ;
+
 
 
     }
@@ -136,6 +145,20 @@ public class AppHelper {
 
     }
 
+    public static String getAppVersionName(Context context)
+    {
+        PackageInfo pInfo = null;
+        try {
+            pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            return pInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+
+            e.printStackTrace();
+            return   BuildConfig.VERSION_NAME;
+        }
+
+
+    }
     public static void readCalenderData()
     {
         Date date= new Date();

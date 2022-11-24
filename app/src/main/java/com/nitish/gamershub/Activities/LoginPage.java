@@ -197,7 +197,7 @@ public class LoginPage extends BasicActivity    implements ActivityResultCallbac
 
                                 // Find todays date
                                 profileData.setLastLogin(DateTimeHelper.getDatePojo().getGetCurrentDateString());
-                                profileData.setCreatedAt(googleSignInAccountUser.getDisplayName());
+                                profileData.setCreatedAt(DateTimeHelper.getDatePojo().getGetCurrentDateString());
                                 profileData.setDeviceInfo(DeviceHelper.getDeviceNameAndVersion());
                                 profileData.setEmail(googleSignInAccountUser.getEmail());
                                 profileData.setName(googleSignInAccountUser.getDisplayName());
@@ -337,8 +337,6 @@ public class LoginPage extends BasicActivity    implements ActivityResultCallbac
                                 UserProfile userProfile = new UserProfile();
 
                                 UserProfile.ProfileData profileData = new UserProfile.ProfileData();
-
-
 
                                // Find todays date
                                 profileData.setLastLogin(DateTimeHelper.getDatePojo().getGetCurrentDateString());

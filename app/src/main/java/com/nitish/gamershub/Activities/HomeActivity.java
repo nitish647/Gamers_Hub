@@ -41,6 +41,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.datatransport.runtime.BuildConfig;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -64,7 +65,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
 import com.instacart.library.truetime.TrueTime;
 import com.nitish.gamershub.Adapters.CategoriesAdapter;
-import com.nitish.gamershub.BuildConfig;
 import com.nitish.gamershub.Fragments.HomeFragment;
 import com.nitish.gamershub.Fragments.ProfileFragment;
 import com.nitish.gamershub.Interface.AdmobInterstitialAdListener;
@@ -749,9 +749,6 @@ public class HomeActivity extends BasicActivity {
             @Override
             public void onTaskSuccessful(UserProfile userProfile) {
 
-
-
-
                 try {
                     getGamersHubData(new GetGamersHubDataListener() {
                         @Override
@@ -809,11 +806,11 @@ public class HomeActivity extends BasicActivity {
                     {
                         profileData.setEmail(UserProfile.ProfileData.getProfileData().getEmail());
                     }
-                    profileData.setVersionName(BuildConfig.VERSION_NAME+"");
+                    profileData.setVersionName(AppHelper.getAppVersionName(HomeActivity.this));
                     profileData.setFirebaseFcmToken(AppHelper.getFireBaseFcmToken());
                     profileData.setLastOpened(DateTimeHelper.getDatePojo().getGetCurrentDateString());
                     profileData.setDeviceInfo(DeviceHelper.getDeviceNameAndVersion());
-                    if (profileData.getCreatedAt().trim().isEmpty()) {
+                    if (profileData.getCreatedAt().trim().isEmpty() && DateTimeHelper.isDateCorrect(profileData.getCreatedAt())) {
                         profileData.setCreatedAt(DateTimeHelper.getDatePojo().getGetCurrentDateString());
                     }
                     userProfile.setProfileData(profileData);
