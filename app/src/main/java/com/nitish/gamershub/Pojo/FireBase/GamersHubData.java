@@ -7,9 +7,19 @@ import java.util.ArrayList;
 public class GamersHubData {
 
     public GamesData gamesData;
+    public Messages message;
+
 
 
     public GamersHubData() {
+    }
+
+    public Messages getMessage() {
+        return message;
+    }
+
+    public void setMessage(Messages message) {
+        this.message = message;
     }
 
     public GamesData getGamesData() {

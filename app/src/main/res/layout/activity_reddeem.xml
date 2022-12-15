@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
 <RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
 
     android:layout_height="match_parent"
@@ -46,6 +45,7 @@
     </RelativeLayout>
 
 <LinearLayout
+    android:layout_above="@+id/googleBannerAdView"
     android:layout_below="@+id/appBarLayoutRelative"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -55,17 +55,9 @@
 
 
      <RelativeLayout
-
-
-         android:layout_marginTop="10dp"
-         android:layout_marginHorizontal="10sp"
+         android:background="@color/gamers_hub_theme"
          android:layout_width="match_parent"
          android:layout_height="140dp"
-
-
-         android:backgroundTint="#76a5fd"
-         android:background="@drawable/round_corners"
-
          android:elevation="@dimen/cardview_default_elevation">
 
          <LinearLayout
@@ -77,13 +69,14 @@
              android:orientation="vertical">
 
              <TextView
+                 android:id="@+id/redeemMessageText"
                  android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
-                 android:layout_marginTop="25dp"
+                 android:layout_marginTop="5dp"
                  android:gravity="center"
                  android:lineSpacingMultiplier="1.5"
-                 android:textColor="@android:color/white"
                  android:text="@string/redeemRequestMessage"
+                 android:textColor="@android:color/white"
                  android:textSize="18sp">
 
              </TextView>
@@ -116,8 +109,45 @@
                 android:layout_height="match_parent">
 
             </androidx.recyclerview.widget.RecyclerView>
+            <RelativeLayout
+                android:visibility="gone"
+                android:id="@+id/noTransactionRelative"
+                android:padding="10dp"
+                android:elevation="@dimen/cardview_default_elevation"
+                android:layout_centerInParent="true"
+                android:layout_marginHorizontal="20sp"
+                android:background="@drawable/round_corners"
+                android:layout_width="match_parent"
+                android:layout_height="100dp">
+                <TextView
+                    android:textSize="20sp"
+                    android:text="No Redeem Items "
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                </TextView>
+
+            </RelativeLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>
+
+    <com.google.android.gms.ads.AdView
+
+        android:layout_alignParentBottom="true"
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/googleBannerAdView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/fui_transparent"
+
+        android:layout_gravity="bottom"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/admob_banner">
+
+    </com.google.android.gms.ads.AdView>
 </RelativeLayout>
+
 </layout>

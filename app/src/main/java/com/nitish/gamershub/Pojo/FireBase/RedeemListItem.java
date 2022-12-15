@@ -4,31 +4,16 @@ public class RedeemListItem {
     String name;
     int coins;
     int money;
-    int imageUrl;
+    String imageUrl;
     String paytmNumber="";
     String upiID="";
 
-    public RedeemListItem(String name, int coins, int money, int imageUrl) {
+    public RedeemListItem(String name, int coins, int money, String imageUrl) {
         this.name = name;
         this.coins = coins;
         this.money = money;
         this.imageUrl = imageUrl;
-    }
 
-    public String getPaytmNumber() {
-        return paytmNumber;
-    }
-
-    public void setPaytmNumber(String paytmNumber) {
-        this.paytmNumber = paytmNumber;
-    }
-
-    public String getUpiID() {
-        return upiID;
-    }
-
-    public void setUpiID(String upiID) {
-        this.upiID = upiID;
     }
 
     public String getName() {
@@ -55,11 +40,27 @@ public class RedeemListItem {
         this.money = money;
     }
 
-    public int getImageUrl() {
+    public String getImageUrl() {
         return imageUrl;
     }
 
-    public void setImageUrl(int imageUrl) {
+    public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getPaytmNumber() {
+        return paytmNumber;
+    }
+
+    public void setPaytmNumber(String paytmNumber) {
+        this.paytmNumber = paytmNumber;
+    }
+
+    public String getUpiID() {
+        return upiID;
+    }
+
+    public void setUpiID(String upiID) {
+        this.upiID = upiID;
     }
 }

@@ -23,11 +23,12 @@ tools:context=".Activities.HomeActivity">
             android:layout_height="match_parent"
             android:layout_above="@+id/googleBannerAdView"
 
-
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
         <com.google.android.gms.ads.AdView
+
 
             android:layout_above="@+id/bottomNavigationView"
             xmlns:ads="http://schemas.android.com/apk/res-auto"
@@ -44,15 +45,15 @@ tools:context=".Activities.HomeActivity">
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
 
-            android:elevation="@dimen/cardview_default_elevation"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginBottom="5dp"
             android:id="@+id/bottomNavigationView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginBottom="5dp"
             android:background="@drawable/round_corners"
             android:backgroundTint="@android:color/white"
+            android:elevation="@dimen/cardview_default_elevation"
             app:itemIconTint="@drawable/bottom_navigation_selector"
             app:menu="@menu/bottom_navigation_menu">
 

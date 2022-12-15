@@ -74,7 +74,6 @@ public class GamePlayActivity extends AppCompatActivity {
 
 
        webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setAppCacheEnabled(true);
 
         webView.getSettings().setAllowFileAccess(true);
         webView.getSettings().setDomStorageEnabled(true);

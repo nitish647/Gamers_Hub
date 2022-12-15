@@ -15,14 +15,9 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.provider.Settings;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,8 +53,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.SetOptions;
-import com.instacart.library.truetime.TrueTime;
-import com.nitish.gamershub.BroadCastReceiver.TimeChangedReceiver;
+import com.google.gson.Gson;
 import com.nitish.gamershub.Fragments.BottomSheetDialog;
 import com.nitish.gamershub.Interface.AdmobInterstitialAdListener;
 import com.nitish.gamershub.Interface.ConfirmationDialogListener2;
@@ -71,7 +65,9 @@ import com.nitish.gamershub.Pojo.FireBase.UserProfile;
 import com.nitish.gamershub.Pojo.FireBase.UserTransactions;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.AppHelper;
+import com.nitish.gamershub.Utils.Connectivity;
 import com.nitish.gamershub.Utils.ConstantsHelper;
+import com.nitish.gamershub.Utils.DataPassingHelper;
 import com.nitish.gamershub.Utils.ProgressBarHelper;
 import com.nitish.gamershub.Utils.UserOperations;
 import com.nitish.gamershub.databinding.BlockUserDialogBinding;
@@ -79,10 +75,9 @@ import com.nitish.gamershub.databinding.ConfirmationDialogLayoutBinding;
 import com.nitish.gamershub.databinding.GameRewardDialogBinding;
 import com.nitish.gamershub.databinding.ShowWebviewDialogBinding;
 
-import java.io.IOException;
+import org.json.JSONObject;
 
 import io.paperdb.Paper;
-import io.tempo.Tempo;
 
 abstract class BasicActivity extends AppCompatActivity {
 
@@ -96,7 +91,7 @@ abstract class BasicActivity extends AppCompatActivity {
 
   static boolean isHomeActivityDestroyed =false;
    BottomSheetDialog bottomSheetDialog;
-    ProgressDialog progressDialog;
+   static ProgressDialog progressDialog;
     GoogleSignInOptions gso;
     AlertDialog logOutDialog;
     AlertDialog confirmationDialog;
@@ -113,7 +108,7 @@ abstract class BasicActivity extends AppCompatActivity {
         Paper.init(this);
          progressDialog = ProgressBarHelper.setProgressBarDialog(BasicActivity.this);
          timeChangedReceiver2 = new TimeChangedReceiver2();
-        new GetNetworkTimeAsync().execute();
+
         logOutDialog2();
         loadInterstitialAdNew();
         loadRewardedAd2();
@@ -123,27 +118,7 @@ abstract class BasicActivity extends AppCompatActivity {
     }
 
 
-    public class GetNetworkTimeAsync extends AsyncTask<Object,Object,Object>
-    {
-
-
-        @Override
-        protected Object doInBackground(Object... objects) {
-
-            //    Tempo.initialize(getApplication());
-            try {
-                TrueTime.build().initialize();
-
-            } catch (IOException e) {
-
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-    }
-
+   
     //----------------- Intent------------///
 
     public void startActivityIntent(Activity fromActivity , Class toActivity)
@@ -177,7 +152,7 @@ abstract class BasicActivity extends AppCompatActivity {
 
 
 
-    public void getGamersHubData(GetGamersHubDataListener gamersHubDataListener)
+     void getGamersHubData(GetGamersHubDataListener gamersHubDataListener)
     {
 
 
@@ -225,12 +200,48 @@ abstract class BasicActivity extends AppCompatActivity {
 
 
     }
-    public void getUserProfileGlobal(GetUserProfileDataListener getUserDataListener)
+
+    void setGamersHubRedeemCoinsList(OnFirestoreDataCompleteListener onFirestoreDataCompleteListener)
     {
 
 
-        showProgressBar();
-        getFirebaseUser().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        setGamersHubRedeemCoinsList().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                dismissProgressBar();
+
+                if(task.isSuccessful())
+                {
+                    DocumentSnapshot documentSnapshot = task.getResult();
+
+                    if(documentSnapshot.exists())
+                    {
+                        onFirestoreDataCompleteListener.OnComplete(documentSnapshot);
+
+
+                    }
+                    else {
+                        Toast.makeText(BasicActivity.this, "document does not exist 112", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+                dismissProgressBar();
+                Toast.makeText(BasicActivity.this, "couldn't get the documents ", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
+    }
+    void getGamersHubRedeemCoinsList(OnFirestoreDataCompleteListener onFirestoreDataCompleteListener)
+    {
+
+
+        setGamersHubRedeemCoinsList().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 dismissProgressBar();
@@ -242,13 +253,82 @@ abstract class BasicActivity extends AppCompatActivity {
                     if(documentSnapshot.exists())
                     {
 
+                        onFirestoreDataCompleteListener.OnComplete(documentSnapshot);
 
+
+                    }
+                    else {
+                        Toast.makeText(BasicActivity.this, "document does not exist 112", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+                dismissProgressBar();
+                Toast.makeText(BasicActivity.this, "couldn't get the documents ", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+
+    }
+
+    public interface OnFirestoreDataCompleteListener
+    {
+        public void OnComplete(DocumentSnapshot documentSnapshot);
+    }
+
+     void getUserProfileGlobal(GetUserProfileDataListener getUserDataListener)
+    {
+
+
+        showProgressBar();
+        // if intent not available then return
+        if( !showNoInternetDialog())
+            return;
+
+        getFirebaseUser().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                dismissProgressBar();
+
+                if(task.isSuccessful())
+                {
+                    DocumentSnapshot documentSnapshot = task.getResult();
+
+
+                    if(documentSnapshot.exists())
+                    {
 
                         if(progressDialog.isShowing())
                             dismissProgressBar();
 
 
-                        UserProfile userProfile =   documentSnapshot.toObject(UserProfile.class);
+                        UserProfile userProfile=null;
+                        try {
+                            JSONObject jsonObject =  new JSONObject(documentSnapshot.getData());
+                            userProfile = new Gson().fromJson(jsonObject.toString(),UserProfile.class);
+
+//                             userProfile =   documentSnapshot.toObject(UserProfile.class);
+                            Log.d("pResponse","userProfile jsonobject : "+jsonObject);
+
+                           if(userProfile.getProfileData()!=null)
+                            Log.d("pResponse","user profile class data "+userProfile.getProfileData().getGameCoins()+" "+userProfile.getProfileData().getDeviceInfo());
+                            Log.d("pResponse","userProfile class object : "+DataPassingHelper.ConvertObjectToString(userProfile));
+
+
+                        }catch (Exception e)
+                        {
+
+                            Log.d("pError","Error in converting data into objects  : "+e);
+
+//                            JSONObject jsonObject =  new JSONObject(documentSnapshot.getData());
+//                            userProfile = new Gson().fromJson(jsonObject.toString(),UserProfile.class);
+//                            Log.d("pResponse","userProfile : "+userProfile);
+                        }
+
 
 
                        saveUserProfileGlobal(userProfile);
@@ -259,7 +339,8 @@ abstract class BasicActivity extends AppCompatActivity {
 
                     }
                     else {
-                        Toast.makeText(BasicActivity.this, "document does not exist 113", Toast.LENGTH_SHORT).show();
+                        Log.d("pError","document does not exist 113  : ");
+
                     }
                 }
             }
@@ -303,7 +384,7 @@ abstract class BasicActivity extends AppCompatActivity {
         return  userProfile;
     }
 
-    public UserProfile updateUserWalletForTransaction(int amount, SetUserDataOnCompleteListener setUserDataOnCompleteListener , UserTransactions userTransactions)
+     UserProfile updateUserWalletForTransaction(int amount, SetUserDataOnCompleteListener setUserDataOnCompleteListener , UserTransactions userTransactions)
     {
 
         UserProfile userProfile = getUserProfileGlobalData();
@@ -323,24 +404,46 @@ abstract class BasicActivity extends AppCompatActivity {
         return  userProfile;
     }
 
-    public void setUserProfile(UserProfile userProfile, SetUserDataOnCompleteListener setUserDataOnCompleteListener)
+     void setUserProfile(UserProfile userProfile, SetUserDataOnCompleteListener setUserDataOnCompleteListener)
     {
+        if( !showNoInternetDialog())
+            return;
 
         getFirebaseUser().set(userProfile, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful())
+                dismissProgressBar();
+                if(task.isSuccessful() && task.isComplete() )
                 {
 
-                    if(progressDialog.isShowing())
-                    {
-                        progressDialog.dismiss();
-                    }
+
                     saveUserProfileGlobal(userProfile);
 
                     setUserDataOnCompleteListener.onTaskSuccessful();
 
+
                 }
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                dismissProgressBar();
+               DialogHelperPojo dialogHelperPojo = new DialogHelperPojo();
+               Log.d("pError","error1123 in the update profile "+e);
+                dialogHelperPojo.setMessage("A server error occurred");
+
+                getConfirmationDialog(dialogHelperPojo, new ConfirmationDialogListener2() {
+                    @Override
+                    public void onYesClick() {
+
+                    }
+
+                    @Override
+                    public void onNoClick() {
+
+                    }
+                });
             }
         });
     }
@@ -355,7 +458,7 @@ abstract class BasicActivity extends AppCompatActivity {
 
 
 
-    public DocumentReference getFirebaseUser()
+    public static DocumentReference getFirebaseUser()
     {
        return FirebaseFirestore.getInstance().collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail)+"");
     }
@@ -364,40 +467,51 @@ abstract class BasicActivity extends AppCompatActivity {
     {
         return FirebaseFirestore.getInstance().collection(GamersHub_DATA).document("gamersHubData");
     }
-
-
-
-
-
-
-
-    public void showRewardDialog(int amount)
+    public DocumentReference setGamersHubRedeemCoinsList()
     {
-        GameRewardDialogBinding gameRewardDialogBinding;
-        LayoutInflater factory = LayoutInflater.from(BasicActivity.this);
-
-        gameRewardDialogBinding =  DataBindingUtil.inflate(factory,R.layout.game_reward_dialog,null,false);
-
-        final AlertDialog addRewardDialog = new AlertDialog.Builder(BasicActivity.this).create();
+        return FirebaseFirestore.getInstance().collection(GamersHub_DATA).document("redeemCoinsList");
+    }
 
 
-        addRewardDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        addRewardDialog.setView(gameRewardDialogBinding.getRoot());
-
-        addRewardDialog.show();
-
-        gameRewardDialogBinding.earnedCoinsTextview.setText(getString(R.string.earned_reward_message)+ " "+amount+" coins");
-
-        gameRewardDialogBinding.gameCoinsImage.setAnimation(R.raw.redeem_pocket_money);
-
-        gameRewardDialogBinding.cancelImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addRewardDialog.dismiss();
-            }
-        });
 
 
+
+
+
+
+
+
+
+    //------------------------- dialog boxes -------------------------------//
+
+
+     Boolean showNoInternetDialog()
+    {
+        if(!isInternetAvailable())
+        {
+            dismissProgressBar();
+            DialogHelperPojo dialogHelperPojo = new DialogHelperPojo();
+            dialogHelperPojo.setTitle("");
+            dialogHelperPojo.setDialogIcon(R.drawable.no_internet_icon);
+            dialogHelperPojo.setMessage("Connection problem, please check your internet connection and try again");
+
+            getConfirmationDialogSingleButton(dialogHelperPojo, new ConfirmationDialogListener2() {
+                @Override
+                public void onYesClick() {
+
+
+                }
+
+                @Override
+                public void onNoClick() {
+
+                }
+            });
+
+            return false;
+        }else
+
+        return true;
     }
     public void showRewardDialog(String message)
     {
@@ -457,11 +571,6 @@ abstract class BasicActivity extends AppCompatActivity {
 
 
     }
-
-
-
-    //------------------------- dialog boxes -------------------------------//
-
     public void logOutDialog2()
     {
         LayoutInflater factory = LayoutInflater.from(BasicActivity.this);
@@ -472,30 +581,7 @@ abstract class BasicActivity extends AppCompatActivity {
         logOutDialog.setView(logOutView);
 
     }
-    public void logOutDialog()
-    {
 
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(BasicActivity.this);
-        android.app.AlertDialog deleteDialog = builder.create();
-
-
-        builder.setMessage("Do you want to logout?");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                googleSignOut();
-            }
-        });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        });
-
-        builder.show();
-
-    }
     public void showWebviewDialog()
     {
         ShowWebviewDialogBinding showWebviewDialogBinding;
@@ -535,7 +621,9 @@ abstract class BasicActivity extends AppCompatActivity {
         addRewardDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
         addRewardDialog.setView(gameRewardDialogBinding.getRoot());
 
-        addRewardDialog.show();
+
+        if(!BasicActivity.this.isFinishing())
+           addRewardDialog.show();
 
         addRewardDialog.setCancelable(false);
         gameRewardDialogBinding.earnedCoinsTextview.setText(message);
@@ -647,6 +735,53 @@ abstract class BasicActivity extends AppCompatActivity {
 
     }
 
+    public ConfirmationDialogLayoutBinding getConfirmationDialogSingleButton(DialogHelperPojo dialogHelperPojo, ConfirmationDialogListener2 confirmationDialogListener2)
+    {
+        ConfirmationDialogLayoutBinding confirmationDialogLayoutBinding;
+        LayoutInflater factory = LayoutInflater.from(BasicActivity.this);
+
+        confirmationDialogLayoutBinding =  DataBindingUtil.inflate(factory,R.layout.confirmation_dialog_layout,null,false);
+
+        confirmationDialog = new AlertDialog.Builder(BasicActivity.this).create();
+
+        confirmationDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
+        confirmationDialog.setView(confirmationDialogLayoutBinding.getRoot());
+        confirmationDialog.setCancelable(false);
+        confirmationDialog.show();
+        confirmationDialogLayoutBinding.titleTextview.setText(dialogHelperPojo.getTitle());
+        confirmationDialogLayoutBinding.messageTextview.setText(Html.fromHtml(dialogHelperPojo.getMessage()));
+        confirmationDialogLayoutBinding.dialogIcon.setImageResource(dialogHelperPojo.getDialogIcon());
+        // by default set yes when the
+
+
+        if(dialogHelperPojo.getYesButton().equals(new DialogHelperPojo().getYesButton()))
+        confirmationDialogLayoutBinding.yesButton.setText("Ok");
+
+        confirmationDialogLayoutBinding.NoButton.setVisibility(View.GONE);
+
+        confirmationDialogLayoutBinding.yesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                confirmationDialog.dismiss();
+                confirmationDialogListener2.onYesClick();
+
+
+            }
+        });
+        confirmationDialogLayoutBinding.NoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                confirmationDialog.dismiss();
+                confirmationDialogListener2.onNoClick();
+
+            }
+        });
+
+        return confirmationDialogLayoutBinding;
+
+
+    }
 
     public ConfirmationDialogLayoutBinding getConfirmationDialog(DialogHelperPojo dialogHelperPojo, ConfirmationDialogListener2 confirmationDialogListener2)
     {
@@ -733,15 +868,6 @@ abstract class BasicActivity extends AppCompatActivity {
     }
 
 
-
-    public void showInterstitial2() {
-        // Show the ad if it's ready. Otherwise toast and restart the game.
-
-        if (interstitialAd != null && ConstantsHelper.ShowAds) {
-            interstitialAd.show(this);
-
-        }
-    }
 
 
 
@@ -985,12 +1111,19 @@ abstract class BasicActivity extends AppCompatActivity {
 
     public ProgressDialog showProgressBar()
     {
-        progressDialog.show();
+        try {
+            if(!BasicActivity.this.isFinishing())
+                progressDialog.show();
+
+        }catch (Exception e)
+        {
+
+        }
 
         return progressDialog;
     }
 
-    public void dismissProgressBar()
+    public  void dismissProgressBar()
     {
         progressDialog.dismiss();
     }
@@ -1014,12 +1147,17 @@ abstract class BasicActivity extends AppCompatActivity {
     }
 
     public void googleSignOut() {
-        progressDialog.show();
+
+        if(!showNoInternetDialog())
+        {
+            return;
+        }
+        showProgressBar();
         getGoogleSignInClient().signOut()
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        progressDialog.dismiss();
+                       dismissProgressBar();
                         AppHelper.destroyAllPaperData();
                         startActivity(new Intent(BasicActivity.this,LoginPage.class));
                         finish();
@@ -1054,9 +1192,18 @@ abstract class BasicActivity extends AppCompatActivity {
                     Toast.makeText(BasicActivity.this, "error while getting doc 211", Toast.LENGTH_SHORT).show();
                 }
                 if(value!=null && value.exists())
-                {UserProfile userProfile=null;
-                    userProfile=   value.toObject(UserProfile.class);
+                {
+
                     try {
+                        UserProfile userProfile=null;
+                        userProfile=   value.toObject(UserProfile.class);
+
+                        if(userProfile!=null) {
+                            saveUserProfileGlobal(userProfile);
+
+
+                        }
+
 
                     }catch (Exception e)
                     {
@@ -1065,11 +1212,6 @@ abstract class BasicActivity extends AppCompatActivity {
                     }
 
 
-                    if(userProfile!=null) {
-                        saveUserProfileGlobal(userProfile);
-
-
-                    }
 
                 }
             }
@@ -1101,6 +1243,18 @@ abstract class BasicActivity extends AppCompatActivity {
 
     }
 
+     boolean isInternetAvailable()
+    {
+        String connectivityStatus = Connectivity.getConnectionStatus(BasicActivity.this);
+
+        if(connectivityStatus.equals(ConstantsHelper.ConnectionSignalStatus.NO_CONNECTIVITY+"")||
+                connectivityStatus.equals(ConstantsHelper.ConnectionSignalStatus.POOR_STRENGTH+"" ))
+        {
+            return false;
+        }
+        else
+            return true;
+    }
 
 
 
@@ -1120,16 +1274,23 @@ abstract class BasicActivity extends AppCompatActivity {
                 }
 
 
-                if (bottomSheetDialogShown) {
-                    if (bottomSheetDialog.isAdded())
-                        bottomSheetDialog.dismiss();
-                }
+         try {
+             if (bottomSheetDialogShown) {
+                 if (bottomSheetDialog.isAdded())
+                     bottomSheetDialog.dismiss();
+             }
 
-          //   bottomSheetDialog.show(getSupportFragmentManager(), "");
+             bottomSheetDialog.show(getSupportFragmentManager(), "");
+
+             bottomSheetDialogShown = true;
+         }
+         catch (Exception e)
+         {
+             Log.d("pError","error in showing botton nav 1123 "+e);
+         }
 
 
 
-        bottomSheetDialogShown = true;
 
             }
 

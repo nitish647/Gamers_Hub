@@ -41,6 +41,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.datatransport.runtime.BuildConfig;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
@@ -55,6 +56,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.Timestamp;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
@@ -63,7 +65,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
 import com.instacart.library.truetime.TrueTime;
 import com.nitish.gamershub.Adapters.CategoriesAdapter;
-import com.nitish.gamershub.BuildConfig;
 import com.nitish.gamershub.Fragments.HomeFragment;
 import com.nitish.gamershub.Fragments.ProfileFragment;
 import com.nitish.gamershub.Interface.AdmobInterstitialAdListener;
@@ -159,17 +160,6 @@ public class HomeActivity extends BasicActivity {
 
 
 
-// enable network
-        firestoreDb.enableNetwork()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // Do online things
-                        // ...
-                    }
-                });
-
-
         String playStoreVersionCode = FirebaseRemoteConfig.getInstance().getString(
                 "appVersion");
 
@@ -198,7 +188,7 @@ public class HomeActivity extends BasicActivity {
             @Override
             public void onClick(View view) {
 
-                logOutDialog();
+                showLogOutDialog();
             }
         });
 
@@ -228,8 +218,31 @@ public class HomeActivity extends BasicActivity {
     }
 
 
+    public void showLogOutDialog()
+    {
+        showConfirmationDialog("Confirmation", "Do you want to log out?", new ConfirmationDialogListener() {
+            @Override
+            public void onDismissListener() {
 
+            }
 
+            @Override
+            public void onYesClick() {
+                googleSignOut();
+            }
+
+            @Override
+            public void onNoClick() {
+
+            }
+
+            @Override
+            public void onRewardGrantedListener() {
+
+            }
+        });
+
+    }
 
     public AdmobInterstitialAdListener interstitialAdListener()
     {
@@ -660,12 +673,7 @@ public class HomeActivity extends BasicActivity {
     @Override
     public void onResume() {
         super.onResume();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Intent.ACTION_TIME_CHANGED);
-        filter.addAction(Intent.ACTION_DATE_CHANGED);
-        filter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-        filter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
-        registerReceiver(timeChangedReceiver2, filter);
+
 
 
         if (googleBannerAdView != null) {
@@ -691,7 +699,7 @@ public class HomeActivity extends BasicActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        unregisterReceiver(timeChangedReceiver2);
+
         interstitialAdDismissed = false;
      //   Toast.makeText(this, "On stop", Toast.LENGTH_SHORT).show();
 
@@ -741,25 +749,32 @@ public class HomeActivity extends BasicActivity {
             @Override
             public void onTaskSuccessful(UserProfile userProfile) {
 
+                try {
+                    getGamersHubData(new GetGamersHubDataListener() {
+                        @Override
+                        public void onTaskSuccessful(GamersHubData gamersHubData) {
 
+                            if( !AppHelper.isAppUpdated()) {
+                                showUpdate(gamersHubData);
+                            }
 
-
-                getGamersHubData(new GetGamersHubDataListener() {
-                    @Override
-                    public void onTaskSuccessful(GamersHubData gamersHubData) {
-
-                        if( !AppHelper.isAppUpdated()) {
-                            showUpdate(gamersHubData);
                         }
+                    });
+                }
+                catch (Exception e)
+                {
 
-                    }
-                });
+                }
+
+
+
                 if (userProfile.getTimerStatus() != null) {
 
                     setTimerStatus(userProfile);
 
 
-                } else {
+                }
+                else {
                     userProfile.setTimerStatus(createTimerStatus());
                 }
 
@@ -791,11 +806,11 @@ public class HomeActivity extends BasicActivity {
                     {
                         profileData.setEmail(UserProfile.ProfileData.getProfileData().getEmail());
                     }
-                    profileData.setVersionName(BuildConfig.VERSION_NAME+"");
+                    profileData.setVersionName(AppHelper.getAppVersionName(HomeActivity.this));
                     profileData.setFirebaseFcmToken(AppHelper.getFireBaseFcmToken());
                     profileData.setLastOpened(DateTimeHelper.getDatePojo().getGetCurrentDateString());
                     profileData.setDeviceInfo(DeviceHelper.getDeviceNameAndVersion());
-                    if (profileData.getCreatedAt().trim().isEmpty()) {
+                    if (profileData.getCreatedAt().trim().isEmpty() && DateTimeHelper.isDateCorrect(profileData.getCreatedAt())) {
                         profileData.setCreatedAt(DateTimeHelper.getDatePojo().getGetCurrentDateString());
                     }
                     userProfile.setProfileData(profileData);

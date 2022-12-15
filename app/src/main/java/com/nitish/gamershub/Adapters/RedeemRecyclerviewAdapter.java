@@ -13,6 +13,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.nitish.gamershub.Activities.RedeemActivity;
 import com.nitish.gamershub.Pojo.FireBase.RedeemListItem;
 import com.nitish.gamershub.R;
@@ -44,7 +45,7 @@ public class RedeemRecyclerviewAdapter extends RecyclerView.Adapter<RedeemRecycl
         RedeemListItem redeemListItem = redeemListItemList.get(position);
 
 
-        holder.redeemImageview.setImageResource(redeemListItem.getImageUrl());
+        Glide.with(context).load(redeemListItem.getImageUrl()).into( holder.redeemImageview);
         String redeemType;
 
         if(redeemListItem.getName().toLowerCase().contains("paytm"))
@@ -64,7 +65,7 @@ public class RedeemRecyclerviewAdapter extends RecyclerView.Adapter<RedeemRecycl
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View view) {
-                ((RedeemActivity)context).redeemMoneyIcon(redeemListItem);
+                ((RedeemActivity)context).redeemMoneyItemClick(redeemListItem);
             }
         });
 
@@ -75,7 +76,7 @@ public class RedeemRecyclerviewAdapter extends RecyclerView.Adapter<RedeemRecycl
 
     @Override
     public int getItemCount() {
-        return redeemListItemList.size();
+        return redeemListItemList!=null?redeemListItemList.size():0;
     }
 
 

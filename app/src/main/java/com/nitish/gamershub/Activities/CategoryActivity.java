@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +45,7 @@ public class CategoryActivity extends BasicActivity {
     ImageView backButton;
     TextView categoryNameTextview;
     RecyclerView categoriesRecycler;
+    RelativeLayout noTransactionRelative;
     List<AllGamesItems> categoryGamesList;
 
     AdView googleBannerAdView;
@@ -61,6 +63,7 @@ public class CategoryActivity extends BasicActivity {
         popularGamesList = Paper.book().read(PopularGamesList);
         newGamesList = Paper.book().read(NewGamesList);
         mainGamesList = Paper.book().read(MainGamesList);
+        noTransactionRelative =findViewById(R.id.noTransactionRelative);
 
         categoriesRecycler.setLayoutManager(new GridLayoutManager(this,4));
 
@@ -103,6 +106,13 @@ public class CategoryActivity extends BasicActivity {
 
             NewAndPopularGamesAdapter newAndPopularGamesAdapter = new NewAndPopularGamesAdapter(CategoryActivity.this,categoryGamesList);
             categoriesRecycler.setAdapter(newAndPopularGamesAdapter);
+            if(categoryGamesList.isEmpty())
+            {
+                noTransactionRelative.setVisibility(View.VISIBLE);
+            }
+            else {
+                noTransactionRelative.setVisibility(View.GONE);
+            }
 
 
         }

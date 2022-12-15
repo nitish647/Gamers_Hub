@@ -6,20 +6,34 @@ import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHubDataGlobal;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GoogleSignInAccountUser;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GoogleSignInUserProfile;
 import static com.nitish.gamershub.Utils.ConstantsHelper.UserProfileGlobal;
+import static com.nitish.gamershub.Utils.DateTimeHelper.TimeStampPattern;
+import static com.nitish.gamershub.Utils.DateTimeHelper.simpleDateFormatPattern;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.datatransport.runtime.BuildConfig;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.nitish.gamershub.Pojo.FireBase.AdViewedStats;
 import com.nitish.gamershub.Pojo.FireBase.GamersHubData;
 import com.nitish.gamershub.Pojo.FireBase.UserProfile;
 import com.nitish.gamershub.R;
 
+import org.json.JSONObject;
+
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
+import java.util.Random;
 
 import io.paperdb.Paper;
 
@@ -99,10 +113,16 @@ public class AppHelper {
 
     public static  boolean isAppUpdated()
     {
-        float currentVersionName = Float.parseFloat(getUserProfileGlobalData().getProfileData().getVersionName());
-        float latestVersionName = Float.parseFloat(getGamersHubDataGlobal().getGamesData().getLatestVersionName());
+        try {
+            float currentVersionName = Float.parseFloat(getUserProfileGlobalData().getProfileData().getVersionName());
+            float latestVersionName = Float.parseFloat(getGamersHubDataGlobal().getGamesData().getLatestVersionName());
+            return currentVersionName>=latestVersionName ;
+        } catch (Exception e)
+        {
+            return false;
+        }
 
-        return currentVersionName>=latestVersionName ;
+
 
 
     }
@@ -125,6 +145,20 @@ public class AppHelper {
 
     }
 
+    public static String getAppVersionName(Context context)
+    {
+        PackageInfo pInfo = null;
+        try {
+            pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            return pInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+
+            e.printStackTrace();
+            return   BuildConfig.VERSION_NAME;
+        }
+
+
+    }
     public static void readCalenderData()
     {
         Date date= new Date();
@@ -156,6 +190,38 @@ public class AppHelper {
         return Uri.parse(mailTo);
     }
 
+    //-----------------------------JSON Helper----------//
 
 
+    public static String generateRandomNumber()
+    {
+        String randomString="";
+
+        final int min = 1000;
+        final int max = 9999;
+        final int random = new Random().nextInt((max - min) + 1) + min;
+        String timestamp;
+
+         timestamp =    new SimpleDateFormat(TimeStampPattern).format(  DateTimeHelper.getDatePojo().getCurrentDate);
+
+        randomString = timestamp+"_"+random;
+
+        return randomString;
+
+    }
+    ///----------------clipboard helper-------------///
+
+    public static void copyToClipboard(Context context,String text)
+    {
+        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText(text, text);
+        clipboard.setPrimaryClip(clip);
+    }
+
+    ////------------------ main class -------------////////////////
+    public static void main(String[] args)
+    {
+
+
+    }
 }

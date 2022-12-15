@@ -40,6 +40,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.util.Locale;
 
 
@@ -70,9 +71,8 @@ public  String timerMinuteSecond="00:00";
 
 
     public static GamePlayFragment newInstance() {
-        GamePlayFragment fragment = new GamePlayFragment();
 
-        return fragment;
+        return new GamePlayFragment();
     }
 
 
@@ -106,8 +106,8 @@ public  String timerMinuteSecond="00:00";
         webView.loadUrl(allGamesItems.getGameUrl());
 
 
+
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setAppCacheEnabled(true);
 
         webView.getSettings().setAllowFileAccess(true);
         webView.getSettings().setDomStorageEnabled(true);
