@@ -64,7 +64,7 @@ public class UserTransactionListAdapter extends RecyclerView.Adapter<UserTransac
             holder.binding.transactionTypeText.setTextColor(context.getColor(R.color.paytmBlue));
         }
 
-        if(!userTransactionRequest.isPaid)
+        if(!userTransactionRequest.isTransactionComplete())
         {
             holder.binding.statusTextview.setText("Pending");
             holder.binding.statusTextview.setTextColor(Color.parseColor("#fd1b1b"));

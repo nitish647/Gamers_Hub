@@ -57,6 +57,7 @@ public class NewAndPopularGamesAdapter  extends RecyclerView.Adapter<NewAndPopul
         allGamesItemsSerializable.setName(allGamesItems.getName());
 
         Picasso.get().load(allGamesItems.getImg_file()).into(holder.game_image);
+        holder.game_image.setClipToOutline(true);
         holder.game_name.setText(allGamesItems.getName());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

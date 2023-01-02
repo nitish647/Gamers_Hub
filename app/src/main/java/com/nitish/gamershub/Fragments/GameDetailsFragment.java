@@ -38,6 +38,7 @@ import com.nitish.gamershub.Helper_class;
 import com.nitish.gamershub.Interface.ConfirmationDialogListener2;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.Pojo.DialogHelperPojo;
+import com.nitish.gamershub.Pojo.FireBase.GamePlayedStatus;
 import com.nitish.gamershub.Pojo.FireBase.UserProfile;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.AppHelper;
@@ -51,10 +52,9 @@ import io.paperdb.Paper;
 public class GameDetailsFragment extends Fragment {
 
 
-
     GameDetailActivity2 parentActivity;
 
-    int vibrant ;
+    int vibrant;
     int vibrantLight;
     int vibrantDark;
     int muted;
@@ -65,6 +65,9 @@ public class GameDetailsFragment extends Fragment {
     ArrayList<AllGamesItems> favouriteArrayList;
 
     FragmentGameDetailsBinding binding;
+    UserProfile userProfile;
+    GamePlayedStatus gamePlayedStatus;
+
     public static GameDetailsFragment newInstance() {
         GameDetailsFragment fragment = new GameDetailsFragment();
 
@@ -76,19 +79,19 @@ public class GameDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_game_details,container,false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_game_details, container, false);
         Paper.init(binding.getRoot().getContext());
 
         parentActivity = (GameDetailActivity2) binding.getRoot().getContext();
 
         favouriteArrayList = new ArrayList<>();
-         allGamesItems = NewAndPopularGamesAdapter.SelectedGameObject;
-
-
+        allGamesItems = NewAndPopularGamesAdapter.SelectedGameObject;
 
 
         ArrayList<AllGamesItems> itemsArrayList = (ArrayList<AllGamesItems>) Paper.book().read(FavouriteList);
         favouriteArrayList = itemsArrayList;
+        userProfile = getUserProfileGlobalData();
+        gamePlayedStatus = getUserProfileGlobalData().getGamePlayedStatus();
 
         setOnClickListeners();
 
@@ -96,13 +99,10 @@ public class GameDetailsFragment extends Fragment {
         setViews();
 
 
-
-
-
-        return  binding.getRoot();
+        return binding.getRoot();
     }
-    public void setOnClickListeners()
-    {
+
+    public void setOnClickListeners() {
         binding.backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -111,15 +111,13 @@ public class GameDetailsFragment extends Fragment {
         });
 
 
-
         binding.favButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // when it is in favourite then remove from favourites
 
 
-                if(checkInFavList(allGamesItems))
-                {
+                if (checkInFavList(allGamesItems)) {
                     deleteFromFavourite(allGamesItems);
                     binding.favButton.setImageResource(R.drawable.fav_of2);
                 }
@@ -149,13 +147,12 @@ public class GameDetailsFragment extends Fragment {
 
 
     }
-    public void setViews()
-    {
-        binding.gameDescTextview.setText(allGamesItems.getDescription());
 
+    public void setViews() {
+        binding.gameDescTextview.setText(allGamesItems.getDescription());
+        binding.gameImageImageVIew.setClipToOutline(true);
         binding.gameNameTextview.setText(allGamesItems.getName());
-        if(checkInFavList(allGamesItems))
-        {
+        if (checkInFavList(allGamesItems)) {
             binding.favButton.setImageResource(R.drawable.fav_on2);
 
         }
@@ -164,12 +161,13 @@ public class GameDetailsFragment extends Fragment {
             binding.favButton.setImageResource(R.drawable.fav_of2);
 
         }
-        Picasso.get().load(allGamesItems.getImg_file()).into( binding.gameImageImageVIew,new com.squareup.picasso.Callback() {
+
+        Picasso.get().load(allGamesItems.getImg_file()).into(binding.gameImageImageVIew, new com.squareup.picasso.Callback() {
             @Override
             public void onSuccess() {
 
-                getDominantGradient( binding.gameImageImageVIew);
-                binding.gameImageContainerRelative.setBackgroundColor(vibrant);
+//                getDominantGradient(binding.gameImageImageVIew);
+//                binding.gameImageContainerRelative.setBackgroundColor(vibrant);
             }
 
             @Override
@@ -179,41 +177,64 @@ public class GameDetailsFragment extends Fragment {
 
         });
 
-        int min =  getGamersHubDataGlobal().gamesData.getGamePlaySecs()/60;
-        String text =" Play this game for "+
-                min+" Minutes to get rewarded";
-        binding.gamePlayTimeTextview.setText(text);
+        setGamePlayInstructions();
 
 
         binding.playButton.setBackground(Helper_class.setSingleColorRoundBackground("#F0740D", 15.0F));
 
     }
-    public void saveToFavourite(AllGamesItems allGamesItems)
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        userProfile = getUserProfileGlobalData();
+        gamePlayedStatus = getUserProfileGlobalData().getGamePlayedStatus();
+        setViews();
+
+    }
+
+    public void setGamePlayInstructions()
     {
+        if(gamePlayedStatus.getGamePlayedToday()>=getGamersHubDataGlobal().gamesData.getDailyGamePlayLimit())
+        {
+            String text = "Your have reached the daily reward limit of " +
+                    getGamersHubDataGlobal().getGamesData().getDailyGamePlayLimit() + " games ,come back tomorrow to get more rewards";
+            binding.gamePlayTimeTextview.setText(text);
+
+        }
+        else {
+            int min = getGamersHubDataGlobal().gamesData.getGamePlaySecs() / 60;
+            String text = " Play this game for " +
+                    min + " Minutes to get rewarded "+
+                    "   \n(Game played reward left "+gamePlayedStatus.getGamePlayedToday()+"/"+getGamersHubDataGlobal().getGamesData().getDailyGamePlayLimit()+")";
+            binding.gamePlayTimeTextview.setText(text);
+
+        }
+    }
+
+    public void saveToFavourite(AllGamesItems allGamesItems) {
         favouriteArrayList.add(allGamesItems);
         Paper.book().write(FavouriteList, favouriteArrayList);
     }
-    public void deleteFromFavourite(AllGamesItems allGamesItems)
-    {
 
-        for(int i =0;i<favouriteArrayList.size();i++)
-        if(favouriteArrayList.get(i).getGameUrl().equals(allGamesItems.getGameUrl())) {
+    public void deleteFromFavourite(AllGamesItems allGamesItems) {
 
-            favouriteArrayList.remove(i);
-            break;
-        }
+        for (int i = 0; i < favouriteArrayList.size(); i++)
+            if (favouriteArrayList.get(i).getGameUrl().equals(allGamesItems.getGameUrl())) {
+
+                favouriteArrayList.remove(i);
+                break;
+            }
 
         Paper.book().write(FavouriteList, favouriteArrayList);
     }
 
-    public boolean checkInFavList(AllGamesItems allGamesItems)
-    {
+    public boolean checkInFavList(AllGamesItems allGamesItems) {
 
-        boolean isInFavList=false;
+        boolean isInFavList = false;
 
-            for(int i =0;i<favouriteArrayList.size();i++)
-        {
-            if(favouriteArrayList.get(i).getGameUrl().equals(allGamesItems.getGameUrl())) {
+        for (int i = 0; i < favouriteArrayList.size(); i++) {
+            if (favouriteArrayList.get(i).getGameUrl().equals(allGamesItems.getGameUrl())) {
                 isInFavList = true;
 
                 break;
@@ -223,8 +244,7 @@ public class GameDetailsFragment extends Fragment {
         return isInFavList;
     }
 
-    public void showGameReportDialog()
-    {
+    public void showGameReportDialog() {
         DialogHelperPojo dialogHelperPojo = new DialogHelperPojo();
         dialogHelperPojo.setYesButton("Send");
         dialogHelperPojo.setTitle("Confirmation");
@@ -232,11 +252,11 @@ public class GameDetailsFragment extends Fragment {
         parentActivity.getConfirmationDialog(dialogHelperPojo, new ConfirmationDialogListener2() {
             @Override
             public void onYesClick() {
-                   String subject = "Issue in the game : "+allGamesItems.getName();
-              Uri uri =  AppHelper.getMailMessageUri(parentActivity,subject,"");
-                Intent intent = new Intent(Intent.ACTION_SENDTO,uri);
+                String subject = "Issue in the game : " + allGamesItems.getName();
+                Uri uri = AppHelper.getMailMessageUri(parentActivity, subject, "");
+                Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
 
-                startActivity(Intent.createChooser(intent,"Send us email "));
+                startActivity(Intent.createChooser(intent, "Send us email "));
             }
 
             @Override
@@ -246,13 +266,12 @@ public class GameDetailsFragment extends Fragment {
         });
     }
 
-    public void getDominantGradient(ImageView imageView)
-    {
+    public void getDominantGradient(ImageView imageView) {
         Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
 
         Palette.from(bitmap).generate(palette -> {
             assert palette != null;
-             vibrant = palette.getVibrantColor(0x003001); // <=== color you want
+            vibrant = palette.getVibrantColor(0x003001); // <=== color you want
 
             vibrantLight = palette.getLightVibrantColor(0x00000);
             vibrantDark = palette.getDarkVibrantColor(0x000000);

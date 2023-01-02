@@ -22,7 +22,7 @@ android:background="@color/gamers_hub_theme"
         <ImageView
 
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="250dp"
             android:src="@drawable/gaming_login">
 
         </ImageView>
@@ -122,6 +122,7 @@ android:background="@color/gamers_hub_theme"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
+            android:textSize="13sp"
             android:text="More sign in options are coming soon"
             android:textColor="@android:color/white">
 

@@ -13,6 +13,7 @@ public class UserProfile {
     public  UserTransactions userTransactions;
     public  AdViewedStats adViewedStats;
     public  UserAccountStatus userAccountStatus;
+    public GamePlayedStatus gamePlayedStatus;
 
 
 
@@ -68,16 +69,13 @@ public class UserProfile {
         this.timerStatus = timerStatus;
     }
 
+    public GamePlayedStatus getGamePlayedStatus() {
+        return gamePlayedStatus;
+    }
 
-
-
-
-
-
-
-
-
-
+    public void setGamePlayedStatus(GamePlayedStatus gamePlayedStatus) {
+        this.gamePlayedStatus = gamePlayedStatus;
+    }
 
     public static class ProfileData {
 

@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.utils.DateUtils;
 import com.instacart.library.truetime.TrueTime;
 
 import org.apache.commons.net.ntp.NTPUDPClient;
@@ -31,7 +32,7 @@ public  class DateTimeHelper extends Application {
    public static Context context ;
   public   static String time_7_am = "07:00:00";
   public static String simpleDateFormatPattern ="yyyy-MM-dd HH:mm:ss";
-
+    public static String simpleDateFormatPattern_yyyyMMdd ="yyyyMMdd";
     public static String TimeStampPattern ="HHmmss";
     @Override
     public void onCreate() {
@@ -111,6 +112,25 @@ public  class DateTimeHelper extends Application {
 
 
     }
+    public static Integer compareDate(Date date1, Date date2)
+    {
+
+     date1=   convertIntoAnotherTimeFormat(date1,simpleDateFormatPattern_yyyyMMdd);
+        date2=   convertIntoAnotherTimeFormat(date2,simpleDateFormatPattern_yyyyMMdd);
+        return date1.compareTo(date2);
+
+    }
+    public static Integer compareDate(String date1Sting, String date2String)
+    {
+
+
+        Date date1 = convertIntoAnotherTimeFormat(date1Sting,simpleDateFormatPattern_yyyyMMdd);
+        Date date2 = convertIntoAnotherTimeFormat(date2String,simpleDateFormatPattern_yyyyMMdd);
+
+        return date1.compareTo(date2);
+
+
+    }
     public static boolean isDateCorrect(String date)
     {
         // checking if the date is correct and is parsable
@@ -153,6 +173,7 @@ public  class DateTimeHelper extends Application {
 
         return  DateTimeHelper.getDatePojo().getSimpleDateFormat().format(date);
     }
+
     public static Date convertStringIntoDate(String dateString)
     {
         Date date1 =new Date();
@@ -167,6 +188,33 @@ public  class DateTimeHelper extends Application {
         return date1;
 
 
+    }
+    public static Date convertIntoAnotherTimeFormat(String dateString,String dateFormatPattern)
+    {
+        Date date1 =new Date();
+
+        try {
+            date1 = new SimpleDateFormat(dateFormatPattern).parse(dateString);
+        } catch (ParseException e) {
+
+            Log.d("gError","error in parsing time 11234: "+e);
+            e.printStackTrace();
+        }
+        return date1;
+    }
+    public static Date convertIntoAnotherTimeFormat(Date date,String dateFormatPattern)
+    {
+        Date date1 =new Date();
+      SimpleDateFormat simpleDateFormat =  new SimpleDateFormat(dateFormatPattern);
+
+        try {
+            date1 =  simpleDateFormat.parse(simpleDateFormat.format(date));
+        } catch (ParseException e) {
+
+            Log.d("gError","error in parsing time 11234: "+e);
+            e.printStackTrace();
+        }
+        return date1;
     }
     // with this function will reset the time of a date to a given time
     public static String resetDateToATime(Object dateObj, String time)

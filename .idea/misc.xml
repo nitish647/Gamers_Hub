@@ -52,7 +52,7 @@
         <entry key="app/src/main/res/layout/popular_and_new_layout.xml" value="0.17119565217391305" />
         <entry key="app/src/main/res/layout/redeem_item_layout.xml" value="0.22" />
         <entry key="app/src/main/res/layout/show_webview_dialog.xml" value="0.17119565217391305" />
-        <entry key="app/src/main/res/layout/user_transaction_list_layout.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/user_transaction_list_layout.xml" value="0.25" />
         <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.19427083333333334" />
       </map>
     </option>

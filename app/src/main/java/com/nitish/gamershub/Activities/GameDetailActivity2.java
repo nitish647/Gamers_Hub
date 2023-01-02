@@ -1,6 +1,7 @@
 package com.nitish.gamershub.Activities;
 
 import static com.nitish.gamershub.Utils.AppHelper.getGamersHubDataGlobal;
+import static com.nitish.gamershub.Utils.AppHelper.getUserProfileGlobalData;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -16,6 +17,7 @@ import com.nitish.gamershub.Fragments.GameDetailsFragment;
 import com.nitish.gamershub.Fragments.GamePlayFragment;
 import com.nitish.gamershub.Interface.AdmobInterstitialAdListener;
 import com.nitish.gamershub.Pojo.AllGamesItems;
+import com.nitish.gamershub.Pojo.FireBase.GamePlayedStatus;
 import com.nitish.gamershub.Pojo.FireBase.UserProfile;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.DateTimeHelper;
@@ -39,7 +41,8 @@ public class GameDetailActivity2 extends BasicActivity {
     boolean gamePlayVisibility= false;
     AllGamesItems allGamesItems;
     FragmentManager fragmentManager;
-
+    UserProfile userProfile;
+    GamePlayedStatus gamePlayedStatus ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +53,8 @@ public class GameDetailActivity2 extends BasicActivity {
 
          fragmentManager = getSupportFragmentManager();
          loadInterstitialAdNew();
+         userProfile = getUserProfileGlobalData();
+        gamePlayedStatus = getUserProfileGlobalData().getGamePlayedStatus();
 
 
         if(gameDetailsFragment==null)
@@ -60,10 +65,8 @@ public class GameDetailActivity2 extends BasicActivity {
 
 
 
-
-
-
     }
+
 
     @Override
     protected int getLayoutResourceId() {
@@ -185,15 +188,68 @@ public class GameDetailActivity2 extends BasicActivity {
             if(LocalTime.parse( gamePlayFragment.timerMinuteSecond).compareTo(LocalTime.parse(DateTimeHelper.formatTimeToMMSS(gamePlaySeconds))) > 0 ) {
 
 
-                int amount = getGamersHubDataGlobal().getGamesData().getGamePlayReward();
-
-                updateUserWallet(amount);
-
-                Toast.makeText(this, "you are rewarded "+amount+" coins", Toast.LENGTH_SHORT).show();
+                updateGamePlayedStatus();
+//                int amount = getGamersHubDataGlobal().getGamesData().getGamePlayReward();
+//
+//                updateUserWallet(amount);
+//
+//                Toast.makeText(this, "you are rewarded "+amount+" coins", Toast.LENGTH_SHORT).show();
 
             }
             gamePlayFragment = null;
         }
+
+    }
+    private void updateGamePlayedStatus()
+    {
+
+
+        int totalGamePlayed = gamePlayedStatus.getTotalGamePlayed();
+        totalGamePlayed = totalGamePlayed+1;
+        gamePlayedStatus.setTotalGamePlayed(totalGamePlayed);
+
+      // if current date is equal to the last played date
+        if(DateTimeHelper.compareDate(DateTimeHelper.getDatePojo().getGetCurrentDateString(),gamePlayedStatus.getLastGamePlayedDate())==0)
+        {
+            int gamePlayedToday = gamePlayedStatus.getGamePlayedToday();
+            gamePlayedToday = gamePlayedToday+1;
+            gamePlayedStatus.setGamePlayedToday(gamePlayedToday);
+
+            if(gamePlayedStatus.getGamePlayedToday()>getGamersHubDataGlobal().gamesData.getDailyGamePlayLimit())
+            {
+                // do something when the game play limit is over
+                updateGamePlayedStatus(gamePlayedStatus);
+            }
+            else {
+                // increment the today game point
+
+                // reward the user
+                int amount = getGamersHubDataGlobal().getGamesData().getGamePlayReward();
+                updateUserWallet(amount);
+                Toast.makeText(this, "you are rewarded "+amount+" coins", Toast.LENGTH_SHORT).show();
+
+
+            }
+
+        }
+        // if current date is greater to the last played date
+        else   if(DateTimeHelper.compareDate(DateTimeHelper.getDatePojo().getGetCurrentDateString(),gamePlayedStatus.getLastGamePlayedDate())>0)
+        {
+            gamePlayedStatus.setLastGamePlayedDate(DateTimeHelper.getDatePojo().getGetCurrentDateString());
+            gamePlayedStatus.setGamePlayedToday(0);
+            updateGamePlayedStatus(gamePlayedStatus);
+        }
+
+
+
+
+
+
+
+
+
+
+
 
     }
 
@@ -204,24 +260,43 @@ public class GameDetailActivity2 extends BasicActivity {
 
             loadInterstitialAdNew();
     }
+    public void updateGamePlayedStatus(GamePlayedStatus gamePlayedStatus)
+    {
+        userProfile.setGamePlayedStatus(gamePlayedStatus);
+
+        setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
+            @Override
+            public void onTaskSuccessful() {
+
+                if(gameDetailsFragment!=null)
+                {
+                    gameDetailsFragment.onResume();
+                }
+
+            }
+
+        });
+    }
     public void updateUserWallet(int amount)
     {
 
-        getUserProfileGlobal(new GetUserProfileDataListener() {
-            @Override
-            public void onTaskSuccessful(UserProfile userProfile) {
                 userProfile.setProfileData(UserOperations.addCoinsToWallet(userProfile, amount));
+                userProfile.setGamePlayedStatus(gamePlayedStatus);
                 setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
                     @Override
                     public void onTaskSuccessful() {
                         showRewardDialog(amount,R.raw.rupee_reward_box);
+                        if(gameDetailsFragment!=null)
+                        {
+                            gameDetailsFragment.onResume();
+                        }
                     }
                 });
-            }
-        });
+
 
 
     }
+
 
     public AdmobInterstitialAdListener interstitialAdListener(String fragmentTag_ToShow)
     {

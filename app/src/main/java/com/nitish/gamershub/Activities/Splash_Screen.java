@@ -1,6 +1,7 @@
 package com.nitish.gamershub.Activities;
 
 import static com.nitish.gamershub.Utils.ConstantsHelper.From;
+import static com.nitish.gamershub.Utils.ConstantsHelper.IntentData;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +23,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.nitish.gamershub.Interface.ConfirmationDialogListener2;
 import com.nitish.gamershub.Pojo.DialogHelperPojo;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.Utils.ConstantsHelper;
+import com.nitish.gamershub.Utils.NotificationHelper;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -49,7 +52,9 @@ public class Splash_Screen extends BasicActivity {
         context = Splash_Screen.this;
         Paper.init(this);
 
+
         handlerFunctions();
+
 
 
 
@@ -126,7 +131,16 @@ public class Splash_Screen extends BasicActivity {
                     {
                         Toast.makeText(Splash_Screen.this, "hello "+ getGoogleSignInAccount().getEmail(), Toast.LENGTH_SHORT).show();
 
-                        intent = new Intent(getApplicationContext(), HomeActivity.class).putExtra(From,Splash_Screen.this.getClass().getSimpleName());
+                        Bundle bundle = getIntent().getExtras();
+                        if(bundle!=null && bundle.containsKey("type"))
+                        {
+                            intent = NotificationHelper.createNotificationIntent(bundle.getString("type"),context);
+                            intent.putExtra(IntentData,bundle);
+
+                        }
+                        else {
+                            intent = new Intent(getApplicationContext(), HomeActivity.class);
+                        }
                     }
                    startIntentWithFlags(intent,Splash_Screen.this);
                     finish();

@@ -1,9 +1,5 @@
 package com.nitish.gamershub.Pojo.FireBase;
 
-import com.nitish.gamershub.Pojo.FaqPojo;
-
-import java.util.ArrayList;
-
 public class GamersHubData {
 
     public GamesData gamesData;
@@ -38,6 +34,7 @@ public class GamersHubData {
         int gamePlaySecs =0;
         int gamePlayReward=0;
         int watchVideoReward =0;
+        int dailyGamePlayLimit =0;
         boolean forceUpdate = false;
         String latestVersionName;
 
@@ -54,10 +51,14 @@ public class GamersHubData {
             return latestVersionName;
         }
 
+
         public int getGamePlaySecs() {
             return gamePlaySecs;
         }
 
+        public int getDailyGamePlayLimit() {
+            return dailyGamePlayLimit;
+        }
 
         public int getGamePlayReward() {
             return gamePlayReward;

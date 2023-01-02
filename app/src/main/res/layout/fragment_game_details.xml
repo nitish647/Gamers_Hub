@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
 <RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragments.GameDetailsFragment">
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -56,31 +55,21 @@
             android:layout_height="wrap_content">
 
 
-            <FrameLayout
-
-                android:id="@+id/gameContainerFrame"
-                android:layout_marginStart="50dp"
-                android:layout_marginTop="10dp"
-
-                android:layout_width="150dp"
-                android:layout_height="150dp">
 
                 <ImageView
 
                     android:id="@+id/gameImageImageVIew"
-                    android:layout_width="match_parent"
+                    android:layout_width="150dp"
+                    android:background="@drawable/round_corners"
+                    android:layout_height="150dp"
 
-                    android:layout_height="match_parent"
-                    android:padding="7dp"
+                    android:layout_marginStart="50dp"
+                    android:layout_marginTop="10dp"
                     android:scaleType="fitXY">
 
                 </ImageView>
 
-                <ImageView
-                    android:src="@drawable/img_background"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </FrameLayout>
+
 
             <TextView
                 android:textStyle="bold"
@@ -89,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="20dp"
-                android:layout_toEndOf="@+id/gameContainerFrame"
+                android:layout_toEndOf="@+id/gameImageImageVIew"
                 android:text="Ninja Action">
 
             </TextView>
@@ -102,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
-                android:layout_toEndOf="@+id/gameContainerFrame"
+                android:layout_toEndOf="@+id/gameImageImageVIew"
                 android:text="Action">
 
             </TextView>
@@ -117,7 +106,7 @@
                 android:layout_gravity="center"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
-                android:layout_toEndOf="@+id/gameContainerFrame"
+                android:layout_toEndOf="@+id/gameImageImageVIew"
                 android:text="Play"
                 android:textColor="@android:color/white"
                 android:textSize="15sp">
@@ -128,7 +117,7 @@
             <LinearLayout
                 android:layout_below="@+id/playButton"
                 android:orientation="horizontal"
-                android:layout_toEndOf="@+id/gameContainerFrame"
+                android:layout_toEndOf="@+id/gameImageImageVIew"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
                 <ImageView
@@ -162,7 +151,7 @@
                 android:id="@+id/gameDescTextview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/gameContainerFrame"
+                android:layout_below="@+id/gameImageImageVIew"
                 android:layout_marginHorizontal="40dp"
                 android:layout_marginTop="10dp">
 
@@ -179,7 +168,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout
+        <RelativeLayout
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -187,30 +176,39 @@
             android:backgroundTint="@color/materialOrange"
             android:elevation="@dimen/cardview_default_elevation"
             android:gravity="center"
+            android:minHeight="50dp"
 
             android:orientation="horizontal"
 
-            android:paddingVertical="10dp">
+            android:padding="5dp">
 
             <TextView
                 android:id="@+id/gamePlayTimeTextview"
                 style="@style/contentTextview"
+                android:layout_alignParentStart="true"
+
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginStart="50dp"
+                android:layout_toStartOf="@+id/gameCoinImage"
+                android:padding="5dp"
+                android:gravity="center"
                 android:text="Play this game for 60 seconds to get rewarded"
                 android:textColor="@android:color/white"
-                android:textSize="12sp">
+                android:textSize="14sp">
 
             </TextView>
 
             <ImageView
-
+                android:id="@+id/gameCoinImage"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:layout_gravity="end"
-                android:layout_marginStart="5dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
                 android:src="@drawable/indian_coin">
 
             </ImageView>
-        </LinearLayout>
+        </RelativeLayout>
     </RelativeLayout>
 </RelativeLayout>
 </layout>

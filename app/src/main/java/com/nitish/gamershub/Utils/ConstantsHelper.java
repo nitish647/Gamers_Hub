@@ -28,7 +28,10 @@ public class ConstantsHelper {
     public static  String AdViewedStatsGlobal = "AdViewedStatsGlobal";
     public static  String FirebaseFCMToken = "FirebaseFCMToken";
     public static  String From = "From";
+    public static  String IntentData = "IntentData";
 
+
+    public static String WithdrawalDone ="WithdrawalSuccess";
 
     public static  int AccountActive =0;
     public static  int AccountSuspended =1;

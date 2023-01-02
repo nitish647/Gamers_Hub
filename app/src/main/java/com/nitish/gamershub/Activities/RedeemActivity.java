@@ -351,7 +351,7 @@ public class RedeemActivity extends BasicActivity {
 
         UserTransactions.TransactionRequest transactionRequest = new UserTransactions.TransactionRequest();
         transactionRequest.setRequestDate(currentDateTime);
-        transactionRequest.setIsPaid(false);
+        transactionRequest.setTransactionComplete(false);
 
         transactionRequest.setCoins(redeemListItem.getCoins());
         transactionRequest.setAmount(redeemListItem.getMoney());

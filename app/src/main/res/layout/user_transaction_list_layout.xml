@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
 <RelativeLayout
@@ -8,9 +9,8 @@
     android:background="@drawable/round_corners"
     android:layout_margin="5dp"
     android:elevation="@dimen/cardview_default_radius"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:padding="10dp"
+    android:padding="5dp"
     android:layout_height="wrap_content">
 
     <RelativeLayout
@@ -22,7 +22,7 @@
             android:elevation="@dimen/cardview_default_elevation"
             android:background="@drawable/round_corners"
 
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
             android:padding="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -39,10 +39,15 @@
 
             </ImageView>
         </RelativeLayout>
+
         <LinearLayout
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_above="@+id/transactionLinear"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="10dp"
+            android:layout_toStartOf="@+id/amountLinear"
             android:layout_toEndOf="@+id/transactionImageRelative"
             android:orientation="vertical">
 
@@ -50,13 +55,14 @@
             <TextView
 
                 android:id="@+id/transactionTypeText"
-                android:textColor="@color/paytmBlue"
-                android:text="Paytm"
-                android:textSize="17sp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:text="Paytm"
+                android:textColor="@color/paytmBlue"
+                android:textSize="17sp">
 
             </TextView>
+
             <TextView
                 android:id="@+id/transactionNumber"
                 android:layout_width="wrap_content"
@@ -65,9 +71,10 @@
 
                 android:text="7003432424"
                 android:textColor="@android:color/black"
-                android:textSize="15sp">
+                android:textSize="11sp">
 
             </TextView>
+
             <TextView
                 android:id="@+id/transactionDate"
                 android:layout_width="wrap_content"
@@ -98,7 +105,7 @@
                     android:id="@+id/transactionCoins"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:layout_marginEnd="5dp"
                     android:layout_gravity="center"
                     android:text=" 5000 ">
@@ -119,7 +126,7 @@
                 android:layout_width="wrap_content"
                 android:textColor="@color/upiGreen"
                 android:textStyle="bold"
-                android:textSize="25sp"
+                android:textSize="20sp"
                 android:layout_marginEnd="15dp"
                 android:layout_gravity="end"
                 android:layout_height="wrap_content"
@@ -160,6 +167,7 @@
             </LinearLayout>
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/transactionLinear"
             android:layout_marginTop="5dp"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/amountLinear"

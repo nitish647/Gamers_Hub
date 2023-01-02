@@ -10,33 +10,20 @@
     app:cardCornerRadius="15dp"
     android:layout_height="wrap_content">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-
-        <FrameLayout
-
-            android:layout_width="80dp"
-            android:layout_height="80dp">
 
             <ImageView
-
+                android:background="@drawable/round_corners"
                 android:id="@+id/game_img"
-                android:layout_width="match_parent"
+                android:layout_width="80dp"
 
-                android:layout_height="match_parent"
-                android:padding="7dp"
+                android:layout_height="80dp"
+
                 android:scaleType="fitXY">
 
             </ImageView>
 
-            <ImageView
-            android:src="@drawable/img_background"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </FrameLayout>
-</RelativeLayout>
+
     <TextView
         android:background="@android:color/transparent"
         android:textColor="#000000"

@@ -480,6 +480,7 @@ public class HomeFragment extends Fragment {
     public void setViews()
     {
         bottomNavigationView= view.findViewById(R.id.bottomNavigationView);
+        imageSlider.setClipToOutline(true);
     }
 
 }

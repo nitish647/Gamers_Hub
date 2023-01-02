@@ -59,6 +59,7 @@ import com.nitish.gamershub.Interface.AdmobInterstitialAdListener;
 import com.nitish.gamershub.Interface.ConfirmationDialogListener2;
 import com.nitish.gamershub.Pojo.DialogHelperPojo;
 import com.nitish.gamershub.Pojo.FireBase.AdViewedStats;
+import com.nitish.gamershub.Pojo.FireBase.GamePlayedStatus;
 import com.nitish.gamershub.Pojo.FireBase.GamersHubData;
 import com.nitish.gamershub.Pojo.FireBase.TimerStatus;
 import com.nitish.gamershub.Pojo.FireBase.UserProfile;
@@ -117,6 +118,7 @@ abstract class BasicActivity extends AppCompatActivity {
 
     }
 
+    protected abstract int getLayoutResourceId();
 
    
     //----------------- Intent------------///
@@ -139,6 +141,11 @@ abstract class BasicActivity extends AppCompatActivity {
         intent.setData(Uri.parse(getString(R.string.play_store_link)));
         startActivity(intent);
     }
+              //////------------------------------////////
+
+
+
+
     protected  void getGoogleSignInOptions(){
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -147,7 +154,6 @@ abstract class BasicActivity extends AppCompatActivity {
                 .build();
     }
 
-    protected abstract int getLayoutResourceId();
 
 
 
@@ -447,6 +453,8 @@ abstract class BasicActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
 
     public interface SetUserDataOnCompleteListener
