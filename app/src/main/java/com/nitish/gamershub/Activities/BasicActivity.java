@@ -706,6 +706,7 @@ abstract class BasicActivity extends AppCompatActivity {
         confirmationDialog.show();
 
     }
+
     public ConfirmationDialogLayoutBinding setConfirmationDialog(String title,String message,ConfirmationDialogListener confirmationDialogListener)
     {
         ConfirmationDialogLayoutBinding confirmationDialogLayoutBinding;
