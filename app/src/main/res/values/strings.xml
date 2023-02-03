@@ -35,28 +35,28 @@
     </string>
 
     // production live ads
-        <string name="admob_inter">
-            ca-app-pub-5584279718709862/1146858340
-        </string>
-        <string name="admob_banner">
-            ca-app-pub-5584279718709862/7324226210
-        </string>
-        <string name="admob_reward">
-            ca-app-pub-5584279718709862/4033478773
-        </string>
+    <!--        <string name="admob_inter">-->
+    <!--            ca-app-pub-5584279718709862/1146858340-->
+    <!--        </string>-->
+    <!--        <string name="admob_banner">-->
+    <!--            ca-app-pub-5584279718709862/7324226210-->
+    <!--        </string>-->
+    <!--        <string name="admob_reward">-->
+    <!--            ca-app-pub-5584279718709862/4033478773-->
+    <!--        </string>-->
 
 
     // test ads
 
-<!--    <string name="admob_inter">-->
-<!--        ca-app-pub-3940256099942544/1033173712-->
-<!--    </string>-->
-<!--    <string name="admob_banner">-->
-<!--        ca-app-pub-3940256099942544/6300978111-->
-<!--    </string>-->
-<!--    <string name="admob_reward">-->
-<!--        	ca-app-pub-3940256099942544/5224354917-->
-<!--    </string>-->
+    <string name="admob_inter">
+        ca-app-pub-3940256099942544/1033173712
+    </string>
+    <string name="admob_banner">
+        ca-app-pub-3940256099942544/6300978111
+    </string>
+    <string name="admob_reward">
+        	ca-app-pub-3940256099942544/5224354917
+    </string>
 
 
     <string name="admob_test_reward">

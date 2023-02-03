@@ -47,7 +47,7 @@ public class CategoryActivity extends BasicActivity {
     RecyclerView categoriesRecycler;
     RelativeLayout noTransactionRelative;
     List<AllGamesItems> categoryGamesList;
-
+    NewAndPopularGamesAdapter newAndPopularGamesAdapter;
     AdView googleBannerAdView;
     ArrayList <AllGamesItems> popularGamesList , newGamesList, mainGamesList;
     @Override
@@ -78,33 +78,9 @@ public class CategoryActivity extends BasicActivity {
 
         if(getIntent()!=null)
         {
-            String categoryName  = getIntent().getStringExtra("categoryName");
-            categoryNameTextview.setText(categoryName);
+            getCategoryGamesList();
 
-            if(categoryName.toLowerCase().contains("best"))
-            {
-                categoryGamesList = popularGamesList;
-            }
-            else if(categoryName.toLowerCase().contains("new"))
-            {
-                categoryGamesList = newGamesList;
-            }
-            else if(categoryName.toLowerCase().contains("fav"))
-            {
-                ArrayList<AllGamesItems> favlist2 = Paper.book().read(FavouriteList);
-                categoryGamesList = favlist2;
-            }
-
-
-            else {
-                for (int i = 0; i < mainGamesList.size(); i++) {
-                    if (categoryName.toLowerCase().contains(mainGamesList.get(i).getCategory().toLowerCase())) {
-                        categoryGamesList.add(mainGamesList.get(i));
-                    }
-                }
-            }
-
-            NewAndPopularGamesAdapter newAndPopularGamesAdapter = new NewAndPopularGamesAdapter(CategoryActivity.this,categoryGamesList);
+            newAndPopularGamesAdapter = new NewAndPopularGamesAdapter(CategoryActivity.this,categoryGamesList);
             categoriesRecycler.setAdapter(newAndPopularGamesAdapter);
             if(categoryGamesList.isEmpty())
             {
@@ -115,6 +91,32 @@ public class CategoryActivity extends BasicActivity {
             }
 
 
+        }
+    }
+
+    private void getCategoryGamesList() {
+        String categoryName  = getIntent().getStringExtra("categoryName");
+        categoryNameTextview.setText(categoryName);
+
+        if(categoryName.toLowerCase().contains("best"))
+        {
+            categoryGamesList = popularGamesList;
+        }
+        else if(categoryName.toLowerCase().contains("new"))
+        {
+            categoryGamesList = newGamesList;
+        }
+        else if(categoryName.toLowerCase().contains("fav"))
+        {
+            ArrayList<AllGamesItems> favlist2 = Paper.book().read(FavouriteList);
+            categoryGamesList = favlist2;
+        }
+        else {
+            for (int i = 0; i < mainGamesList.size(); i++) {
+                if (categoryName.toLowerCase().contains(mainGamesList.get(i).getCategory().toLowerCase())) {
+                    categoryGamesList.add(mainGamesList.get(i));
+                }
+            }
         }
     }
 
@@ -187,6 +189,9 @@ public class CategoryActivity extends BasicActivity {
         if (googleBannerAdView != null) {
             googleBannerAdView.resume();
         }
+
+        getCategoryGamesList();
+        newAndPopularGamesAdapter.changedNewAndPopularGamesList(categoryGamesList);
     }
 
     /** Called before the activity is destroyed */

@@ -32,7 +32,13 @@ public class NewAndPopularGamesAdapter  extends RecyclerView.Adapter<NewAndPopul
     public NewAndPopularGamesAdapter(Context context, List<AllGamesItems> allGamesItemsList) {
         this.context = context;
         this.allGamesItemsList = allGamesItemsList;
-        allGamesItemsListFull  =allGamesItemsList;
+        this.allGamesItemsListFull  =allGamesItemsList;
+    }
+
+    public void changedNewAndPopularGamesList(List<AllGamesItems> allGamesItemsList) {
+        this.allGamesItemsList = allGamesItemsList;
+        this.allGamesItemsListFull =allGamesItemsList;
+        notifyDataSetChanged();
     }
 
     @NonNull

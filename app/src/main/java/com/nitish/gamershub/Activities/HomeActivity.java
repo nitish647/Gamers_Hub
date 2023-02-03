@@ -50,6 +50,7 @@ import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
 import com.nitish.gamershub.Adapters.CategoriesAdapter;
+import com.nitish.gamershub.Fragments.CategoryGamesFragment;
 import com.nitish.gamershub.Fragments.HomeFragment;
 import com.nitish.gamershub.Fragments.ProfileFragment;
 import com.nitish.gamershub.Interface.AdmobInterstitialAdListener;
@@ -95,6 +96,8 @@ public class HomeActivity extends BasicActivity {
 
     HomeFragment homeFragment;
     ProfileFragment profileFragment;
+
+    CategoryGamesFragment categoryGamesFragment;
     Fragment previousFragment;
     RequestQueue requestQueue;
     List<Categories> categoriesList;
@@ -286,9 +289,14 @@ public class HomeActivity extends BasicActivity {
 
                         }
                         showHideFragment(profileFragment, profileFragment.getTag());
-
-
                         break;
+                    case R.id.categoryGamesMenu:
+                        if(categoryGamesFragment ==null)
+                        {
+                            categoryGamesFragment = categoryGamesFragment.newInstance("","");
+
+                        }
+                        showHideFragment(categoryGamesFragment, categoryGamesFragment.getTag());
 
                 }
                 return false;

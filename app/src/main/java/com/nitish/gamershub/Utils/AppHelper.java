@@ -45,7 +45,6 @@ public class AppHelper {
     //--------------------login page -----------------//
     public static void saveGoogleSignInAccountUser(GoogleSignInAccount googleSignInAccount)
     {
-
         Log.d("pResponse","GoogleSignInUserProfile "+googleSignInAccount.getPhotoUrl());
         Paper.book().write(GoogleSignInUserProfile,googleSignInAccount.getPhotoUrl()+"");
         Paper.book().write(GoogleSignInAccountUser,googleSignInAccount);

@@ -166,7 +166,6 @@ public class GameDetailActivity2 extends BasicActivity {
         else
             super.onBackPressed();
 
-
     }
     public void showGameDetailsFrag()
     {

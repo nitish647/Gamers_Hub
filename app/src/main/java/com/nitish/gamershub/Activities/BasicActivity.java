@@ -10,6 +10,7 @@ import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHub_DATA;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHub_ParentCollection;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GoogleSignInAccountUser;
 import static com.nitish.gamershub.Utils.ConstantsHelper.UserMail;
+import static com.nitish.gamershub.Utils.ConstantsHelper.populateCategoryList;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -29,6 +30,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
@@ -59,7 +61,6 @@ import com.nitish.gamershub.Interface.AdmobInterstitialAdListener;
 import com.nitish.gamershub.Interface.ConfirmationDialogListener2;
 import com.nitish.gamershub.Pojo.DialogHelperPojo;
 import com.nitish.gamershub.Pojo.FireBase.AdViewedStats;
-import com.nitish.gamershub.Pojo.FireBase.GamePlayedStatus;
 import com.nitish.gamershub.Pojo.FireBase.GamersHubData;
 import com.nitish.gamershub.Pojo.FireBase.TimerStatus;
 import com.nitish.gamershub.Pojo.FireBase.UserProfile;
@@ -77,6 +78,8 @@ import com.nitish.gamershub.databinding.GameRewardDialogBinding;
 import com.nitish.gamershub.databinding.ShowWebviewDialogBinding;
 
 import org.json.JSONObject;
+
+import java.util.List;
 
 import io.paperdb.Paper;
 
@@ -115,7 +118,6 @@ abstract class BasicActivity extends AppCompatActivity {
         loadRewardedAd2();
         getGoogleSignInOptions();
 
-
     }
 
     protected abstract int getLayoutResourceId();
@@ -129,6 +131,8 @@ abstract class BasicActivity extends AppCompatActivity {
         intent.putExtra(From, fromActivity.getClass().getSimpleName());
         startActivity(intent);
     }
+
+
     public void startIntentWithFlags(Intent intent ,Activity fromActivity)
     {
         intent.putExtra(From,fromActivity.getClass().getSimpleName());
@@ -243,6 +247,7 @@ abstract class BasicActivity extends AppCompatActivity {
 
 
     }
+
     void getGamersHubRedeemCoinsList(OnFirestoreDataCompleteListener onFirestoreDataCompleteListener)
     {
 
@@ -1176,11 +1181,23 @@ abstract class BasicActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-
-
-
-
         super.onResume();
+
+
+
+        Log.d("onResume: Activity ", this.getClass().getName());
+
+        if(getSupportFragmentManager().findFragmentById(R.id.frameLayout) != null){
+            List<Fragment> fragments = getSupportFragmentManager().getFragments();
+            for(Fragment f: fragments) {
+                if(f.isVisible())
+                    Log.d("onResume: Fragment ", f.getClass().getName());
+            }
+        }
+
+
+
+
     }
 
     @Override

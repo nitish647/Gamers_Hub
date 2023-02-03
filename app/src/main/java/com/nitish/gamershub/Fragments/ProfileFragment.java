@@ -114,7 +114,6 @@ public class ProfileFragment extends Fragment {
     {
 
 
-
             binding.profileName.setText(AppHelper.getGoogleSignInAccountUser().getDisplayName());
             if(AppHelper.getGoogleSignInUserProfile()!=null)
                 if(!(AppHelper.getGoogleSignInUserProfile()+"").equals("null"))

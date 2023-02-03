@@ -254,7 +254,7 @@ public class LoginPage extends BasicActivity    implements ActivityResultCallbac
                 if(!TrueTime.isInitialized())
                  TrueTime.build().withSharedPreferencesCache(LoginPage.this);
                 if(!Tempo.isInitialized())
-                Tempo.initialize(getApplication());
+                    Tempo.initialize(getApplication());
 
             } catch (Exception e) {
 

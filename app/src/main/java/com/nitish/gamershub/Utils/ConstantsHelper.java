@@ -2,6 +2,10 @@ package com.nitish.gamershub.Utils;
 
 import com.nitish.gamershub.Pojo.FireBase.AdViewedStats;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 public class ConstantsHelper {
     public static  String gameDataObject = "gameDataObject";
     public  static boolean ShowAds = true;
@@ -37,9 +41,38 @@ public class ConstantsHelper {
     public static  int AccountSuspended =1;
     public static  int AccountBanned =2;
 
+    // Category Names
+    public static List<String> CategoryList = new ArrayList<>();
+    public static final String CategoryFavourites = "Favourites";
+    public static final String CategoryNew = "New";
+    public static final String CategoryBest = "Best";
+    public static final String CategoryAction = "Action";
+    public static final String CategoryArcade = "Arcade";
+    public static final String CategoryShooting = "Shooting";
+    public static final String CategoryPuzzle = "Puzzle";
+    public static final String CategoryBoard = "Board";
+    public static final String CategoryRacing = "Racing";
+    public static final String CategoryStrategy = "Strategy";
+
+
+
     public static String timerHourMinuteSecond ="00:00:00";
     public static enum ConnectionSignalStatus{
         NO_CONNECTIVITY,GOOD_STRENGTH,FAIR_STRENGTH,POOR_STRENGTH
 
     }
+
+    public static void populateCategoryList() {
+        CategoryList.add(CategoryFavourites);
+        CategoryList.add(CategoryNew);
+        CategoryList.add(CategoryBest);
+        CategoryList.add(CategoryAction);
+        CategoryList.add(CategoryArcade);
+        CategoryList.add(CategoryShooting);
+        CategoryList.add(CategoryPuzzle);
+        CategoryList.add(CategoryBoard);
+        CategoryList.add(CategoryRacing);
+        CategoryList.add(CategoryStrategy);
+    }
+
 }
