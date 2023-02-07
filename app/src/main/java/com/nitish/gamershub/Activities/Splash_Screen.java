@@ -6,9 +6,12 @@ import static com.nitish.gamershub.Utils.ConstantsHelper.IntentData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +47,7 @@ public class Splash_Screen extends BasicActivity {
     private FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash__screen);
         requestQueue = Volley.newRequestQueue(this);
@@ -191,7 +195,6 @@ public class Splash_Screen extends BasicActivity {
 
         requestQueue.add(jsonObjectRequest);
     }
-
 
 
 }

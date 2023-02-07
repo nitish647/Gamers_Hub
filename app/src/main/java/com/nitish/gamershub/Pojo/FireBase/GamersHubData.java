@@ -38,8 +38,16 @@ public class GamersHubData {
         boolean forceUpdate = false;
         String latestVersionName;
 
-
+        String firebaseFcmToken;
         public GamesData() {
+        }
+
+        public String getFirebaseFcmToken() {
+            return firebaseFcmToken;
+        }
+
+        public void setFirebaseFcmToken(String firebaseFcmToken) {
+            this.firebaseFcmToken = firebaseFcmToken;
         }
 
         public int getDailyCheckReward() {

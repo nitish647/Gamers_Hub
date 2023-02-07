@@ -4,7 +4,8 @@
     <item
         android:title="Home"
         android:id="@+id/homeMenu"
-         android:icon="@drawable/home_icon">
+         android:icon="@drawable/ic_round_home">
+<!--        android:icon="@drawable/home_icon">-->
     </item>
 
     <item
@@ -16,6 +17,7 @@
     <item
         android:title="Profile"
         android:id="@+id/profileMenu"
-        android:icon="@drawable/profile_unselected">
+        android:icon="@drawable/ic_person">
+<!--        android:icon="@drawable/profile_unselected">-->
     </item>
 </menu>

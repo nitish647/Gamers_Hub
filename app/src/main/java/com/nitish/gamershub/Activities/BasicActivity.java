@@ -18,11 +18,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -109,6 +112,9 @@ abstract class BasicActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResourceId());
+
+        setStatusBarColor();
+
         Paper.init(this);
          progressDialog = ProgressBarHelper.setProgressBarDialog(BasicActivity.this);
          timeChangedReceiver2 = new TimeChangedReceiver2();
@@ -1186,7 +1192,6 @@ abstract class BasicActivity extends AppCompatActivity {
 
 
         Log.d("onResume: Activity ", this.getClass().getName());
-
         if(getSupportFragmentManager().findFragmentById(R.id.frameLayout) != null){
             List<Fragment> fragments = getSupportFragmentManager().getFragments();
             for(Fragment f: fragments) {
@@ -1375,5 +1380,21 @@ abstract class BasicActivity extends AppCompatActivity {
 
         }
         super.onDestroy();
+    }
+
+
+    void setStatusBarColor() {
+        if (Build.VERSION.SDK_INT >= 21) {
+            Window window = this.getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            if(this.getClass().getName().equals(Splash_Screen.class.getName())) {
+                window.setStatusBarColor(this.getResources().getColor(R.color.splash_screen));
+            } else if(this.getClass().getName().equals(LoginPage.class.getName())) {
+                window.setStatusBarColor(this.getResources().getColor(R.color.login_page));
+            }else {
+                window.setStatusBarColor(this.getResources().getColor(R.color.gamers_hub_theme));
+            }
+        }
     }
 }

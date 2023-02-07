@@ -7,17 +7,20 @@ import static com.nitish.gamershub.Utils.ConstantsHelper.GoogleSignInAccountUser
 import static com.nitish.gamershub.Utils.ConstantsHelper.UserMail;
 
 import android.app.ProgressDialog;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.drawerlayout.widget.DrawerLayout;
+//import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -43,7 +46,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
@@ -53,6 +55,7 @@ import com.nitish.gamershub.Adapters.CategoriesAdapter;
 import com.nitish.gamershub.Fragments.CategoryGamesFragment;
 import com.nitish.gamershub.Fragments.HomeFragment;
 import com.nitish.gamershub.Fragments.ProfileFragment;
+import com.nitish.gamershub.Fragments.Profile2Fragment;
 import com.nitish.gamershub.Interface.AdmobInterstitialAdListener;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.Pojo.Categories;
@@ -96,17 +99,18 @@ public class HomeActivity extends BasicActivity {
 
     HomeFragment homeFragment;
     ProfileFragment profileFragment;
+//    Profile2Fragment profile2Fragment;
 
     CategoryGamesFragment categoryGamesFragment;
     Fragment previousFragment;
     RequestQueue requestQueue;
-    List<Categories> categoriesList;
-    RecyclerView categoriesRecycler;
+//    List<Categories> categoriesList;
+//    RecyclerView categoriesRecycler;
 
 
 
-    NavigationView navigationView;
-    DrawerLayout drawerLayout;
+//    NavigationView navigationView;
+//    DrawerLayout drawerLayout;
     LinearLayout linearAdContainer;
     FrameLayout frameLayout;
 
@@ -114,7 +118,7 @@ public class HomeActivity extends BasicActivity {
     boolean interstitialAdDismissed = false;
 
 
-    Button logoutButton;
+//    Button logoutButton;
 
     private RewardedAd rewardedAd;
     boolean isLoading;
@@ -129,6 +133,7 @@ public class HomeActivity extends BasicActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Paper.init(this);
@@ -146,8 +151,8 @@ public class HomeActivity extends BasicActivity {
                 "appVersion");
 
         Log.d("pResponse","playStoreVersionCode "+  playStoreVersionCode);
-        categoriesList = new ArrayList<>();
-        navigationView.setVisibility(View.VISIBLE);
+//        categoriesList = new ArrayList<>();
+//        navigationView.setVisibility(View.VISIBLE);
 
         NotificationHelper.generateFcmToken();
         setHeader();
@@ -158,7 +163,7 @@ public class HomeActivity extends BasicActivity {
 
         //     AdsHelper.loadInterstitialAd(this);
 
-        setCategory();
+//        setCategory();
 
        MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
@@ -166,13 +171,13 @@ public class HomeActivity extends BasicActivity {
             }
         });
 
-        logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                showLogOutDialog();
-            }
-        });
+//        logoutButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                showLogOutDialog();
+//            }
+//        });
 
 
         // just writing an empty favourite list to avoid null pointer when reading the data
@@ -284,11 +289,14 @@ public class HomeActivity extends BasicActivity {
                     case R.id.profileMenu:
 
                         if(profileFragment ==null)
+//                        if(profile2Fragment==null)
                         {
                             profileFragment = profileFragment.newInstance("","");
+//                            profile2Fragment = profile2Fragment.newInstance("","");
 
                         }
                         showHideFragment(profileFragment, profileFragment.getTag());
+//                        showHideFragment(profile2Fragment, profile2Fragment.getTag());
                         break;
                     case R.id.categoryGamesMenu:
                         if(categoryGamesFragment ==null)
@@ -582,29 +590,26 @@ public class HomeActivity extends BasicActivity {
         }
 
 
-    public void setCategory()
-    {
-        //category images
-
-         categoriesList.add(new Categories(R.drawable.fav_on2,"","Favourites"));
-        categoriesList.add(new Categories(R.drawable.new_icon1,"","New"));
-        categoriesList.add(new Categories(R.drawable.best_games,"","Best"));
-        categoriesList.add(new Categories(R.drawable.action_icon1,"","Action"));
-        categoriesList.add(new Categories(R.drawable.arcade_icon1,"","Arcade"));
-        categoriesList.add(new Categories(R.drawable.shooter_icon1,"","Shooting"));
-        categoriesList.add(new Categories(R.drawable.puzzle_icon1,"","Puzzle"));
-        categoriesList.add(new Categories(R.drawable.board_icon1,"","Board"));
-        categoriesList.add(new Categories(R.drawable.racing_icon1,"","Racing"));
-        categoriesList.add(new Categories(R.drawable.strategy_icon1,"","Strategy"));
-
-        categoriesRecycler.setLayoutManager(new GridLayoutManager(this,2));
-        CategoriesAdapter categoriesAdapter = new CategoriesAdapter(this,categoriesList);
-        categoriesRecycler.setAdapter(categoriesAdapter);
-
-
+//    public void setCategory()
+//    {
+//        //category images
+//         categoriesList.add(new Categories(R.drawable.fav_on2,"","Favourites"));
+//        categoriesList.add(new Categories(R.drawable.new_icon1,"","New"));
+//        categoriesList.add(new Categories(R.drawable.best_games,"","Best"));
+//        categoriesList.add(new Categories(R.drawable.action_icon1,"","Action"));
+//        categoriesList.add(new Categories(R.drawable.arcade_icon1,"","Arcade"));
+//        categoriesList.add(new Categories(R.drawable.shooter_icon1,"","Shooting"));
+//        categoriesList.add(new Categories(R.drawable.puzzle_icon1,"","Puzzle"));
+//        categoriesList.add(new Categories(R.drawable.board_icon1,"","Board"));
+//        categoriesList.add(new Categories(R.drawable.racing_icon1,"","Racing"));
+//        categoriesList.add(new Categories(R.drawable.strategy_icon1,"","Strategy"));
+//
+//        categoriesRecycler.setLayoutManager(new GridLayoutManager(this,2));
+//        CategoriesAdapter categoriesAdapter = new CategoriesAdapter(this,categoriesList);
+//        categoriesRecycler.setAdapter(categoriesAdapter);
+//    }
 
 
-    }
 
     public void startIntent()
     {
@@ -741,14 +746,14 @@ public class HomeActivity extends BasicActivity {
     }
     public void setViews()
     {
-        logoutButton= findViewById(R.id.logoutButton);
+//        logoutButton= findViewById(R.id.logoutButton);
 
         progressDialog = ProgressBarHelper.setProgressBarDialog(this);
-        drawerLayout = findViewById(R.id.drawerLayout);
-        navigationView = findViewById(R.id.navigationView);
+//        drawerLayout = findViewById(R.id.drawerLayout);
+//        navigationView = findViewById(R.id.navigationView);
         frameLayout = findViewById(R.id.frameLayout);
         googleBannerAdView = findViewById(R.id.googleBannerAdView);
-        categoriesRecycler = findViewById(R.id.categoriesRecycler);
+//        categoriesRecycler = findViewById(R.id.categoriesRecycler);
         bottomNavigationView= findViewById(R.id.bottomNavigationView);
 
 
@@ -889,9 +894,10 @@ public class HomeActivity extends BasicActivity {
             showConfirmationDialog("Pending Update","A new update of the app has been released , please update ",confirmationDialogListener
             );
         }
-
-
-   }
     }
+
+
+
+}
 
 

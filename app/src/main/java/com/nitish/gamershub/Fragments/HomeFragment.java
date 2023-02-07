@@ -134,9 +134,9 @@ public class HomeFragment extends Fragment {
     RequestQueue requestQueue;
     List<Categories> categoriesList;
     RecyclerView categoriesRecycler;
-    Button navigationButton;
+//    Button navigationButton;
 
-    DrawerLayout drawerLayout;
+//    DrawerLayout drawerLayout;
     LinearLayout linearAdContainer;
 
     NewAndPopularGamesAdapter newAndPopularGamesAdapter;
@@ -145,7 +145,7 @@ public class HomeFragment extends Fragment {
 
     private InterstitialAd interstitialAd;
 
-    Button logoutButton;
+//    Button logoutButton;
 
     private RewardedAd rewardedAd;
     boolean isLoading;
@@ -161,8 +161,7 @@ public class HomeFragment extends Fragment {
     
     
     
-    
-    
+
     
     public static HomeFragment newInstance(String param1, String param2) {
         HomeFragment fragment = new HomeFragment();
@@ -194,13 +193,13 @@ public class HomeFragment extends Fragment {
         allGamesRecyclerView = view.findViewById(R.id.allGamesRecyclerView);
         // Initialize Firebase Auth
 
-        logoutButton= view.findViewById(R.id.logoutButton);
+//        logoutButton= view.findViewById(R.id.logoutButton);
         searchView = view.findViewById(R.id.searchView);
         progressDialog = ProgressBarHelper.setProgressBarDialog(view.getContext());
-        drawerLayout = parentHomeActivity.findViewById(R.id.drawerLayout);
+//        drawerLayout = parentHomeActivity.findViewById(R.id.drawerLayout);
         imageSlider = view.findViewById(R.id.imageSlider);
 
-        navigationButton =view.findViewById(R.id.navigationButton);
+//        navigationButton =view.findViewById(R.id.navigationButton);
 
         categoriesRecycler = view.findViewById(R.id.categoriesRecycler);
         googleBannerAdView = view.findViewById(R.id.googleBannerAdView);
@@ -248,21 +247,20 @@ public class HomeFragment extends Fragment {
 
     public void setOnClickListens()
     {
-        navigationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                drawerLayout.openDrawer(Gravity.LEFT);
-            }
-
-        });
-        navigationButton.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                Toast.makeText(parentHomeActivity, "clicked", Toast.LENGTH_SHORT).show();
-                AppHelper.saveCalenderData();
-                return false;
-            }
-        });
+//        navigationButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                drawerLayout.openDrawer(Gravity.LEFT);
+//            }
+//        });
+//        navigationButton.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View view) {
+//                Toast.makeText(parentHomeActivity, "clicked", Toast.LENGTH_SHORT).show();
+//                AppHelper.saveCalenderData();
+//                return false;
+//            }
+//        });
     }
 
 

@@ -20,6 +20,19 @@
             android:layout_width="match_parent"
             android:layout_height="50dp">
 
+            <ImageView
+                android:id="@+id/logOutRelative"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="10dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_logout"
+                android:scaleX="0.5"
+                android:scaleY="0.5"
+                app:tint="@android:color/white">
+            </ImageView>
+
         </RelativeLayout>
 
 
@@ -64,11 +77,9 @@
                         android:gravity="center"
                         android:text="Gamers Hub"
                         android:padding="5dp"
-
                         android:textColor="@android:color/white"
-
-                        android:textStyle="bold">
-
+                        android:textStyle="bold"
+                        android:textSize="20dp">
                     </TextView>
                 </LinearLayout>
 
@@ -106,6 +117,7 @@
                     android:layout_marginStart="5dp"
                     android:text=" 5000 coins"
                     android:textStyle="bold"
+                    android:textSize="16sp"
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
@@ -140,99 +152,78 @@
                         android:id="@+id/rewardsRelative"
                         android:layout_width="wrap_content"
                         android:layout_height="60dp"
-                        android:layout_margin="5dp"
-                        android:elevation="@dimen/cardview_default_elevation">
+                        android:layout_margin="5dp">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
+                            android:gravity="center_vertical"
                             android:orientation="horizontal">
 
                             <ImageView
-                                style="@style/optionIcon"
-                                android:src="@drawable/rupee_cashout">
-
-                            </ImageView>
+                                app:tint="@android:color/black"
+                                android:layout_width="25dp"
+                                android:layout_height = "25dp"
+                                android:src="@drawable/ic_money_bag"/>
 
                             <TextView
-
                                 style="@style/contentTextview"
                                 android:layout_marginStart="20dp"
-
                                 android:text="Rewards"
 
-
-                                >
-
-                            </TextView>
+                                android:textColor="@android:color/black"/>
                         </LinearLayout>
-
-
                         <ImageView
-                            style="@style/optionIcon2"
-
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
-                            android:src="@drawable/next_arrow_icon"
-                            app:tint="@color/greyPrimary">
-
-                        </ImageView>
+                            android:src="@drawable/ic_arrow_forward"
+                            app:tint="@android:color/black"/>
                     </RelativeLayout>
-
-
-
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginHorizontal="5dp"
                         android:background="@drawable/round_corners"
-                        android:backgroundTint="@color/lightGrey1">
+                        android:backgroundTint="@color/lightGrey1"/>
 
-                    </View>
                     <RelativeLayout
                         android:id="@+id/privacyPolicy"
                         android:layout_width="wrap_content"
                         android:layout_height="60dp"
-                        android:layout_margin="5dp"
-                        android:elevation="@dimen/cardview_default_elevation">
+                        android:layout_margin="5dp">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
+                            android:gravity="center_vertical"
                             android:orientation="horizontal">
 
                             <ImageView
-                                style="@style/optionIcon"
-                                android:src="@drawable/agreement">
-
-                            </ImageView>
+                                app:tint="@android:color/black"
+                                android:layout_width="25dp"
+                                android:layout_height = "25dp"
+                                android:src="@drawable/ic_privacy_policy"/>
 
                             <TextView
-
                                 style="@style/contentTextview"
                                 android:layout_marginStart="20dp"
-
                                 android:text="Privacy Policy"
-
-
-                                >
-
-                            </TextView>
+                                android:textColor="@android:color/black"/>
                         </LinearLayout>
 
 
                         <ImageView
-                            style="@style/optionIcon2"
-
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
-                            android:src="@drawable/next_arrow_icon"
-                            app:tint="@color/greyPrimary">
-
-                        </ImageView>
+                            android:src="@drawable/ic_arrow_forward"
+                            app:tint="@android:color/black"/>
                     </RelativeLayout>
 
                     <View
@@ -240,52 +231,42 @@
                         android:layout_height="1dp"
                         android:layout_marginHorizontal="5dp"
                         android:background="@drawable/round_corners"
-                        android:backgroundTint="@color/lightGrey1">
-
-                    </View>
+                        android:backgroundTint="@color/lightGrey1"/>
 
                     <RelativeLayout
                         android:id="@+id/rateUsRelative"
                         android:layout_width="wrap_content"
                         android:layout_height="60dp"
-                        android:layout_margin="5dp"
-                        android:elevation="@dimen/cardview_default_elevation">
+                        android:layout_margin="5dp">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
-                            android:orientation="horizontal">
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
 
                             <ImageView
-                                style="@style/optionIcon"
-                                android:src="@drawable/playstore">
-
-                            </ImageView>
+                                app:tint="@android:color/black"
+                                android:layout_width="25dp"
+                                android:layout_height = "25dp"
+                                android:src="@drawable/ic_google_play"/>
 
                             <TextView
-
                                 style="@style/contentTextview"
                                 android:layout_marginStart="20dp"
-
                                 android:text="Rate Us"
-
-
-                                >
-
-                            </TextView>
+                                android:textColor="@android:color/black"/>
                         </LinearLayout>
 
 
                         <ImageView
-                            style="@style/optionIcon2"
-
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
-                            android:src="@drawable/next_arrow_icon"
-                            app:tint="@color/greyPrimary">
-
-                        </ImageView>
+                            android:src="@drawable/ic_arrow_forward"
+                            app:tint="@android:color/black"/>
                     </RelativeLayout>
 
                     <View
@@ -293,54 +274,42 @@
                         android:layout_height="1dp"
                         android:layout_marginHorizontal="5dp"
                         android:background="@drawable/round_corners"
-                        android:backgroundTint="@color/lightGrey1">
-
-                    </View>
-
+                        android:backgroundTint="@color/lightGrey1"/>
 
                     <RelativeLayout
-
                         android:id="@+id/faqRelative"
                         android:layout_width="wrap_content"
                         android:layout_height="60dp"
-                        android:layout_margin="5dp"
-                        android:elevation="@dimen/cardview_default_elevation">
+                        android:layout_margin="5dp">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
-                            android:orientation="horizontal">
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
 
                             <ImageView
-                                style="@style/optionIcon"
-                                android:src="@drawable/faq">
-
-                            </ImageView>
+                                app:tint="@android:color/black"
+                                android:layout_width="25dp"
+                                android:layout_height = "25dp"
+                                android:src="@drawable/ic_faq"/>
 
                             <TextView
-
                                 style="@style/contentTextview"
                                 android:layout_marginStart="20dp"
-
                                 android:text="Faq"
-
-
-                                >
-
-                            </TextView>
+                                android:textColor="@android:color/black"/>
                         </LinearLayout>
 
 
                         <ImageView
-                            style="@style/optionIcon2"
-
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
-                            android:src="@drawable/next_arrow_icon"
-                            app:tint="@color/greyPrimary">
-
-                        </ImageView>
+                            android:src="@drawable/ic_arrow_forward"
+                            app:tint="@android:color/black"/>
                     </RelativeLayout>
 
                     <View
@@ -348,117 +317,49 @@
                         android:layout_height="1dp"
                         android:layout_marginHorizontal="5dp"
                         android:background="@drawable/round_corners"
-                        android:backgroundTint="@color/lightGrey1">
+                        android:backgroundTint="@color/lightGrey1"/>
 
-                    </View>
                     <RelativeLayout
-
                         android:id="@+id/contactUsRelative"
                         android:layout_width="wrap_content"
                         android:layout_height="60dp"
-                        android:layout_margin="5dp"
-                        android:elevation="@dimen/cardview_default_elevation">
+                        android:layout_margin="5dp">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
-                            android:orientation="horizontal">
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
 
                             <ImageView
-                                style="@style/optionIcon"
-                                android:src="@drawable/contact_us">
-
-                            </ImageView>
+                                app:tint="@android:color/black"
+                                android:layout_width="25dp"
+                                android:layout_height = "25dp"
+                                android:src="@drawable/ic_contact_us"/>
 
                             <TextView
-
                                 style="@style/contentTextview"
                                 android:layout_marginStart="20dp"
-
                                 android:text="Contact Us"
-
-
-                                >
-
-                            </TextView>
+                                android:textColor="@android:color/black"/>
                         </LinearLayout>
 
 
                         <ImageView
-                            style="@style/optionIcon2"
-
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
-                            android:src="@drawable/next_arrow_icon"
-                            app:tint="@color/greyPrimary">
-
-                        </ImageView>
+                            android:src="@drawable/ic_arrow_forward"
+                            app:tint="@android:color/black"/>
                     </RelativeLayout>
-
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginHorizontal="5dp"
                         android:background="@drawable/round_corners"
-                        android:backgroundTint="@color/lightGrey1">
-
-                    </View>
-                    <RelativeLayout
-
-                        android:id="@+id/logOutRelative"
-                        android:layout_width="wrap_content"
-                        android:layout_height="60dp"
-                        android:layout_margin="5dp"
-                        android:elevation="@dimen/cardview_default_elevation">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                style="@style/optionIcon"
-                                android:src="@drawable/logout">
-
-                            </ImageView>
-
-                            <TextView
-
-                                style="@style/contentTextview"
-                                android:layout_marginStart="20dp"
-
-                                android:text="Logout"
-
-
-                                >
-
-                            </TextView>
-                        </LinearLayout>
-
-
-                        <ImageView
-                            style="@style/optionIcon2"
-
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:src="@drawable/next_arrow_icon"
-                            app:tint="@color/greyPrimary">
-
-                        </ImageView>
-                    </RelativeLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginHorizontal="5dp"
-                        android:background="@drawable/round_corners"
-                        android:backgroundTint="@color/lightGrey1">
-
-                    </View>
-
-
+                        android:backgroundTint="@color/lightGrey1"/>
                 </LinearLayout>
             </ScrollView>
         </RelativeLayout>
@@ -466,3 +367,6 @@
     </RelativeLayout>
 </FrameLayout>
 </layout>
+
+
+

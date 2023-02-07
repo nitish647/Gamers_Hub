@@ -26,4 +26,6 @@
     <color name="lightGrey1">#d9d9d9</color>
     <color name="lightGrey2">#f9fbfc</color>
 
+    <color name="splash_screen">#FFC300</color>
+    <color name="login_page">#53bcbd</color>
 </resources>

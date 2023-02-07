@@ -29,9 +29,11 @@ import io.tempo.Tempo;
 
 public  class DateTimeHelper extends Application {
 
-   public static Context context ;
-  public   static String time_7_am = "07:00:00";
-  public static String simpleDateFormatPattern ="yyyy-MM-dd HH:mm:ss";
+    public static Context context ;
+    public   static String time_7_am = "07:00:00";
+    public static String simpleDateFormatPattern ="yyyy-MM-dd HH:mm:ss";
+
+    public static String simpleDateFormatPattern_MMMddYYYY ="MMM d, yyyy - HH:mm a";
     public static String simpleDateFormatPattern_yyyyMMdd ="yyyyMMdd";
     public static String TimeStampPattern ="HHmmss";
     @Override
@@ -115,18 +117,15 @@ public  class DateTimeHelper extends Application {
     public static Integer compareDate(Date date1, Date date2)
     {
 
-     date1=   convertIntoAnotherTimeFormat(date1,simpleDateFormatPattern_yyyyMMdd);
+        date1=   convertIntoAnotherTimeFormat(date1,simpleDateFormatPattern_yyyyMMdd);
         date2=   convertIntoAnotherTimeFormat(date2,simpleDateFormatPattern_yyyyMMdd);
         return date1.compareTo(date2);
 
     }
     public static Integer compareDate(String date1Sting, String date2String)
     {
-
-
         Date date1 = convertIntoAnotherTimeFormat(date1Sting,simpleDateFormatPattern_yyyyMMdd);
         Date date2 = convertIntoAnotherTimeFormat(date2String,simpleDateFormatPattern_yyyyMMdd);
-
         return date1.compareTo(date2);
 
 
@@ -186,22 +185,23 @@ public  class DateTimeHelper extends Application {
             e.printStackTrace();
         }
         return date1;
-
-
     }
+
     public static Date convertIntoAnotherTimeFormat(String dateString,String dateFormatPattern)
     {
-        Date date1 =new Date();
-
+        Date date1 = new Date();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
         try {
             date1 = new SimpleDateFormat(dateFormatPattern).parse(dateString);
-        } catch (ParseException e) {
-
+        } catch (Exception e) {
             Log.d("gError","error in parsing time 11234: "+e);
             e.printStackTrace();
         }
+
+
         return date1;
     }
+
     public static Date convertIntoAnotherTimeFormat(Date date,String dateFormatPattern)
     {
         Date date1 =new Date();
@@ -246,6 +246,23 @@ public  class DateTimeHelper extends Application {
 
         return timeToReset;
 
+    }
+
+    public static String getTimeStringInAnotherFormat(String dateString, String dateFormatPattern) {
+        Date date1;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
+        try {
+            date1 = getSimpleDateFormat().parse(dateString);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        String finalDate = simpleDateFormat.format(date1);
+        try {
+            Log.d("New Date", String.valueOf(simpleDateFormat.parse(finalDate)));
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        return finalDate;
     }
 
     public static class DatePojo{

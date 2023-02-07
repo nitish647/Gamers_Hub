@@ -25,7 +25,7 @@
             <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-
+                android:theme="@style/AppTheme"
                 android:background="@color/gamers_hub_theme">
 
                 <RelativeLayout
@@ -34,19 +34,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <Button
-                        android:id="@+id/navigationButton"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginStart="7dp"
-                        android:layout_marginBottom="12dp"
+<!--                    <Button-->
+<!--                        android:id="@+id/navigationButton"-->
+<!--                        android:layout_width="30dp"-->
+<!--                        android:layout_height="30dp"-->
+<!--                        android:layout_alignParentStart="true"-->
+<!--                        android:layout_alignParentBottom="true"-->
+<!--                        android:layout_marginStart="7dp"-->
+<!--                        android:layout_marginBottom="12dp"-->
 
-                        android:background="@drawable/navigation_icon4"
-                        android:gravity="start">
+<!--                        android:background="@drawable/navigation_icon4"-->
+<!--                        android:gravity="start">-->
 
-                    </Button>
+<!--                    </Button>-->
 
                     <TextView
                         android:id="@+id/main_title"
@@ -64,16 +64,11 @@
 
                     <androidx.appcompat.widget.SearchView
                         android:id="@+id/searchView"
-
-
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
-
                         android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="10dp"
-                        android:backgroundTint="@android:color/white"
                         android:icon="@drawable/search_icon_white"
                         app:queryBackground="@android:color/white">
 

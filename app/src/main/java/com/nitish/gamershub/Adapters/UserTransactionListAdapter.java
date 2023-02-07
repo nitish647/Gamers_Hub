@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.nitish.gamershub.Pojo.FireBase.UserTransactions;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.AppHelper;
+import com.nitish.gamershub.Utils.DateTimeHelper;
 import com.nitish.gamershub.databinding.UserTransactionListLayoutBinding;
 
 import java.util.List;
@@ -51,17 +52,17 @@ public class UserTransactionListAdapter extends RecyclerView.Adapter<UserTransac
         {
             holder.binding.transactionImage.setImageResource(R.drawable.upi_icon_1);
             holder.binding.transactionTypeText.setText("UPI");
-            holder.binding.transactionTypeText.setTextColor(context.getColor(R.color.upiGreen));
+//            holder.binding.transactionTypeText.setTextColor(context.getColor(R.color.upiGreen));
             holder.binding.transactionNumber.setText(userTransactionRequest.getUpiId());
 
 
         }
         else {
-            holder.binding.transactionImage.setImageResource(R.drawable.paytm_icom);
+            holder.binding.transactionImage.setImageResource(R.drawable.paytm_logo);
 
             holder.binding.transactionTypeText.setText("Paytm");
             holder.binding.transactionNumber.setText(userTransactionRequest.getPaytmNumber());
-            holder.binding.transactionTypeText.setTextColor(context.getColor(R.color.paytmBlue));
+//            holder.binding.transactionTypeText.setTextColor(context.getColor(R.color.paytmBlue));
         }
 
         if(!userTransactionRequest.isTransactionComplete())
@@ -78,7 +79,8 @@ public class UserTransactionListAdapter extends RecyclerView.Adapter<UserTransac
         holder.binding.transactionCoins.setText(""+userTransactionRequest.getCoins());
 
         holder.binding.transactionIdTextView.setText("Id: "+userTransactionRequest.getTransactionId());
-        holder.binding.transactionDate.setText(""+userTransactionRequest.getRequestDate());
+// //        holder.binding.transactionDate.setText(""+ DateTimeHelper.convertIntoAnotherTimeFormat(userTransactionRequest.getRequestDate(),DateTimeHelper.simpleDateFormatPattern));
+        holder.binding.transactionDate.setText(""+ DateTimeHelper.getTimeStringInAnotherFormat(userTransactionRequest.getRequestDate(),DateTimeHelper.simpleDateFormatPattern_MMMddYYYY));
 
         holder.binding.clipboardText.setOnClickListener(new View.OnClickListener() {
             @Override
