@@ -2,6 +2,7 @@ package com.nitish.gamershub.Activities;
 
 import static com.nitish.gamershub.Utils.AppHelper.getGamersHubDataGlobal;
 import static com.nitish.gamershub.Utils.AppHelper.getUserProfileGlobalData;
+import static com.nitish.gamershub.Utils.AppHelper.setStatusBarColor;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -10,6 +11,7 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter;
@@ -68,6 +70,7 @@ public class GameDetailActivity2 extends BasicActivity {
     }
 
 
+
     @Override
     protected int getLayoutResourceId() {
         return R.layout.activity_game_detail;
@@ -96,6 +99,7 @@ public class GameDetailActivity2 extends BasicActivity {
 
         gamePlayVisibility = true;
         gamePlayFragment.startTimer();
+
         // game play fragment is visible
     }
     public void showHideFragment(Fragment fragment , String tag)
@@ -122,6 +126,14 @@ public class GameDetailActivity2 extends BasicActivity {
         }
         fragmentTransaction.commit();
         previousFragment = fragment;
+
+        if(fragment instanceof GamePlayFragment )
+        {
+            setStatusBarColor(this, R.color.black);
+        }
+        else {
+            setStatusBarColor(this, R.color.gamers_hub_theme);
+        }
     }
 
 
@@ -239,25 +251,14 @@ public class GameDetailActivity2 extends BasicActivity {
             updateGamePlayedStatus(gamePlayedStatus);
         }
 
-
-
-
-
-
-
-
-
-
-
-
     }
+
 
     /** Called when returning to the activity */
     @Override
     public void onResume() {
         super.onResume();
-
-            loadInterstitialAdNew();
+        loadInterstitialAdNew();
     }
     public void updateGamePlayedStatus(GamePlayedStatus gamePlayedStatus)
     {

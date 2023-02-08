@@ -9,12 +9,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.nitish.gamershub.Activities.CategoryActivity;
 
 import com.nitish.gamershub.Pojo.Categories;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.databinding.CategoryItemBinding;
 
 import java.util.List;
 
@@ -33,9 +35,9 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.My
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(context).inflate(R.layout.category_item,parent,false);
+        CategoryItemBinding categoryItemBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.category_item, parent, false);
+        return new MyViewHolder(categoryItemBinding);
 
-        return new CategoriesAdapter.MyViewHolder(v);
     }
 
     @Override
@@ -43,8 +45,8 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.My
 
         Categories categories = categoriesList.get(position);
 
-        holder.category_img.setImageResource(categories.getImageSrc());
-        holder.categoryNameTextview.setText(categories.getName());
+        holder.categoryItemBinding.categoryImg.setImageResource(categories.getImageSrc());
+        holder.categoryItemBinding.listText.setText(categories.getName());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,15 +65,11 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.My
 
     public static class MyViewHolder extends RecyclerView.ViewHolder
     {
-        ImageView category_img;
-        TextView categoryNameTextview;
+        CategoryItemBinding categoryItemBinding;
+        public MyViewHolder(@NonNull CategoryItemBinding categoryItemBinding) {
 
-        public MyViewHolder(@NonNull View itemView) {
-
-            super(itemView);
-            category_img = itemView.findViewById(R.id.category_img);
-            categoryNameTextview = itemView.findViewById(R.id.list_text);
-
+            super(categoryItemBinding.getRoot());
+            this.categoryItemBinding = categoryItemBinding;
 
         }
     }

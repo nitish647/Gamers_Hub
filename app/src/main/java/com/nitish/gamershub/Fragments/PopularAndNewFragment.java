@@ -6,6 +6,7 @@ import static com.nitish.gamershub.Utils.ConstantsHelper.FavouriteList;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.SearchView;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,6 +23,7 @@ import com.google.gson.Gson;
 import com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.databinding.FragmentPopularAndNewBinding;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,10 +37,10 @@ import io.paperdb.Paper;
 
 public class PopularAndNewFragment extends Fragment {
 
-
+    FragmentPopularAndNewBinding fragmentPopularAndNewBinding;
     NewAndPopularGamesAdapter newAndPopularGamesAdapter;
     View view;
-    RecyclerView newPopularRecycler;
+
     String gameDataString;
     String title;
     List<AllGamesItems> allGamesItemsList,favItemList ;
@@ -49,8 +51,9 @@ public class PopularAndNewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view=  inflater.inflate(R.layout.fragment_popular_and_new, container, false);
-        newPopularRecycler = view.findViewById(R.id.newPopularRecycler);
+        fragmentPopularAndNewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_popular_and_new, container, false);
+        view = fragmentPopularAndNewBinding.getRoot();
+
         allGamesItemsList =  new ArrayList<>();
         favItemList = new ArrayList<>();
         gson = new Gson();
@@ -67,8 +70,8 @@ public class PopularAndNewFragment extends Fragment {
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(view.getContext(),4);
         newAndPopularGamesAdapter = new NewAndPopularGamesAdapter(view.getContext(),allGamesItemsList);
-        newPopularRecycler.setAdapter(newAndPopularGamesAdapter);
-         newPopularRecycler.setLayoutManager(gridLayoutManager);
+        fragmentPopularAndNewBinding.newPopularRecycler.setAdapter(newAndPopularGamesAdapter);
+        fragmentPopularAndNewBinding.newPopularRecycler.setLayoutManager(gridLayoutManager);
 
           searchView=   getActivity().findViewById(R.id.searchView);
 

@@ -26,13 +26,13 @@ repositories {
 }
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 33
 
     defaultConfig {
         applicationId "com.nitish.gamershub"
         apply plugin: 'com.google.gms.google-services'
         minSdkVersion 24
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode 28
         versionName "3.7"
         multiDexEnabled true
@@ -137,7 +137,7 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
 
     implementation 'de.hdodenhof:circleimageview:3.1.0'
-    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.core:core-ktx:1.9.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
 }

@@ -1,7 +1,9 @@
 package com.nitish.gamershub.Activities;
 
+import static com.nitish.gamershub.Utils.ConstantsHelper.DailyBonus;
 import static com.nitish.gamershub.Utils.ConstantsHelper.From;
 import static com.nitish.gamershub.Utils.ConstantsHelper.IntentData;
+import static com.nitish.gamershub.Utils.AppHelper.setStatusBarColor;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +16,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.databinding.DataBindingUtil;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -28,6 +32,7 @@ import com.nitish.gamershub.Pojo.DialogHelperPojo;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.ConstantsHelper;
 import com.nitish.gamershub.Utils.NotificationHelper;
+import com.nitish.gamershub.databinding.ActivitySplashScreenBinding;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,9 +40,10 @@ import org.json.JSONObject;
 import io.paperdb.Paper;
 
 public class Splash_Screen extends BasicActivity {
+    ActivitySplashScreenBinding activitySplashScreenBinding;
+
     SharedPreferences sh;
     SharedPreferences.Editor editor;
-    TextView textView;
     String data;
     String    gameData;
     RequestQueue requestQueue;
@@ -49,16 +55,16 @@ public class Splash_Screen extends BasicActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash__screen);
+
+        activitySplashScreenBinding = DataBindingUtil.setContentView(this, R.layout.activity_splash__screen);
         requestQueue = Volley.newRequestQueue(this);
         mAuth = FirebaseAuth.getInstance();
-        textView = findViewById(R.id.warning);
         context = Splash_Screen.this;
         Paper.init(this);
 
 
-        handlerFunctions();
 
+        handlerFunctions();
 
 
 
@@ -88,13 +94,13 @@ public class Splash_Screen extends BasicActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                textView.setText("Internet is slow...");
+                activitySplashScreenBinding.warning.setText("Internet is slow...");
             }
         }, 7000);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                textView.setText("PLease check your internet connection and try again");
+                activitySplashScreenBinding.warning.setText("PLease check your internet connection and try again");
             }
         }, 11000);
     }

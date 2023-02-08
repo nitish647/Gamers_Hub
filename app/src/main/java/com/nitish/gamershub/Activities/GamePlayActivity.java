@@ -4,6 +4,7 @@ import static com.nitish.gamershub.Utils.ConstantsHelper.gameDataObject;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
 import android.annotation.TargetApi;
 import android.net.ConnectivityManager;
@@ -26,6 +27,7 @@ import com.monstertechno.adblocker.util.AdBlocker;
 import com.nitish.gamershub.Helper_class;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.databinding.ActivityGamePlay2Binding;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -35,53 +37,43 @@ import java.io.InputStreamReader;
 
 public class GamePlayActivity extends AppCompatActivity {
 
+    ActivityGamePlay2Binding gamePlayBinding;
     LinearLayout.LayoutParams layoutParams;
-    LottieAnimationView loading_lottieAnimationView, no_interent_lottie;
-    WebView webView;
     AllGamesItems allGamesItems;
 
     StringBuilder blocklist;
-    WebView view;
     String loddnormallist= "0"; //if you want to use a filterlist without "::::" at the beginning. please change to 1
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game_play2);
-        webView = findViewById(R.id.webView);
-
+        gamePlayBinding = DataBindingUtil.setContentView(this, R.layout.activity_game_play2);
 
 
         load();
         allGamesItems = (AllGamesItems) getIntent().getSerializableExtra(gameDataObject);
 
-
-        loading_lottieAnimationView = findViewById(R.id.frag_lottie_loading);
-        no_interent_lottie = findViewById(R.id.frag_no_internet);
-
-
         layoutParams = new LinearLayout.LayoutParams(0, 0);
-        loading_lottieAnimationView.setVisibility(View.VISIBLE);
-
-        new AdBlockerWebView.init(this).initializeWebView(webView);
-        webView.setWebViewClient(new Browser_home());
-
+        gamePlayBinding.fragLottieLoading.setVisibility(View.VISIBLE);
+        new AdBlockerWebView.init(this).initializeWebView(gamePlayBinding.webView);
+        gamePlayBinding.webView.setWebViewClient(new Browser_home());
 
 
 
-         webView.loadUrl(allGamesItems.getGameUrl());
+
+        gamePlayBinding.webView.loadUrl(allGamesItems.getGameUrl());
 
 
-       webView.getSettings().setJavaScriptEnabled(true);
+        gamePlayBinding.webView.getSettings().setJavaScriptEnabled(true);
 
-        webView.getSettings().setAllowFileAccess(true);
-        webView.getSettings().setDomStorageEnabled(true);
-        webView.getSettings().setDatabaseEnabled(true);
-     webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT); // load online by default
+        gamePlayBinding.webView.getSettings().setAllowFileAccess(true);
+        gamePlayBinding.webView.getSettings().setDomStorageEnabled(true);
+        gamePlayBinding.webView.getSettings().setDatabaseEnabled(true);
+        gamePlayBinding.webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT); // load online by default
 
         if (!isNetworkAvailable()) { // loading offline
-            webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+            gamePlayBinding.webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         }
 
 
@@ -127,8 +119,8 @@ public class GamePlayActivity extends AppCompatActivity {
         public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
             if (view.getUrl().equals(failingUrl)) {
                 view.setLayoutParams(GamePlayActivity.this.layoutParams);
-                loading_lottieAnimationView.setVisibility(View.INVISIBLE);
-                no_interent_lottie.setVisibility(View.VISIBLE);
+                gamePlayBinding.fragLottieLoading.setVisibility(View.INVISIBLE);
+                gamePlayBinding.fragNoInternet.setVisibility(View.VISIBLE);
                 Helper_class.show_toast(view.getContext(), "something went wrong ");
             }
             super.onReceivedError(view, errorCode, description, failingUrl);
@@ -162,8 +154,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            loading_lottieAnimationView.setVisibility(View.GONE);
-
+            gamePlayBinding.fragLottieLoading.setVisibility(View.GONE);
         }
 
 

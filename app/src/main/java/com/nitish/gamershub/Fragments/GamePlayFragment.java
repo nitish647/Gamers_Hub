@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 import android.net.http.SslError;
 import android.os.Bundle;
 
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
@@ -34,6 +35,7 @@ import com.nitish.gamershub.Helper_class;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.DateTimeHelper;
+import com.nitish.gamershub.databinding.FragmentGamePlayBinding;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -46,22 +48,19 @@ import java.util.Locale;
 
 public class GamePlayFragment extends Fragment {
 
+    FragmentGamePlayBinding fragmentGamePlayBinding;
 
-    View view;
     LinearLayout.LayoutParams layoutParams;
-    LottieAnimationView  no_interent_lottie;
-    WebView webView;
+
     AllGamesItems allGamesItems;
 
     StringBuilder blocklist;
 
     String loddnormallist= "0"; //if you want to use a filterlist without "::::" at the beginning. please change to 1
 
-    TextView timerTextview;
 
     public int seconds = 0;
 
-    ImageView dismissButton;
     // Is the stopwatch running?
     private boolean running;
 public  String timerMinuteSecond="00:00";
@@ -80,52 +79,44 @@ public  String timerMinuteSecond="00:00";
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view= inflater.inflate(R.layout.fragment_game_play, container, false);
-        webView = view.findViewById(R.id.webView);
-        timerTextview = view.findViewById(R.id.timerTextview);
-        dismissButton = view.findViewById(R.id.dismissButton);
-        parentActivity = (GameDetailActivity2) view.getContext();
+        fragmentGamePlayBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_game_play, container, false);
+
+        parentActivity = (GameDetailActivity2) fragmentGamePlayBinding.getRoot().getContext();
         loadGame();
         allGamesItems = NewAndPopularGamesAdapter.SelectedGameObject;
 
 
 
-
-
-
-        no_interent_lottie = view.findViewById(R.id.frag_no_internet);
-
-
         layoutParams = new LinearLayout.LayoutParams(0, 0);
 
-        webView.setWebViewClient(new Browser_home());
+        fragmentGamePlayBinding.webView.setWebViewClient(new Browser_home());
 
 
 
 
-        webView.loadUrl(allGamesItems.getGameUrl());
+        fragmentGamePlayBinding.webView.loadUrl(allGamesItems.getGameUrl());
 
 
 
-        webView.getSettings().setJavaScriptEnabled(true);
+        fragmentGamePlayBinding.webView.getSettings().setJavaScriptEnabled(true);
 
-        webView.getSettings().setAllowFileAccess(true);
-        webView.getSettings().setDomStorageEnabled(true);
-        webView.getSettings().setDatabaseEnabled(true);
-        webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT); // load online by default
+        fragmentGamePlayBinding.webView.getSettings().setAllowFileAccess(true);
+        fragmentGamePlayBinding.webView.getSettings().setDomStorageEnabled(true);
+        fragmentGamePlayBinding.webView.getSettings().setDatabaseEnabled(true);
+        fragmentGamePlayBinding.webView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT); // load online by default
 
-        dismissButton.setOnClickListener(new View.OnClickListener() {
+        fragmentGamePlayBinding.dismissButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 parentActivity.onBackPressed();
             }
         });
         if (!isNetworkAvailable()) { // loading offline
-            webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+            fragmentGamePlayBinding.webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         }
 
 
-        return view;
+        return fragmentGamePlayBinding.getRoot();
     }
     private boolean isNetworkAvailable() {
         ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(CONNECTIVITY_SERVICE);
@@ -168,7 +159,7 @@ public  String timerMinuteSecond="00:00";
         public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
             if (view.getUrl().equals(failingUrl)) {
                 view.setLayoutParams(layoutParams);
-                no_interent_lottie.setVisibility(View.VISIBLE);
+                fragmentGamePlayBinding.fragNoInternet.setVisibility(View.VISIBLE);
                 Helper_class.show_toast(view.getContext(), "something went wrong ");
             }
             super.onReceivedError(view, errorCode, description, failingUrl);
@@ -243,9 +234,16 @@ public  String timerMinuteSecond="00:00";
         if (wasRunning) {
             running = true;
         }
+
+
+
     }
+
+
+
     public void startTimer()
     {
+
         running = true;
         timer();
     }
@@ -285,7 +283,7 @@ public  String timerMinuteSecond="00:00";
 
                  timerMinuteSecond
                             = DateTimeHelper.formatTimeToMMSS(minutes, secs);
-                    timerTextview.setText(timerMinuteSecond);
+                    fragmentGamePlayBinding.timerTextview.setText(timerMinuteSecond);
 
                 // If running is true, increment the
                 // seconds variable.

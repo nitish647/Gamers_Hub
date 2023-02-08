@@ -4,6 +4,7 @@ import static com.nitish.gamershub.Utils.AppHelper.getAdViewedStatsGlobal;
 import static com.nitish.gamershub.Utils.AppHelper.getUserProfileGlobalData;
 import static com.nitish.gamershub.Utils.AppHelper.saveAdViewedStatsGlobal;
 import static com.nitish.gamershub.Utils.AppHelper.saveUserProfileGlobal;
+import static com.nitish.gamershub.Utils.AppHelper.setStatusBarColor;
 import static com.nitish.gamershub.Utils.ConstantsHelper.From;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHubDataGlobal;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHub_DATA;
@@ -60,6 +61,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.SetOptions;
 import com.google.gson.Gson;
 import com.nitish.gamershub.Fragments.BottomSheetDialog;
+import com.nitish.gamershub.Fragments.GamePlayFragment;
 import com.nitish.gamershub.Interface.AdmobInterstitialAdListener;
 import com.nitish.gamershub.Interface.ConfirmationDialogListener2;
 import com.nitish.gamershub.Pojo.DialogHelperPojo;
@@ -113,7 +115,10 @@ abstract class BasicActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResourceId());
 
-        setStatusBarColor();
+//        setStatusBarColor();
+
+        setActivityStatusBarColor();
+
 
         Paper.init(this);
          progressDialog = ProgressBarHelper.setProgressBarDialog(BasicActivity.this);
@@ -125,6 +130,7 @@ abstract class BasicActivity extends AppCompatActivity {
         getGoogleSignInOptions();
 
     }
+
 
     protected abstract int getLayoutResourceId();
 
@@ -1195,11 +1201,11 @@ abstract class BasicActivity extends AppCompatActivity {
         if(getSupportFragmentManager().findFragmentById(R.id.frameLayout) != null){
             List<Fragment> fragments = getSupportFragmentManager().getFragments();
             for(Fragment f: fragments) {
-                if(f.isVisible())
+                if (f.isVisible()) {
                     Log.d("onResume: Fragment ", f.getClass().getName());
+                }
             }
         }
-
 
 
 
@@ -1383,18 +1389,19 @@ abstract class BasicActivity extends AppCompatActivity {
     }
 
 
-    void setStatusBarColor() {
-        if (Build.VERSION.SDK_INT >= 21) {
-            Window window = this.getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            if(this.getClass().getName().equals(Splash_Screen.class.getName())) {
-                window.setStatusBarColor(this.getResources().getColor(R.color.splash_screen));
-            } else if(this.getClass().getName().equals(LoginPage.class.getName())) {
-                window.setStatusBarColor(this.getResources().getColor(R.color.login_page));
-            }else {
-                window.setStatusBarColor(this.getResources().getColor(R.color.gamers_hub_theme));
-            }
+
+    public void setActivityStatusBarColor() {
+        if (this.getClass().getName().equals(Splash_Screen.class.getName())) {
+            setStatusBarColor(this, R.color.splash_screen);
+        } else if (this.getClass().getName().equals(LoginPage.class.getName())) {
+            setStatusBarColor(this, R.color.login_page);
+        } else {
+            setStatusBarColor(this, R.color.gamers_hub_theme);
         }
+
     }
+
+
+
+
 }

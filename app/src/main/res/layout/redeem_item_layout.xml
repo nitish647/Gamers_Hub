@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
 <RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-
     android:elevation="@dimen/cardview_default_radius"
-
     android:backgroundTint="#e6f9fe"
     android:layout_margin="5dp"
     android:background="@drawable/round_corners"
@@ -74,3 +76,4 @@
 
     </LinearLayout>
 </RelativeLayout>
+</layout>

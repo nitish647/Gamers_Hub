@@ -27,6 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,6 +35,7 @@ import com.airbnb.lottie.animation.content.Content;
 import com.nitish.gamershub.Activities.CategoryActivity;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.databinding.CategoryGamesLayoutBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +59,9 @@ public class CategoryGamesAdapter extends RecyclerView.Adapter<CategoryGamesAdap
     @NonNull
     @Override
     public CategoryGamesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new CategoryGamesViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.category_games_layout, parent, false));
+
+        CategoryGamesLayoutBinding categoryGamesLayoutBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.category_games_layout, parent, false);
+        return new CategoryGamesViewHolder(categoryGamesLayoutBinding);
     }
 
     @Override
@@ -66,16 +70,16 @@ public class CategoryGamesAdapter extends RecyclerView.Adapter<CategoryGamesAdap
 
         if(categoryGameList.size() != 0) {
             categoryGameList = categoryGameList.stream().limit(4).collect(Collectors.toList());
-            holder.categoryNameTextview.setVisibility(View.VISIBLE);
-            holder.gamesRecyclerView.setVisibility(View.VISIBLE);
-            holder.btnViewAllGames.setVisibility(View.VISIBLE);
+            holder.categoryGamesLayoutBinding.categoryNameTextview.setVisibility(View.VISIBLE);
+            holder.categoryGamesLayoutBinding.gamesRecyclerView.setVisibility(View.VISIBLE);
+            holder.categoryGamesLayoutBinding.btnViewAllGames.setVisibility(View.VISIBLE);
 
-            holder.categoryNameTextview.setText(CategoryList.get(position));
+            holder.categoryGamesLayoutBinding.categoryNameTextview.setText(CategoryList.get(position));
 
-            holder.gamesRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-            holder.gamesRecyclerView.setAdapter(new NewAndPopularGamesAdapter(context, categoryGameList));
+            holder.categoryGamesLayoutBinding.gamesRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+            holder.categoryGamesLayoutBinding.gamesRecyclerView.setAdapter(new NewAndPopularGamesAdapter(context, categoryGameList));
 
-            holder.btnViewAllGames.setOnClickListener(new View.OnClickListener() {
+            holder.categoryGamesLayoutBinding.btnViewAllGames.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(context, CategoryActivity.class);
@@ -85,9 +89,9 @@ public class CategoryGamesAdapter extends RecyclerView.Adapter<CategoryGamesAdap
             });
 
         } else {
-            holder.categoryNameTextview.setVisibility(View.GONE);
-            holder.gamesRecyclerView.setVisibility(View.GONE);
-            holder.btnViewAllGames.setVisibility(View.GONE);
+            holder.categoryGamesLayoutBinding.categoryNameTextview.setVisibility(View.GONE);
+            holder.categoryGamesLayoutBinding.gamesRecyclerView.setVisibility(View.GONE);
+            holder.categoryGamesLayoutBinding.btnViewAllGames.setVisibility(View.GONE);
         }
     }
 
@@ -98,16 +102,13 @@ public class CategoryGamesAdapter extends RecyclerView.Adapter<CategoryGamesAdap
 
     public class CategoryGamesViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView categoryNameTextview;
-        private RecyclerView gamesRecyclerView;
-        private LinearLayout btnViewAllGames;
 
-        public CategoryGamesViewHolder(@NonNull View itemView) {
-            super(itemView);
+        CategoryGamesLayoutBinding categoryGamesLayoutBinding;
 
-            categoryNameTextview = itemView.findViewById(R.id.categoryNameTextview);
-            gamesRecyclerView = itemView.findViewById(R.id.gamesRecyclerView);
-            btnViewAllGames = itemView.findViewById(R.id.btnViewAllGames);
+        public CategoryGamesViewHolder(@NonNull CategoryGamesLayoutBinding categoryGamesLayoutBinding) {
+            super(categoryGamesLayoutBinding.getRoot());
+
+            this.categoryGamesLayoutBinding = categoryGamesLayoutBinding;
         }
     }
 

@@ -14,6 +14,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
+import androidx.databinding.DataBindingUtil;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -69,6 +70,7 @@ import com.nitish.gamershub.Utils.AppHelper;
 import com.nitish.gamershub.Utils.NotificationHelper;
 import com.nitish.gamershub.Utils.ProgressBarHelper;
 import com.nitish.gamershub.Utils.UserOperations;
+import com.nitish.gamershub.databinding.FragmentHomeBinding;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -90,7 +92,7 @@ import io.paperdb.Paper;
 public class HomeFragment extends Fragment {
 
     
-    
+    FragmentHomeBinding fragmentHomeBinding;
     
     
     
@@ -130,13 +132,11 @@ public class HomeFragment extends Fragment {
 
 
     HomeActivity parentHomeActivity;
-    SearchView searchView;
     RequestQueue requestQueue;
     List<Categories> categoriesList;
     RecyclerView categoriesRecycler;
-//    Button navigationButton;
 
-//    DrawerLayout drawerLayout;
+
     LinearLayout linearAdContainer;
 
     NewAndPopularGamesAdapter newAndPopularGamesAdapter;
@@ -145,13 +145,12 @@ public class HomeFragment extends Fragment {
 
     private InterstitialAd interstitialAd;
 
-//    Button logoutButton;
+
 
     private RewardedAd rewardedAd;
     boolean isLoading;
-    RecyclerView allGamesRecyclerView;
     ArrayList<AllGamesItems> mainGamesArrayList;
-    ImageSlider imageSlider;
+
     ProgressDialog progressDialog;
 
 
@@ -185,21 +184,16 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-         view = inflater.inflate(R.layout.fragment_home, container, false);
+        fragmentHomeBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
+
+        view = fragmentHomeBinding.getRoot();
         Paper.init(view.getContext());
         parentHomeActivity = (HomeActivity) (getActivity());
 
         requestQueue = Volley.newRequestQueue(view.getContext());
-        allGamesRecyclerView = view.findViewById(R.id.allGamesRecyclerView);
         // Initialize Firebase Auth
 
-//        logoutButton= view.findViewById(R.id.logoutButton);
-        searchView = view.findViewById(R.id.searchView);
         progressDialog = ProgressBarHelper.setProgressBarDialog(view.getContext());
-//        drawerLayout = parentHomeActivity.findViewById(R.id.drawerLayout);
-        imageSlider = view.findViewById(R.id.imageSlider);
-
-//        navigationButton =view.findViewById(R.id.navigationButton);
 
         categoriesRecycler = view.findViewById(R.id.categoriesRecycler);
         googleBannerAdView = view.findViewById(R.id.googleBannerAdView);
@@ -213,7 +207,7 @@ public class HomeFragment extends Fragment {
         bannerImagesApi();
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(view.getContext(),4);
-        allGamesRecyclerView.setLayoutManager(gridLayoutManager);
+        fragmentHomeBinding.allGamesRecyclerView.setLayoutManager(gridLayoutManager);
 
 
         if(Paper.book().read(Splash_Screen.MaterData)==null|| !Paper.book().contains(Splash_Screen.MaterData))
@@ -269,7 +263,7 @@ public class HomeFragment extends Fragment {
 
     public void setSearchView()
     {
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        fragmentHomeBinding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
 
@@ -305,7 +299,7 @@ public class HomeFragment extends Fragment {
             slideModelArrayList.add(slideModel);
 
         }
-        imageSlider.setImageList(slideModelArrayList, ScaleTypes.FIT);
+        fragmentHomeBinding.imageSlider.setImageList(slideModelArrayList, ScaleTypes.FIT);
     }
 
     // will set the main games data
@@ -324,7 +318,7 @@ public class HomeFragment extends Fragment {
             }
 
             newAndPopularGamesAdapter = new NewAndPopularGamesAdapter(view.getContext(),mainItemsArrayList);
-            allGamesRecyclerView.setAdapter(newAndPopularGamesAdapter);
+            fragmentHomeBinding.allGamesRecyclerView.setAdapter(newAndPopularGamesAdapter);
 
             Paper.book().write(MainGamesList,mainItemsArrayList);
 
@@ -478,7 +472,7 @@ public class HomeFragment extends Fragment {
     public void setViews()
     {
         bottomNavigationView= view.findViewById(R.id.bottomNavigationView);
-        imageSlider.setClipToOutline(true);
+        fragmentHomeBinding.imageSlider.setClipToOutline(true);
     }
 
 }

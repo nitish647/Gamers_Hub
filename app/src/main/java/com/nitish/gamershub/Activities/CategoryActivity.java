@@ -9,6 +9,7 @@ import static com.nitish.gamershub.Utils.ConstantsHelper.gameDataObject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,6 +36,7 @@ import com.nitish.gamershub.Interface.AdmobInterstitialAdListener;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.ConstantsHelper;
+import com.nitish.gamershub.databinding.ActivityCategoryBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,34 +44,28 @@ import java.util.List;
 import io.paperdb.Paper;
 
 public class CategoryActivity extends BasicActivity {
-    ImageView backButton;
-    TextView categoryNameTextview;
-    RecyclerView categoriesRecycler;
-    RelativeLayout noTransactionRelative;
+
+    ActivityCategoryBinding categoryBinding;
+
     List<AllGamesItems> categoryGamesList;
     NewAndPopularGamesAdapter newAndPopularGamesAdapter;
-    AdView googleBannerAdView;
     ArrayList <AllGamesItems> popularGamesList , newGamesList, mainGamesList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(getLayoutResourceId());
+        categoryBinding = DataBindingUtil.setContentView(this, getLayoutResourceId());
+
         Paper.init(this);
-        categoriesRecycler =findViewById(R.id.categoriesRecycler);
-        categoryNameTextview =findViewById(R.id.categoryNameTextview);
-        backButton = findViewById(R.id.backButton);
         categoryGamesList = new ArrayList<>();
-        googleBannerAdView = findViewById(R.id.googleBannerAdView);
         popularGamesList = Paper.book().read(PopularGamesList);
         newGamesList = Paper.book().read(NewGamesList);
         mainGamesList = Paper.book().read(MainGamesList);
-        noTransactionRelative =findViewById(R.id.noTransactionRelative);
 
-        categoriesRecycler.setLayoutManager(new GridLayoutManager(this,4));
+        categoryBinding.categoriesRecycler.setLayoutManager(new GridLayoutManager(this,4));
 
         setUpBannerAd();
 
-        backButton.setOnClickListener(new View.OnClickListener() {
+        categoryBinding.backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onBackPressed();
@@ -81,13 +77,13 @@ public class CategoryActivity extends BasicActivity {
             getCategoryGamesList();
 
             newAndPopularGamesAdapter = new NewAndPopularGamesAdapter(CategoryActivity.this,categoryGamesList);
-            categoriesRecycler.setAdapter(newAndPopularGamesAdapter);
+            categoryBinding.categoriesRecycler.setAdapter(newAndPopularGamesAdapter);
             if(categoryGamesList.isEmpty())
             {
-                noTransactionRelative.setVisibility(View.VISIBLE);
+                categoryBinding.noTransactionRelative.setVisibility(View.VISIBLE);
             }
             else {
-                noTransactionRelative.setVisibility(View.GONE);
+                categoryBinding.noTransactionRelative.setVisibility(View.GONE);
             }
 
 
@@ -96,7 +92,7 @@ public class CategoryActivity extends BasicActivity {
 
     private void getCategoryGamesList() {
         String categoryName  = getIntent().getStringExtra("categoryName");
-        categoryNameTextview.setText(categoryName);
+        categoryBinding.categoryNameTextview.setText(categoryName);
 
         if(categoryName.toLowerCase().contains("best"))
         {
@@ -169,15 +165,15 @@ public class CategoryActivity extends BasicActivity {
     {
 
         AdRequest adRequest = new AdRequest.Builder().build();
-        googleBannerAdView.loadAd(adRequest);
+        categoryBinding.googleBannerAdView.loadAd(adRequest);
 
     }
 
     /** Called when leaving the activity */
     @Override
     public void onPause() {
-        if (googleBannerAdView != null) {
-            googleBannerAdView.pause();
+        if (categoryBinding.googleBannerAdView != null) {
+            categoryBinding.googleBannerAdView.pause();
         }
         super.onPause();
     }
@@ -186,8 +182,8 @@ public class CategoryActivity extends BasicActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if (googleBannerAdView != null) {
-            googleBannerAdView.resume();
+        if (categoryBinding.googleBannerAdView != null) {
+            categoryBinding.googleBannerAdView.resume();
         }
 
         getCategoryGamesList();
@@ -197,8 +193,8 @@ public class CategoryActivity extends BasicActivity {
     /** Called before the activity is destroyed */
     @Override
     public void onDestroy() {
-        if (googleBannerAdView != null) {
-            googleBannerAdView.destroy();
+        if (categoryBinding.googleBannerAdView != null) {
+            categoryBinding.googleBannerAdView.destroy();
         }
         super.onDestroy();
     }

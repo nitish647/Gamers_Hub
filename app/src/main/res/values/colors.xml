@@ -20,6 +20,7 @@
     <color name="material_light_grey2">#eef1f7</color>
 
 
+    <color name="black">#000000</color>
     <color name="greyPrimary">#898989</color>
     <color name="darkGrey">#505050</color>
     <color name="lightGrey">#bfbfbf</color>

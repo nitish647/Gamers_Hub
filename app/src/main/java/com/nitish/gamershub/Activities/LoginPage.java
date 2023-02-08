@@ -8,6 +8,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -39,6 +40,7 @@ import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.AppHelper;
 import com.nitish.gamershub.Utils.DateTimeHelper;
 import com.nitish.gamershub.Utils.DeviceHelper;
+import com.nitish.gamershub.databinding.ActivityLoginPageBinding;
 
 import java.io.IOException;
 
@@ -47,8 +49,7 @@ import io.tempo.Tempo;
 
 public class LoginPage extends BasicActivity    implements ActivityResultCallback<FirebaseAuthUIAuthenticationResult>{
 
-    SignInButton googleSingInButton;
-
+    ActivityLoginPageBinding loginPageBinding;
     FirebaseFirestore firestoreDb;
 
 
@@ -58,8 +59,7 @@ public class LoginPage extends BasicActivity    implements ActivityResultCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login_page);
-        googleSingInButton = findViewById(R.id.singInButton);
+        loginPageBinding = DataBindingUtil.setContentView(this, R.layout.activity_login_page);
         Paper.init(this);
         firestoreDb = FirebaseFirestore.getInstance();
 
@@ -70,12 +70,13 @@ public class LoginPage extends BasicActivity    implements ActivityResultCallbac
 
 
 
+
     }
 
 
     public void setonClickListeners()
     {
-        googleSingInButton.setOnClickListener(new View.OnClickListener() {
+        loginPageBinding.singInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 

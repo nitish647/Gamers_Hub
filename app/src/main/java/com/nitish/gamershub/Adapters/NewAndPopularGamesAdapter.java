@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.nitish.gamershub.Activities.CategoryActivity;
@@ -17,6 +18,7 @@ import com.nitish.gamershub.Activities.HomeActivity;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.Pojo.AllGamesItemsSerializable;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.databinding.PopularAndNewLayoutBinding;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -44,9 +46,8 @@ public class NewAndPopularGamesAdapter  extends RecyclerView.Adapter<NewAndPopul
     @NonNull
     @Override
     public NewAndPopularGamesAdapter.PopularAndNewViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(context).inflate(R.layout.popular_and_new_layout,parent,false);
-
-        return new NewAndPopularGamesAdapter.PopularAndNewViewHolder(v);
+        PopularAndNewLayoutBinding popularAndNewLayoutBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.popular_and_new_layout, parent, false);
+        return new PopularAndNewViewHolder(popularAndNewLayoutBinding);
     }
 
     @Override
@@ -62,9 +63,10 @@ public class NewAndPopularGamesAdapter  extends RecyclerView.Adapter<NewAndPopul
         allGamesItemsSerializable.setDescription(allGamesItems.getDescription());
         allGamesItemsSerializable.setName(allGamesItems.getName());
 
-        Picasso.get().load(allGamesItems.getImg_file()).into(holder.game_image);
-        holder.game_image.setClipToOutline(true);
-        holder.game_name.setText(allGamesItems.getName());
+
+        Picasso.get().load(allGamesItems.getImg_file()).into(holder.popularAndNewLayoutBinding.gameImg);
+        holder.popularAndNewLayoutBinding.gameImg.setClipToOutline(true);
+        holder.popularAndNewLayoutBinding.gameName.setText(allGamesItems.getName());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -133,16 +135,11 @@ public class NewAndPopularGamesAdapter  extends RecyclerView.Adapter<NewAndPopul
 
     public static class PopularAndNewViewHolder extends RecyclerView.ViewHolder
     {
-        ImageView game_image;
-        TextView game_name;
+        PopularAndNewLayoutBinding popularAndNewLayoutBinding;
 
-        public PopularAndNewViewHolder(@NonNull View itemView) {
-
-            super(itemView);
-            game_image = itemView.findViewById(R.id.game_img);
-            game_name = itemView.findViewById(R.id.game_name);
-
-
+        public PopularAndNewViewHolder(@NonNull PopularAndNewLayoutBinding popularAndNewLayoutBinding) {
+            super(popularAndNewLayoutBinding.getRoot());
+            this.popularAndNewLayoutBinding = popularAndNewLayoutBinding;
         }
     }
 }

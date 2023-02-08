@@ -4,6 +4,7 @@ import static com.nitish.gamershub.Utils.ConstantsHelper.populateCategoryList;
 
 import android.os.Bundle;
 
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,14 +19,16 @@ import android.widget.Toast;
 import com.google.api.LogDescriptor;
 import com.nitish.gamershub.Adapters.CategoryGamesAdapter;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.databinding.FragmentCategoryGamesBinding;
 
 
 public class CategoryGamesFragment extends Fragment {
 
+    FragmentCategoryGamesBinding fragmentCategoryGamesBinding;
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    private RecyclerView categoryGamesRecyclerView;
     private CategoryGamesAdapter categoryGamesAdapter;
 
     public static CategoryGamesFragment newInstance(String param1, String param2) {
@@ -46,14 +49,13 @@ public class CategoryGamesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_category_games, container, false);
+        fragmentCategoryGamesBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_category_games, container, false);
 
-        categoryGamesRecyclerView = view.findViewById(R.id.categoryGamesRecyclerView);
-        categoryGamesRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.VERTICAL, false));
-        categoryGamesAdapter = new CategoryGamesAdapter(view.getContext());
-        categoryGamesRecyclerView.setAdapter(categoryGamesAdapter);
+        fragmentCategoryGamesBinding.categoryGamesRecyclerView.setLayoutManager(new LinearLayoutManager(fragmentCategoryGamesBinding.getRoot().getContext(), LinearLayoutManager.VERTICAL, false));
+        categoryGamesAdapter = new CategoryGamesAdapter(fragmentCategoryGamesBinding.getRoot().getContext());
+        fragmentCategoryGamesBinding.categoryGamesRecyclerView.setAdapter(categoryGamesAdapter);
 
-        return view;
+        return fragmentCategoryGamesBinding.getRoot();
     }
 
     @Override
