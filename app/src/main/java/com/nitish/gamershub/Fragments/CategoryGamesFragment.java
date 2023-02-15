@@ -17,7 +17,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.api.LogDescriptor;
+import com.nitish.gamershub.Activities.HomeActivity;
 import com.nitish.gamershub.Adapters.CategoryGamesAdapter;
+import com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter;
+import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.databinding.FragmentCategoryGamesBinding;
 
@@ -30,6 +33,7 @@ public class CategoryGamesFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     private CategoryGamesAdapter categoryGamesAdapter;
+
 
     public static CategoryGamesFragment newInstance(String param1, String param2) {
         CategoryGamesFragment fragment = new CategoryGamesFragment();

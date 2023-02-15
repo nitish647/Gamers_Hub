@@ -1,6 +1,8 @@
 package com.nitish.gamershub.Activities;
 
 import static com.nitish.gamershub.Utils.AppHelper.getUserProfileGlobalData;
+import static com.nitish.gamershub.Utils.ConstantsHelper.TransactionStatusPending;
+import static com.nitish.gamershub.Utils.ConstantsHelper.TransactionMessage;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -9,8 +11,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,13 +18,11 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
 import com.google.gson.Gson;
 import com.nitish.gamershub.Adapters.RedeemRecyclerviewAdapter;
 import com.nitish.gamershub.Pojo.FireBase.RedeemCoins;
@@ -35,7 +33,6 @@ import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.AppHelper;
 import com.nitish.gamershub.Utils.CommonMethods;
 import com.nitish.gamershub.Utils.Connectivity;
-import com.nitish.gamershub.Utils.ConstantsHelper;
 import com.nitish.gamershub.Utils.DateTimeHelper;
 import com.nitish.gamershub.Utils.ProgressBarHelper;
 import com.nitish.gamershub.Utils.ToastHelper;
@@ -359,6 +356,8 @@ public class RedeemActivity extends BasicActivity {
 
         transactionRequest.setRedeemType(redeemListItem.getName());
 
+        transactionRequest.setTransactionStatus(TransactionStatusPending);
+        transactionRequest.setTransactionMessage(TransactionMessage);
 
         if(redeemListItem.getName().toLowerCase().contains("upi"))
         {

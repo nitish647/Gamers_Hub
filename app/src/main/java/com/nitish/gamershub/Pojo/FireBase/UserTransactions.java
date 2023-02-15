@@ -39,6 +39,9 @@ public class UserTransactions implements Serializable {
 
         public String transactionId;
 
+        public String transactionStatus;
+        public String transactionMessage;
+
         public TransactionRequest() {
         }
 
@@ -121,6 +124,28 @@ public class UserTransactions implements Serializable {
         public void setTransactionId(String transactionId) {
             this.transactionId = transactionId;
         }
+
+        public String getTransactionStatus() {
+            // TestCode: Anuraag
+            // transactionStatus = TransactionStatusFailed;
+            // transactionStatus = "";
+            return transactionStatus;
+        }
+
+        public void setTransactionStatus(String transactionStatus) {
+            this.transactionStatus = transactionStatus;
+        }
+
+        public String getTransactionMessage() {
+            // TestCode: Anuraag
+            // transactionMessage
+            return transactionMessage;
+        }
+
+        public void setTransactionMessage(String transactionMessage) {
+            this.transactionMessage = transactionMessage;
+        }
+
     }
 
 

@@ -120,8 +120,10 @@ public class ProfileFragment extends Fragment {
                     Picasso.get().load(AppHelper.getGoogleSignInUserProfile()).placeholder(R.drawable.gamers_hub_icon15).into(binding.profileIcon);
 
 
+            // TestCode: Anuraag
+            // UserProfile user= null;
+            // binding.redeemCoinsTextview.setText( user.getProfileData().getGameCoins() +" coins");
         binding.redeemCoinsTextview.setText( getUserProfileGlobalData().getProfileData().getGameCoins() +" coins");
-
 
     }
     public void setonClickListeners()
@@ -136,14 +138,14 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        binding.rewardsRelative.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                Toast.makeText(parentHomeActivity, "clicked", Toast.LENGTH_SHORT).show();
-                AppHelper.readCalenderData();
-                return false;
-            }
-        });
+//        binding.rewardsRelative.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View view) {
+//                Toast.makeText(parentHomeActivity, "clicked", Toast.LENGTH_SHORT).show();
+//                AppHelper.readCalenderData();
+//                return false;
+//            }
+//        });
 
         binding.logOutRelative.setOnClickListener(new View.OnClickListener() {
             @Override

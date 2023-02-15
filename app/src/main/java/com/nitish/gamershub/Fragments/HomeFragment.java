@@ -155,8 +155,7 @@ public class HomeFragment extends Fragment {
 
 
     BottomNavigationView bottomNavigationView;
-    
-    
+
     
     
     
@@ -317,7 +316,13 @@ public class HomeFragment extends Fragment {
                 mainItemsArrayList.add(allGamesItems);
             }
 
-            newAndPopularGamesAdapter = new NewAndPopularGamesAdapter(view.getContext(),mainItemsArrayList);
+            newAndPopularGamesAdapter = new NewAndPopularGamesAdapter(view.getContext(), mainItemsArrayList, new NewAndPopularGamesAdapter.NewAndPopularGameAdapterInterface() {
+                @Override
+                public void onClick(AllGamesItems allGamesItems) {
+                    ((HomeActivity) getActivity()).startIntent(allGamesItems);
+                }
+            });
+
             fragmentHomeBinding.allGamesRecyclerView.setAdapter(newAndPopularGamesAdapter);
 
             Paper.book().write(MainGamesList,mainItemsArrayList);

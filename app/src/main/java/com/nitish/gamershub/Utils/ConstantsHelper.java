@@ -54,6 +54,10 @@ public class ConstantsHelper {
     public static final String CategoryRacing = "Racing";
     public static final String CategoryStrategy = "Strategy";
 
+    public static final String TransactionStatusPending = "pending";
+    public static final String TransactionStatusFailed = "failed";
+    public static final String TransactionStatusCompleted = "completed";
+    public static final String TransactionMessage = "Unfortunately, the transaction could not be completed";
 
 
     public static String timerHourMinuteSecond ="00:00:00";

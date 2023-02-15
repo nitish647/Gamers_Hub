@@ -3,6 +3,7 @@ package com.nitish.gamershub.Activities;
 import static com.nitish.gamershub.Utils.AppHelper.getGamersHubDataGlobal;
 import static com.nitish.gamershub.Utils.AppHelper.getUserProfileGlobalData;
 import static com.nitish.gamershub.Utils.AppHelper.setStatusBarColor;
+import static com.nitish.gamershub.Utils.ConstantsHelper.IntentData;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -51,7 +52,8 @@ public class GameDetailActivity2 extends BasicActivity {
         setContentView(R.layout.activity_game_detail);
         Paper.init(GameDetailActivity2.this);
 
-         allGamesItems = NewAndPopularGamesAdapter.SelectedGameObject;
+//         allGamesItems = NewAndPopularGamesAdapter.SelectedGameObject;
+         allGamesItems = (AllGamesItems) getIntent().getSerializableExtra(IntentData);
 
          fragmentManager = getSupportFragmentManager();
          loadInterstitialAdNew();
@@ -182,7 +184,7 @@ public class GameDetailActivity2 extends BasicActivity {
     public void showGameDetailsFrag()
     {
 
-     //   gamePlayFragment.resetTimer();// reset the timer
+    //   gamePlayFragment.resetTimer();// reset the timer
 
         if(gameDetailsFragment==null)
         {

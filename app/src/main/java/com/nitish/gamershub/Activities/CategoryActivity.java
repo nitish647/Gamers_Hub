@@ -1,7 +1,8 @@
 package com.nitish.gamershub.Activities;
 
-import static com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter.SelectedGameObject;
+//import static com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter.SelectedGameObject;
 import static com.nitish.gamershub.Utils.ConstantsHelper.FavouriteList;
+import static com.nitish.gamershub.Utils.ConstantsHelper.IntentData;
 import static com.nitish.gamershub.Utils.ConstantsHelper.MainGamesList;
 import static com.nitish.gamershub.Utils.ConstantsHelper.NewGamesList;
 import static com.nitish.gamershub.Utils.ConstantsHelper.PopularGamesList;
@@ -38,6 +39,7 @@ import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.ConstantsHelper;
 import com.nitish.gamershub.databinding.ActivityCategoryBinding;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +52,7 @@ public class CategoryActivity extends BasicActivity {
     List<AllGamesItems> categoryGamesList;
     NewAndPopularGamesAdapter newAndPopularGamesAdapter;
     ArrayList <AllGamesItems> popularGamesList , newGamesList, mainGamesList;
+    private AllGamesItems mAllGamesItems;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +79,14 @@ public class CategoryActivity extends BasicActivity {
         {
             getCategoryGamesList();
 
-            newAndPopularGamesAdapter = new NewAndPopularGamesAdapter(CategoryActivity.this,categoryGamesList);
+            newAndPopularGamesAdapter = new NewAndPopularGamesAdapter(CategoryActivity.this, categoryGamesList, new NewAndPopularGamesAdapter.NewAndPopularGameAdapterInterface() {
+                @Override
+                public void onClick(AllGamesItems allGamesItems) {
+                    mAllGamesItems = allGamesItems;
+                    categoryItemClick();
+                }
+            });
+
             categoryBinding.categoriesRecycler.setAdapter(newAndPopularGamesAdapter);
             if(categoryGamesList.isEmpty())
             {
@@ -130,7 +140,7 @@ public class CategoryActivity extends BasicActivity {
     {
 
         Intent intent = new Intent(CategoryActivity.this, GameDetailActivity2.class);
-        //    intent.putExtra(gameDataObject, NewAndPopularGamesAdapter.SelectedGameObject);
+        intent.putExtra(IntentData, mAllGamesItems);
         startActivity(intent);
     }
 

@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.nitish.gamershub.Activities.HomeActivity;
 import com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.R;
@@ -47,6 +48,7 @@ public class PopularAndNewFragment extends Fragment {
     String gameData="";
     Gson gson ;
     SearchView searchView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -69,7 +71,12 @@ public class PopularAndNewFragment extends Fragment {
 
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(view.getContext(),4);
-        newAndPopularGamesAdapter = new NewAndPopularGamesAdapter(view.getContext(),allGamesItemsList);
+        newAndPopularGamesAdapter = new NewAndPopularGamesAdapter(view.getContext(), allGamesItemsList, new NewAndPopularGamesAdapter.NewAndPopularGameAdapterInterface() {
+            @Override
+            public void onClick(AllGamesItems allGamesItems) {
+                ((HomeActivity) getActivity()).startIntent(allGamesItems);
+            }
+        });
         fragmentPopularAndNewBinding.newPopularRecycler.setAdapter(newAndPopularGamesAdapter);
         fragmentPopularAndNewBinding.newPopularRecycler.setLayoutManager(gridLayoutManager);
 

@@ -175,8 +175,9 @@ public class AppHelper {
         Date date= new Date();
         Calendar cal =      (Calendar) Paper.book().read("TimeHelperCalender");
 
-        Log.d("savedTimeReturn",DateTimeHelper.convertDateToString(cal.getTime()));
-
+        // TestCode: Anuraag
+//        cal = null;
+//        Log.d("savedTimeReturn",DateTimeHelper.convertDateToString(cal.getTime()));
 
 
     }

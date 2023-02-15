@@ -2,11 +2,14 @@ package com.nitish.gamershub.Activities;
 
 import static com.nitish.gamershub.Adapters.CategoriesAdapter.context;
 import static com.nitish.gamershub.Utils.ConstantsHelper.FavouriteList;
+import static com.nitish.gamershub.Utils.ConstantsHelper.From;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GamersHub_ParentCollection;
 import static com.nitish.gamershub.Utils.ConstantsHelper.GoogleSignInAccountUser;
+import static com.nitish.gamershub.Utils.ConstantsHelper.IntentData;
 import static com.nitish.gamershub.Utils.ConstantsHelper.UserMail;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -45,6 +48,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
+import com.nitish.gamershub.Adapters.NewAndPopularGamesAdapter;
 import com.nitish.gamershub.Fragments.CategoryGamesFragment;
 import com.nitish.gamershub.Fragments.HomeFragment;
 import com.nitish.gamershub.Fragments.ProfileFragment;
@@ -69,6 +73,7 @@ import com.nitish.gamershub.databinding.ActivityHomeBinding;
 
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -106,6 +111,9 @@ public class HomeActivity extends BasicActivity {
     // firebase auth
 
     FirebaseFirestore firestoreDb;
+
+
+    AllGamesItems mAllGamesItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -232,7 +240,11 @@ public class HomeActivity extends BasicActivity {
 
   public void   openGameDetailsActivity()
     {
-        startActivityIntent(HomeActivity.this,GameDetailActivity2.class);
+//        startActivityIntent(HomeActivity.this,GameDetailActivity2.class);
+        Intent intent = new Intent(HomeActivity.this,GameDetailActivity2.class);
+        intent.putExtra(From, HomeActivity.class.getSimpleName());
+        intent.putExtra(IntentData,  mAllGamesItems);
+        startActivity(intent);
 
     }
     public void setBottomNavigationView()
@@ -261,14 +273,11 @@ public class HomeActivity extends BasicActivity {
                     case R.id.profileMenu:
 
                         if(profileFragment ==null)
-//                        if(profile2Fragment==null)
                         {
                             profileFragment = profileFragment.newInstance("","");
-//                            profile2Fragment = profile2Fragment.newInstance("","");
 
                         }
                         showHideFragment(profileFragment, profileFragment.getTag());
-//                        showHideFragment(profile2Fragment, profile2Fragment.getTag());
                         break;
                     case R.id.categoryGamesMenu:
                         if(categoryGamesFragment ==null)
@@ -558,11 +567,10 @@ public class HomeActivity extends BasicActivity {
 
 
 
-    public void startIntent()
+    public void startIntent(AllGamesItems allGamesItems)
     {
-
+        mAllGamesItems = allGamesItems;
           showInterstitialAdNew(interstitialAdListener());
-
 
     }
     public void setUpBannerAd()
@@ -827,8 +835,7 @@ public class HomeActivity extends BasicActivity {
 
         if(gamersHubData.getGamesData().isForceUpdate())
         {
-            showConfirmationDialogSingleButton("Update","Pending Update","A new update of the app has been released , please update ",confirmationDialogListener
-            );
+            showConfirmationDialogSingleButton("Update","Pending Update","A new update of the app has been released , please update ",confirmationDialogListener);
 
         }
         else {

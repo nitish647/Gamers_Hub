@@ -6,8 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -30,11 +28,13 @@ public class NewAndPopularGamesAdapter  extends RecyclerView.Adapter<NewAndPopul
     Context context;
     List<AllGamesItems> allGamesItemsList ;
     List<AllGamesItems> allGamesItemsListFull;
-    public static  AllGamesItems SelectedGameObject ;
-    public NewAndPopularGamesAdapter(Context context, List<AllGamesItems> allGamesItemsList) {
+//    public static  AllGamesItems SelectedGameObject ;
+    NewAndPopularGameAdapterInterface newAndPopularGameAdapterInterface;
+    public NewAndPopularGamesAdapter(Context context, List<AllGamesItems> allGamesItemsList,NewAndPopularGameAdapterInterface mNewAndPopularGameAdapterInterface) {
         this.context = context;
         this.allGamesItemsList = allGamesItemsList;
         this.allGamesItemsListFull  =allGamesItemsList;
+        this.newAndPopularGameAdapterInterface = mNewAndPopularGameAdapterInterface;
     }
 
     public void changedNewAndPopularGamesList(List<AllGamesItems> allGamesItemsList) {
@@ -71,20 +71,18 @@ public class NewAndPopularGamesAdapter  extends RecyclerView.Adapter<NewAndPopul
             @Override
             public void onClick(View view) {
 
-                SelectedGameObject = allGamesItems;
-                if(context.getClass()== HomeActivity.class)
-                {
-
-
-                    ((HomeActivity)context).startIntent();
-                }
-                else {
-                    ((CategoryActivity)context).categoryItemClick();
-                }
+                newAndPopularGameAdapterInterface.onClick(allGamesItems);
+//                SelectedGameObject = allGamesItems;
+//                if(context.getClass()== HomeActivity.class)
+//                {
+//                    ((HomeActivity)context).startIntent();
+//                }
+//                else {
+//                    ((CategoryActivity)context).categoryItemClick();
+//                }
 
             }
         });
-
     }
 
 
@@ -142,4 +140,8 @@ public class NewAndPopularGamesAdapter  extends RecyclerView.Adapter<NewAndPopul
             this.popularAndNewLayoutBinding = popularAndNewLayoutBinding;
         }
     }
+    public interface NewAndPopularGameAdapterInterface {
+        public void onClick(AllGamesItems allGamesItems);
+    }
+
 }

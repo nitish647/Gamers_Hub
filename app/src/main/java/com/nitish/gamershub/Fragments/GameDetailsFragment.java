@@ -3,6 +3,7 @@ package com.nitish.gamershub.Fragments;
 import static com.nitish.gamershub.Utils.AppHelper.getGamersHubDataGlobal;
 import static com.nitish.gamershub.Utils.AppHelper.getUserProfileGlobalData;
 import static com.nitish.gamershub.Utils.ConstantsHelper.FavouriteList;
+import static com.nitish.gamershub.Utils.ConstantsHelper.IntentData;
 import static com.nitish.gamershub.Utils.ConstantsHelper.gameDataObject;
 
 import android.content.Intent;
@@ -85,8 +86,8 @@ public class GameDetailsFragment extends Fragment {
         parentActivity = (GameDetailActivity2) binding.getRoot().getContext();
 
         favouriteArrayList = new ArrayList<>();
-        allGamesItems = NewAndPopularGamesAdapter.SelectedGameObject;
-
+//        allGamesItems = NewAndPopularGamesAdapter.SelectedGameObject;
+        allGamesItems = (AllGamesItems) getActivity().getIntent().getSerializableExtra(IntentData);
 
         ArrayList<AllGamesItems> itemsArrayList = (ArrayList<AllGamesItems>) Paper.book().read(FavouriteList);
         favouriteArrayList = itemsArrayList;
@@ -149,6 +150,9 @@ public class GameDetailsFragment extends Fragment {
     }
 
     public void setViews() {
+        // TestCode: Anuraag
+//        allGamesItems = null;
+
         binding.gameDescTextview.setText(allGamesItems.getDescription());
         binding.gameImageImageVIew.setClipToOutline(true);
         binding.gameNameTextview.setText(allGamesItems.getName());

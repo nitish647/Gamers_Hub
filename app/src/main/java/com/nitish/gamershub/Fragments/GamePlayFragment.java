@@ -2,6 +2,8 @@ package com.nitish.gamershub.Fragments;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
+import static com.nitish.gamershub.Utils.ConstantsHelper.IntentData;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.net.ConnectivityManager;
@@ -83,8 +85,8 @@ public  String timerMinuteSecond="00:00";
 
         parentActivity = (GameDetailActivity2) fragmentGamePlayBinding.getRoot().getContext();
         loadGame();
-        allGamesItems = NewAndPopularGamesAdapter.SelectedGameObject;
-
+//        allGamesItems = NewAndPopularGamesAdapter.SelectedGameObject;
+        allGamesItems = (AllGamesItems) getActivity().getIntent().getSerializableExtra(IntentData);
 
 
         layoutParams = new LinearLayout.LayoutParams(0, 0);
@@ -281,8 +283,7 @@ public  String timerMinuteSecond="00:00";
                 int minutes = (seconds % 3600) / 60;
                 int secs = seconds % 60;
 
-                 timerMinuteSecond
-                            = DateTimeHelper.formatTimeToMMSS(minutes, secs);
+                 timerMinuteSecond = DateTimeHelper.formatTimeToMMSS(minutes, secs);
                     fragmentGamePlayBinding.timerTextview.setText(timerMinuteSecond);
 
                 // If running is true, increment the

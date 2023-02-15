@@ -19,6 +19,7 @@ import static com.nitish.gamershub.Utils.ConstantsHelper.PopularGamesList;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.animation.content.Content;
 import com.nitish.gamershub.Activities.CategoryActivity;
+import com.nitish.gamershub.Activities.HomeActivity;
 import com.nitish.gamershub.Pojo.AllGamesItems;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.databinding.CategoryGamesLayoutBinding;
@@ -77,7 +79,12 @@ public class CategoryGamesAdapter extends RecyclerView.Adapter<CategoryGamesAdap
             holder.categoryGamesLayoutBinding.categoryNameTextview.setText(CategoryList.get(position));
 
             holder.categoryGamesLayoutBinding.gamesRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
-            holder.categoryGamesLayoutBinding.gamesRecyclerView.setAdapter(new NewAndPopularGamesAdapter(context, categoryGameList));
+            holder.categoryGamesLayoutBinding.gamesRecyclerView.setAdapter(new NewAndPopularGamesAdapter(context, categoryGameList, new NewAndPopularGamesAdapter.NewAndPopularGameAdapterInterface() {
+                @Override
+                public void onClick(AllGamesItems allGamesItems) {
+                    ((HomeActivity) context).startIntent(allGamesItems);
+                }
+            }));
 
             holder.categoryGamesLayoutBinding.btnViewAllGames.setOnClickListener(new View.OnClickListener() {
                 @Override

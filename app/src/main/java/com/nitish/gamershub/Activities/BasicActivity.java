@@ -121,8 +121,8 @@ abstract class BasicActivity extends AppCompatActivity {
 
 
         Paper.init(this);
-         progressDialog = ProgressBarHelper.setProgressBarDialog(BasicActivity.this);
-         timeChangedReceiver2 = new TimeChangedReceiver2();
+        progressDialog = ProgressBarHelper.setProgressBarDialog(BasicActivity.this);
+        timeChangedReceiver2 = new TimeChangedReceiver2();
 
         logOutDialog2();
         loadInterstitialAdNew();
@@ -512,8 +512,7 @@ abstract class BasicActivity extends AppCompatActivity {
 
      Boolean showNoInternetDialog()
     {
-        if(!isInternetAvailable())
-        {
+        if(!isInternetAvailable()) {
             dismissProgressBar();
             DialogHelperPojo dialogHelperPojo = new DialogHelperPojo();
             dialogHelperPojo.setTitle("");
@@ -534,9 +533,8 @@ abstract class BasicActivity extends AppCompatActivity {
             });
 
             return false;
-        }else
-
-        return true;
+        } else
+            return true;
     }
     public void showRewardDialog(String message)
     {
@@ -579,7 +577,7 @@ abstract class BasicActivity extends AppCompatActivity {
         addRewardDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
         addRewardDialog.setView(gameRewardDialogBinding.getRoot());
 
-        addRewardDialog.show();
+
 
         gameRewardDialogBinding.earnedCoinsTextview.setText(getString(R.string.earned_reward_message)+ " "+amount+" coins");
 
@@ -594,6 +592,9 @@ abstract class BasicActivity extends AppCompatActivity {
             }
         });
 
+        if(!isFinishing()) {
+            addRewardDialog.show();
+        }
 
     }
     public void logOutDialog2()
@@ -724,6 +725,27 @@ abstract class BasicActivity extends AppCompatActivity {
 
     }
 
+    public void showConfirmationDialogSingleButtonDismissable(String buttonTitle,String title,String message,ConfirmationDialogListener confirmationDialogListener)
+    {
+
+        ConfirmationDialogLayoutBinding confirmationDialogLayoutBinding = setConfirmationDialog(title,message,confirmationDialogListener);
+
+        confirmationDialogLayoutBinding.NoButton.setVisibility(View.GONE);
+
+
+        confirmationDialogLayoutBinding.yesButton.setText(buttonTitle);
+        confirmationDialogLayoutBinding.yesButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    confirmationDialog.dismiss();
+                    confirmationDialogListener.onYesClick();
+                }
+            });
+        confirmationDialog.show();
+
+    }
+
+
     public ConfirmationDialogLayoutBinding setConfirmationDialog(String title,String message,ConfirmationDialogListener confirmationDialogListener)
     {
         ConfirmationDialogLayoutBinding confirmationDialogLayoutBinding;
@@ -731,7 +753,7 @@ abstract class BasicActivity extends AppCompatActivity {
 
         confirmationDialogLayoutBinding =  DataBindingUtil.inflate(factory,R.layout.confirmation_dialog_layout,null,false);
 
-          confirmationDialog = new AlertDialog.Builder(BasicActivity.this).create();
+        confirmationDialog = new AlertDialog.Builder(BasicActivity.this).create();
 
         confirmationDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
         confirmationDialog.setView(confirmationDialogLayoutBinding.getRoot());
@@ -781,7 +803,8 @@ abstract class BasicActivity extends AppCompatActivity {
 
 
         if(dialogHelperPojo.getYesButton().equals(new DialogHelperPojo().getYesButton()))
-        confirmationDialogLayoutBinding.yesButton.setText("Ok");
+            confirmationDialogLayoutBinding.yesButton.setText("Ok");
+
 
         confirmationDialogLayoutBinding.NoButton.setVisibility(View.GONE);
 
@@ -879,6 +902,9 @@ abstract class BasicActivity extends AppCompatActivity {
         if(userProfile!=null)
         {
             TimerStatus timerStatus = userProfile.getTimerStatus();
+
+            // TestCode: Anuraag
+//            timerStatus = null;
              dailyBonus = timerStatus.getDailyBonus();
 
 

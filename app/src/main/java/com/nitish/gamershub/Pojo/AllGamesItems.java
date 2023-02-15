@@ -1,7 +1,9 @@
 package com.nitish.gamershub.Pojo;
 
 
-public class AllGamesItems  {
+import java.io.Serializable;
+
+public class AllGamesItems implements Serializable {
 
     String img_file;
     String  orientation;

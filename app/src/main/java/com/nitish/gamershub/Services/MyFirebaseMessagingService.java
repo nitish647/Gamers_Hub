@@ -34,6 +34,11 @@ import io.paperdb.Paper;
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public String TAG ="FirebaseNotification";
     Context context = this;
+
+    MyFirebaseMessagingService() {
+        Paper.init(context);
+    }
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 

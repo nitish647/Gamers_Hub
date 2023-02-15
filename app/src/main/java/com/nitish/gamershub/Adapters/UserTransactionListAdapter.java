@@ -1,5 +1,10 @@
 package com.nitish.gamershub.Adapters;
 
+import static com.nitish.gamershub.Utils.ConstantsHelper.TransactionMessage;
+import static com.nitish.gamershub.Utils.ConstantsHelper.TransactionStatusFailed;
+import static com.nitish.gamershub.Utils.ConstantsHelper.TransactionStatusPending;
+
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
@@ -13,6 +18,8 @@ import androidx.annotation.RequiresApi;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.nitish.gamershub.Activities.HomeActivity;
+import com.nitish.gamershub.Activities.TransactionHistoryActivity;
 import com.nitish.gamershub.Pojo.FireBase.UserTransactions;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.Utils.AppHelper;
@@ -65,16 +72,36 @@ public class UserTransactionListAdapter extends RecyclerView.Adapter<UserTransac
 //            holder.binding.transactionTypeText.setTextColor(context.getColor(R.color.paytmBlue));
         }
 
-        if(!userTransactionRequest.isTransactionComplete())
+        if (!userTransactionRequest.isTransactionComplete() || userTransactionRequest.getTransactionStatus().contains(TransactionStatusPending))
         {
-            holder.binding.statusTextview.setText("Pending");
+            holder.binding.statusTextview.setText("pending");
             holder.binding.statusTextview.setTextColor(Color.parseColor("#fd1b1b"));
+            holder.binding.infoTransactionButton.setVisibility(View.GONE);
+        }
+        else if(userTransactionRequest.getTransactionStatus().contains(TransactionStatusFailed)) {
+            holder.binding.statusTextview.setText("failed");
+            holder.binding.statusTextview.setTextColor(Color.parseColor("#fd1b1b"));
+            holder.binding.infoTransactionButton.setVisibility(View.VISIBLE);
+            holder.binding.infoTransactionStatus.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(userTransactionRequest.getTransactionMessage() != null) {
+                        showDialogMessage(userTransactionRequest.getTransactionMessage());
+                    } else {
+                        showDialogMessage(TransactionMessage);
+                    }
+                }
+            });
+
         }
         else {
-
-            holder.binding.statusTextview.setText("Success");
+            holder.binding.statusTextview.setText("success");
             holder.binding.statusTextview.setTextColor(Color.parseColor("#1fc648"));
+            holder.binding.infoTransactionButton.setVisibility(View.GONE);
         }
+
+
+
         holder.binding.transactionAmount.setText("₹ "+userTransactionRequest.getAmount());
         holder.binding.transactionCoins.setText(""+userTransactionRequest.getCoins());
 
@@ -114,6 +141,32 @@ public class UserTransactionListAdapter extends RecyclerView.Adapter<UserTransac
 
           this.binding =  userTransactionListLayoutBinding;
         }
+    }
+
+
+    private void showDialogMessage(String message) {
+        TransactionHistoryActivity.ConfirmationDialogListener confirmationDialogListener = new TransactionHistoryActivity.ConfirmationDialogListener() {
+            @Override
+            public void onDismissListener() {
+
+            }
+
+            @Override
+            public void onYesClick() {
+
+            }
+
+            @Override
+            public void onNoClick() {
+
+            }
+
+            @Override
+            public void onRewardGrantedListener() {
+
+            }
+        };
+        ((TransactionHistoryActivity) context).showConfirmationDialogSingleButtonDismissable("Ok", "Transaction Failed", message, confirmationDialogListener);
     }
 }
 
