@@ -15,7 +15,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    tools:context=".Activities.HomeActivity">
+    tools:context=".view.homePage.activity.HomeActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"

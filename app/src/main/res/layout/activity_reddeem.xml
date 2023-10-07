@@ -9,7 +9,7 @@
 
     android:layout_height="match_parent"
 
-    tools:context=".Activities.RedeemActivity">
+    tools:context=".view.rewards.activity.RedeemActivity">
     <RelativeLayout
 
         android:id="@+id/appBarLayoutRelative"

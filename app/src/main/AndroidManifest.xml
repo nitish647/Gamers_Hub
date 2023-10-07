@@ -12,15 +12,11 @@
         android:roundIcon="@mipmap/vector_icon2"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Utils.KotlinTestActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".Activities.ContactUsActivity"
+            android:name=".utils.KotlinTestActivity"
             android:exported="false" />
 
         <receiver
-            android:name=".BroadCastReceiver.TimeChangedReceiver"
+            android:name=".utils.broadcastReceivers.TimeChangedReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BATTERY_CHANGED" />
@@ -32,47 +28,39 @@
         </receiver>
 
         <activity
-            android:name=".Activities.FaqActivity"
+            android:name=".view.rewards.activity.FaqActivity"
             android:exported="false" />
         <activity
-            android:name=".Activities.RewardsActivity"
+            android:name=".view.rewards.activity.RewardsActivity"
             android:exported="false" />
         <activity
-            android:name=".Activities.EarnMoreActivity"
+            android:name=".view.rewards.activity.TransactionHistoryActivity"
             android:exported="false" />
         <activity
-            android:name=".Activities.TransactionHistoryActivity"
+            android:name=".view.rewards.activity.RedeemActivity"
             android:exported="false" />
         <activity
-            android:name=".Activities.RedeemActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Activities.LoginPage"
+            android:name=".view.loginSingup.activity.LoginActivity"
             android:exported="true" />
         <activity
-            android:name=".Activities.CategoryActivity"
+            android:name=".view.homePage.activity.CategoryActivity"
             android:exported="false" />
+
+
         <activity
-            android:name=".Activities.GamePlayActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Activities.GameDetailActivity2"
-            android:configChanges="orientation|screenSize"
-            android:exported="false" />
-        <activity
-            android:name=".Activities.HomeActivity"
+            android:name=".view.homePage.activity.HomeActivity"
             android:exported="false" />
 
         <service
-            android:name=".Services.MyFirebaseMessagingService"
-            android:exported="false">
+            android:name=".services.MyFirebaseMessagingService"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
         <activity
-            android:name=".Activities.Splash_Screen"
+            android:name=".view.loginSingup.activity.SplashScreen"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

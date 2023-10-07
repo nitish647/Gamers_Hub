@@ -15,7 +15,7 @@
     app:cardCornerRadius="15dp"
     android:layout_height="wrap_content">
 
-
+F
             <ImageView
                 android:background="@drawable/round_corners"
                 android:id="@+id/game_img"

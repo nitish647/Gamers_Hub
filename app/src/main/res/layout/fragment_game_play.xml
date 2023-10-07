@@ -50,7 +50,7 @@
 
 
 
-    <com.nitish.gamershub.Utils.MovableFloatingActionRelative
+    <com.nitish.gamershub.utils.customViews.MovableFloatingActionRelative
 
         android:backgroundTint="@android:color/white"
         android:background="@drawable/round_corners"
@@ -94,7 +94,7 @@
 
         </ImageView>
 </LinearLayout>
-    </com.nitish.gamershub.Utils.MovableFloatingActionRelative>
+    </com.nitish.gamershub.utils.customViews.MovableFloatingActionRelative>
 
 
 </FrameLayout>
