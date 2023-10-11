@@ -17,9 +17,17 @@ public class LoginSignUpViewModel extends ViewModel {
     public LiveData<NetworkResponse<UserProfile>> getUserProfileLD = loginSignupRepository.getUserProfileLD;
 
 
-    private void callGetUserProfile() {
+    public void callGetUserProfile() {
 
-        loginSignupRepository.callGetUserProfileGlobal();
+        loginSignupRepository.callGetUserProfile();
+
+    }
+
+    public LiveData<NetworkResponse<Object>> registerUserProfileLD = loginSignupRepository.registerUserProfileLD;
+
+    public void callRegisterUserProfile(UserProfile userProfile) {
+
+        loginSignupRepository.callSetUserProfile(userProfile);
 
     }
 

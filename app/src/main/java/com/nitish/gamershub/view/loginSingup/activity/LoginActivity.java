@@ -9,6 +9,9 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -31,6 +34,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.instacart.library.truetime.TrueTime;
+import com.nitish.gamershub.utils.NetworkResponse;
+import com.nitish.gamershub.utils.ToastHelper;
+import com.nitish.gamershub.utils.firebaseUtils.FireBaseService;
 import com.nitish.gamershub.view.homePage.activity.HomeActivity;
 import com.nitish.gamershub.databinding.ActivityLoginPageBinding;
 import com.nitish.gamershub.model.firebase.UserProfile;
@@ -39,6 +45,9 @@ import com.nitish.gamershub.utils.AppHelper;
 import com.nitish.gamershub.utils.timeUtils.DateTimeHelper;
 import com.nitish.gamershub.utils.DeviceHelper;
 import com.nitish.gamershub.view.base.BaseActivity;
+import com.nitish.gamershub.view.loginSingup.viewmodelRepo.LoginSignUpViewModel;
+
+import java.security.acl.Owner;
 
 import io.paperdb.Paper;
 import io.tempo.Tempo;
@@ -48,6 +57,7 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
     ActivityLoginPageBinding loginPageBinding;
     FirebaseFirestore firestoreDb;
 
+    private LoginSignUpViewModel viewModel;
 
     int RC_SIGN_IN =12345;
 
@@ -58,11 +68,15 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
         loginPageBinding = DataBindingUtil.setContentView(this, R.layout.activity_login_page);
         Paper.init(this);
         firestoreDb = FirebaseFirestore.getInstance();
+        viewModel =     ViewModelProviders.of(this).get(LoginSignUpViewModel.class);
 
 
-        showProgressBar();
+
+
+
         new  GetNetworkTimeAsync().execute();
 
+        bindObservers();
 
 
 
@@ -70,6 +84,53 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
     }
 
 
+    private void bindObservers()
+    {
+        viewModel.getUserProfileLD.observe(this, new Observer<NetworkResponse<UserProfile>>() {
+            @Override
+            public void onChanged(NetworkResponse<UserProfile> response) {
+                if (response instanceof NetworkResponse.Success) {
+
+                    dismissProgressBar();
+                } else if (response instanceof NetworkResponse.Error) {
+
+                   String message = ((NetworkResponse.Error<UserProfile>) response).getMessage();
+                   if(message.equals(FireBaseService.FirebaseMessage.DOCUMENT_DOES_NOT_EXISTS.toString()))
+                   {
+                       // for new users
+                       ToastHelper.customToast(LoginActivity.this,"registering");
+
+                   }
+                    dismissProgressBar();
+                } else if (response instanceof NetworkResponse.Loading) {
+
+                    showProgressBar();
+                }
+            }
+        });
+
+
+        viewModel.registerUserProfileLD.observe(this, new Observer<NetworkResponse<Object>>() {
+            @Override
+            public void onChanged(NetworkResponse<Object> response) {
+                if (response instanceof NetworkResponse.Success) {
+
+                    dismissProgressBar();
+                }
+                else if (response instanceof NetworkResponse.Error) {
+
+                    String message = ((NetworkResponse.Error<Object>) response).getMessage();
+
+                    dismissProgressBar();
+                }
+                else if (response instanceof NetworkResponse.Loading) {
+
+                    showProgressBar();
+                }
+            }
+        });
+
+    }
     public void setonClickListeners()
     {
         loginPageBinding.singInButton.setOnClickListener(new View.OnClickListener() {
@@ -77,19 +138,6 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
             public void onClick(View view) {
 
                 signIn();
-
-//
-//                List<AuthUI.IdpConfig> providers = Arrays.asList(
-//
-//
-//                        new AuthUI.IdpConfig.GoogleBuilder().build());
-//
-//
-//                Intent signInIntent = AuthUI.getInstance()
-//                        .createSignInIntentBuilder()
-//                        .setAvailableProviders(providers)
-//                        .build();
-//                signInLauncher.launch(signInIntent);
 
             }
         });
@@ -267,6 +315,7 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
             super.onPostExecute(o);
         }
     }
+
     public void startIntentForHome()
     {
 
@@ -390,5 +439,16 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
 
         Toast.makeText(this, "result "+ result.getIdpResponse()+" "+result.getResultCode(), Toast.LENGTH_SHORT).show();
 
+    }
+
+
+
+    private void callLoginUser()
+    {
+        viewModel.callGetUserProfile();
+    }
+    private void callRegisterUser(UserProfile userProfile)
+    {
+        viewModel.callRegisterUserProfile(userProfile);
     }
 }

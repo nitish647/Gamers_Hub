@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.gson.Gson;
+import com.google.protobuf.Any;
 import com.nitish.gamershub.model.firebase.UserProfile;
 import com.nitish.gamershub.utils.DataPassingHelper;
 import com.nitish.gamershub.utils.NetworkResponse;
@@ -30,11 +31,19 @@ public class LoginSignupRepository extends BaseRepository {
     public LiveData<NetworkResponse<UserProfile>> getUserProfileLD = getUserProfileMLD;
 
 
-
-    public void callGetUserProfileGlobal() {
+    public void callGetUserProfile() {
 
         getFireBaseDocumentReference(FireBaseService.getFirebaseUser(), getUserProfileMLD,UserProfile.class);
 
+    }
+
+
+    private MutableLiveData<NetworkResponse<Object>> registerUserProfileMLD = new MutableLiveData<>();
+    public LiveData<NetworkResponse<Object>> registerUserProfileLD = registerUserProfileMLD;
+
+    public void callSetUserProfile(UserProfile userProfile) {
+
+        setFirebaseDocumentReference(FireBaseService.getFirebaseUser(), registerUserProfileMLD,userProfile);
 
     }
 

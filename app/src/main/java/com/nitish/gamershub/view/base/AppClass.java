@@ -2,6 +2,8 @@ package com.nitish.gamershub.view.base;
 
 import android.app.Application;
 
+import io.paperdb.Paper;
+
 public class AppClass extends Application {
 
     private AppClass appClass = null;
@@ -10,6 +12,7 @@ public class AppClass extends Application {
     public void onCreate() {
         super.onCreate();
 
+        Paper.init(this);
         getInstance();
     }
 

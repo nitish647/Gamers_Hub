@@ -4,7 +4,7 @@ public abstract class NetworkResponse<T> {
 
 
     public static class Success<T> extends NetworkResponse<T> {
-        public T data = null;
+        private T data = null;
 
         public Success(T data) {
 
@@ -17,7 +17,7 @@ public abstract class NetworkResponse<T> {
     }
     public static class Error<T> extends NetworkResponse<T>
     {
-        public String message;
+        private String message;
         public Error(String message){
             this.message = message;
         }
