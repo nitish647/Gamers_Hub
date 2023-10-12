@@ -1,16 +1,13 @@
 package com.nitish.gamershub.view.loginSingup.activity;
 
-import static com.nitish.gamershub.utils.AppConstants.GamersHub_ParentCollection;
 import static com.nitish.gamershub.utils.AppConstants.UserInfo;
 import static com.nitish.gamershub.utils.AppConstants.UserMail;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
@@ -25,14 +22,10 @@ import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
 import com.instacart.library.truetime.TrueTime;
 import com.nitish.gamershub.utils.NetworkResponse;
 import com.nitish.gamershub.utils.ToastHelper;
@@ -47,60 +40,78 @@ import com.nitish.gamershub.utils.DeviceHelper;
 import com.nitish.gamershub.view.base.BaseActivity;
 import com.nitish.gamershub.view.loginSingup.viewmodelRepo.LoginSignUpViewModel;
 
-import java.security.acl.Owner;
-
 import io.paperdb.Paper;
 import io.tempo.Tempo;
 
-public class LoginActivity extends BaseActivity implements ActivityResultCallback<FirebaseAuthUIAuthenticationResult>{
+public class LoginActivity extends BaseActivity implements ActivityResultCallback<FirebaseAuthUIAuthenticationResult> {
 
-    ActivityLoginPageBinding loginPageBinding;
+    ActivityLoginPageBinding binding;
     FirebaseFirestore firestoreDb;
 
+    private UserProfile loginUserProfile;
+    private UserProfile registerUserProfile;
     private LoginSignUpViewModel viewModel;
 
-    int RC_SIGN_IN =12345;
+    int RC_SIGN_IN = 12345;
+    GoogleSignInAccount googleSignInAccount;
+    public static String Users_ParentDocument = "Users";
 
-    public  static String Users_ParentDocument ="Users";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        loginPageBinding = DataBindingUtil.setContentView(this, R.layout.activity_login_page);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_login_page);
         Paper.init(this);
         firestoreDb = FirebaseFirestore.getInstance();
-        viewModel =     ViewModelProviders.of(this).get(LoginSignUpViewModel.class);
+        viewModel = ViewModelProviders.of(this).get(LoginSignUpViewModel.class);
 
 
-
-
-
-        new  GetNetworkTimeAsync().execute();
+        new GetNetworkTimeAsync().execute();
 
         bindObservers();
 
 
-
-
     }
 
+    @Override
+    protected int getLayoutResourceId() {
+        return R.layout.activity_login_page;
+    }
 
-    private void bindObservers()
-    {
-        viewModel.getUserProfileLD.observe(this, new Observer<NetworkResponse<UserProfile>>() {
+    private void bindObservers() {
+        viewModel.loginUserLD.observe(this, new Observer<NetworkResponse<UserProfile>>() {
             @Override
             public void onChanged(NetworkResponse<UserProfile> response) {
                 if (response instanceof NetworkResponse.Success) {
-
                     dismissProgressBar();
+
+
+                    UserProfile userProfile = ((NetworkResponse.Success<UserProfile>) response).getData();
+                    UserProfile.ProfileData profileData = userProfile.getProfileData();
+                    profileData.setLastLogin(DateTimeHelper.getDatePojo().getGetCurrentDateString());
+                    userProfile.setProfileData(profileData);
+                    callUpdateUser(userProfile);
+
+
                 } else if (response instanceof NetworkResponse.Error) {
 
-                   String message = ((NetworkResponse.Error<UserProfile>) response).getMessage();
-                   if(message.equals(FireBaseService.FirebaseMessage.DOCUMENT_DOES_NOT_EXISTS.toString()))
-                   {
-                       // for new users
-                       ToastHelper.customToast(LoginActivity.this,"registering");
+                    String message = ((NetworkResponse.Error<UserProfile>) response).getMessage();
+                    if (message.equals(FireBaseService.FirebaseMessage.DOCUMENT_DOES_NOT_EXISTS.toString())) {
+                        // for new users
+                        ToastHelper.customToast(LoginActivity.this, "registering");
 
-                   }
+                        UserProfile userProfile = new UserProfile();
+
+                        UserProfile.ProfileData profileData = new UserProfile.ProfileData();
+
+                        // Find todays date
+                        profileData.setLastLogin(DateTimeHelper.getDatePojo().getGetCurrentDateString());
+                        profileData.setCreatedAt(DateTimeHelper.getDatePojo().getGetCurrentDateString());
+                        profileData.setDeviceInfo(DeviceHelper.getDeviceNameAndVersion());
+                        profileData.setEmail(googleSignInAccount.getEmail());
+                        profileData.setName(googleSignInAccount.getDisplayName());
+                        userProfile.setProfileData(profileData);
+                        callRegisterUser(userProfile);
+                    }
                     dismissProgressBar();
                 } else if (response instanceof NetworkResponse.Loading) {
 
@@ -115,25 +126,57 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
             public void onChanged(NetworkResponse<Object> response) {
                 if (response instanceof NetworkResponse.Success) {
 
+                    Toast.makeText(LoginActivity.this, "Welcome User", Toast.LENGTH_SHORT).show();
+                    Paper.book().write(UserMail, googleSignInAccount.getEmail());
+                    Paper.book().write(UserInfo, registerUserProfile);
+                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                    finish();
+
                     dismissProgressBar();
-                }
-                else if (response instanceof NetworkResponse.Error) {
+                } else if (response instanceof NetworkResponse.Error) {
 
                     String message = ((NetworkResponse.Error<Object>) response).getMessage();
 
                     dismissProgressBar();
-                }
-                else if (response instanceof NetworkResponse.Loading) {
+                } else if (response instanceof NetworkResponse.Loading) {
 
                     showProgressBar();
                 }
             }
         });
 
+        viewModel.updateUserProfileLD.observe(this, new Observer<NetworkResponse<Object>>() {
+            @Override
+            public void onChanged(NetworkResponse<Object> response) {
+                if (response instanceof NetworkResponse.Success) {
+
+                    Toast.makeText(LoginActivity.this, "Welcome Back", Toast.LENGTH_SHORT).show();
+                    dismissProgressBar();
+
+                    Paper.book().write(UserInfo, loginUserProfile);
+                    Paper.book().write(UserMail, googleSignInAccount.getEmail());
+                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                    finish();
+
+                } else if (response instanceof NetworkResponse.Error) {
+
+                    String message = ((NetworkResponse.Error<Object>) response).getMessage();
+
+                    dismissProgressBar();
+                } else if (response instanceof NetworkResponse.Loading) {
+
+                    showProgressBar();
+                }
+            }
+        });
+
+
     }
-    public void setonClickListeners()
-    {
-        loginPageBinding.singInButton.setOnClickListener(new View.OnClickListener() {
+
+    public void setonClickListeners() {
+        binding.singInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -144,10 +187,6 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
 
     }
 
-    @Override
-    protected int getLayoutResourceId() {
-        return R.layout.activity_login_page;
-    }
 
     private final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
             new FirebaseAuthUIActivityResultContract(),
@@ -178,100 +217,99 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
 
             // Successfully signed in
 //            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if(googleSignInAccountUser !=null && googleSignInAccountUser.getEmail()!=null) {
+            if (googleSignInAccountUser != null && googleSignInAccountUser.getEmail() != null) {
+
+                googleSignInAccount = googleSignInAccountUser;
                 AppHelper.saveGoogleSignInAccountUser(googleSignInAccountUser);
 
                 Paper.book().write(UserMail, googleSignInAccountUser.getEmail());
 
-
-                getUserProfileGlobal(new GetUserProfileDataListener() {
-                    @Override
-                    public void onTaskSuccessful(UserProfile userProfile) {
-
-                    }
-                });
-                firestoreDb.collection(GamersHub_ParentCollection).document(googleSignInAccountUser.getEmail()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        DocumentSnapshot documentSnapshot = task.getResult();
-                        if(task.isSuccessful()) {
-
-                            if (documentSnapshot.exists()) {
-
-                                // for existing users
-
-
-
-                                UserProfile userProfile =  documentSnapshot.toObject(UserProfile.class);
-
-
-                                UserProfile.ProfileData profileData = userProfile.getProfileData();
-
-
-                                profileData.setLastLogin(DateTimeHelper.getDatePojo().getGetCurrentDateString());
-
-
-                                userProfile.setProfileData(profileData);
-
-
-
-
-                                firestoreDb.collection(GamersHub_ParentCollection).document(googleSignInAccountUser.getEmail()).set(userProfile, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-
-                                        Toast.makeText(LoginActivity.this, "Welcome Back", Toast.LENGTH_SHORT).show();
-
-                                        Paper.book().write(UserInfo,userProfile);
-
-
-                                        startIntentForHome();
-
-                                    }
-                                });
-                            } else {
-
-
-                                // for new users
-
-                                UserProfile userProfile = new UserProfile();
-
-                                UserProfile.ProfileData profileData = new UserProfile.ProfileData();
-
-                                // Find todays date
-                                profileData.setLastLogin(DateTimeHelper.getDatePojo().getGetCurrentDateString());
-                                profileData.setCreatedAt(DateTimeHelper.getDatePojo().getGetCurrentDateString());
-                                profileData.setDeviceInfo(DeviceHelper.getDeviceNameAndVersion());
-                                profileData.setEmail(googleSignInAccountUser.getEmail());
-                                profileData.setName(googleSignInAccountUser.getDisplayName());
-
-                                userProfile.setProfileData(profileData);
-                                firestoreDb.collection(GamersHub_ParentCollection).document(googleSignInAccountUser.getEmail()).set(userProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-
-                                        Toast.makeText(LoginActivity.this, "Welcome User", Toast.LENGTH_SHORT).show();
-                                        Paper.book().write(UserInfo,userProfile);
-
-                                        AppHelper.saveGoogleSignInAccountUser(googleSignInAccountUser);
-                                        startIntentForHome();
-                                    }
-                                });
-
-                            }
-
-                        }
-
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(LoginActivity.this, "failed "+e, Toast.LENGTH_SHORT).show();
-
-                    }
-                });
-            }
-            else {
+                callLoginUser();
+//
+//                getUserProfileGlobal(new GetUserProfileDataListener() {
+//                    @Override
+//                    public void onTaskSuccessful(UserProfile userProfile) {
+//
+//                    }
+//                });
+//                firestoreDb.collection(GamersHub_ParentCollection).document(googleSignInAccountUser.getEmail()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                        DocumentSnapshot documentSnapshot = task.getResult();
+//                        if (task.isSuccessful()) {
+//
+//                            if (documentSnapshot.exists()) {
+//
+//                                // for existing users
+//
+//
+//                                UserProfile userProfile = documentSnapshot.toObject(UserProfile.class);
+//
+//
+//                                UserProfile.ProfileData profileData = userProfile.getProfileData();
+//
+//
+//                                profileData.setLastLogin(DateTimeHelper.getDatePojo().getGetCurrentDateString());
+//
+//
+//                                userProfile.setProfileData(profileData);
+//
+//
+//                                firestoreDb.collection(GamersHub_ParentCollection).document(googleSignInAccountUser.getEmail()).set(userProfile, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                    @Override
+//                                    public void onComplete(@NonNull Task<Void> task) {
+//
+//                                        Toast.makeText(LoginActivity.this, "Welcome Back", Toast.LENGTH_SHORT).show();
+//
+//                                        Paper.book().write(UserInfo, userProfile);
+//
+//
+//                                        startIntentForHome();
+//
+//                                    }
+//                                });
+//                            } else {
+//
+//
+//                                // for new users
+//
+//                                UserProfile userProfile = new UserProfile();
+//
+//                                UserProfile.ProfileData profileData = new UserProfile.ProfileData();
+//
+//                                // Find todays date
+//                                profileData.setLastLogin(DateTimeHelper.getDatePojo().getGetCurrentDateString());
+//                                profileData.setCreatedAt(DateTimeHelper.getDatePojo().getGetCurrentDateString());
+//                                profileData.setDeviceInfo(DeviceHelper.getDeviceNameAndVersion());
+//                                profileData.setEmail(googleSignInAccountUser.getEmail());
+//                                profileData.setName(googleSignInAccountUser.getDisplayName());
+//
+//                                userProfile.setProfileData(profileData);
+//                                firestoreDb.collection(GamersHub_ParentCollection).document(googleSignInAccountUser.getEmail()).set(userProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                    @Override
+//                                    public void onComplete(@NonNull Task<Void> task) {
+//
+//                                        Toast.makeText(LoginActivity.this, "Welcome User", Toast.LENGTH_SHORT).show();
+//                                        Paper.book().write(UserInfo, userProfile);
+//
+//                                        AppHelper.saveGoogleSignInAccountUser(googleSignInAccountUser);
+//                                        startIntentForHome();
+//                                    }
+//                                });
+//
+//                            }
+//
+//                        }
+//
+//                    }
+//                }).addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Toast.makeText(LoginActivity.this, "failed " + e, Toast.LENGTH_SHORT).show();
+//
+//                    }
+//                });
+            } else {
                 Toast.makeText(this, "user is null", Toast.LENGTH_SHORT).show();
             }
 
@@ -284,9 +322,7 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
         }
     }
 
-    public class GetNetworkTimeAsync extends AsyncTask<Object,Object,Object>
-    {
-
+    public class GetNetworkTimeAsync extends AsyncTask<Object, Object, Object> {
 
 
         @Override
@@ -294,9 +330,9 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
 
 
             try {
-                if(!TrueTime.isInitialized())
-                 TrueTime.build().withSharedPreferencesCache(LoginActivity.this);
-                if(!Tempo.isInitialized())
+                if (!TrueTime.isInitialized())
+                    TrueTime.build().withSharedPreferencesCache(LoginActivity.this);
+                if (!Tempo.isInitialized())
                     Tempo.initialize(getApplication());
 
             } catch (Exception e) {
@@ -316,120 +352,33 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
         }
     }
 
-    public void startIntentForHome()
-    {
+    public void startIntentForHome() {
 
 
         startActivityIntent(LoginActivity.this, HomeActivity.class);
         finish();
     }
+
     private void signIn() {
         Intent signInIntent = getGoogleSignInClient().getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
+
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
 
         if (result.getResultCode() == RESULT_OK) {
 
             // Successfully signed in
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if(user!=null && user.getEmail()!=null) {
 
-                firestoreDb.collection(GamersHub_ParentCollection).document(user.getEmail()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        DocumentSnapshot documentSnapshot = task.getResult();
-                        if(task.isSuccessful()) {
-
-                            if (documentSnapshot.exists()) {
-
-                                // for existing users
-
-
-
-                                UserProfile userProfile =  documentSnapshot.toObject(UserProfile.class);
-
-                                UserProfile.ProfileData profileData = userProfile.getProfileData();
-
-
-                                profileData.setLastLogin(DateTimeHelper.getDatePojo().getGetCurrentDateString());
-
-
-                                userProfile.setProfileData(profileData);
-
-
-
-
-                                firestoreDb.collection(GamersHub_ParentCollection).document(user.getEmail()).set(userProfile, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-
-                                        Toast.makeText(LoginActivity.this, "Welcome Back", Toast.LENGTH_SHORT).show();
-
-                                        Paper.book().write(UserInfo,userProfile);
-                                        Paper.book().write(UserMail,user.getEmail());
-                                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                });
-                            } else {
-
-
-                                // for new users
-
-                                UserProfile userProfile = new UserProfile();
-
-                                UserProfile.ProfileData profileData = new UserProfile.ProfileData();
-
-                               // Find todays date
-                                profileData.setLastLogin(DateTimeHelper.getDatePojo().getGetCurrentDateString());
-                                profileData.setCreatedAt(DateTimeHelper.getDatePojo().getGetCurrentDateString());
-                                profileData.setDeviceInfo(DeviceHelper.getDeviceNameAndVersion());
-                                profileData.setEmail(user.getEmail());
-                                profileData.setName(user.getDisplayName());
-
-                                userProfile.setProfileData(profileData);
-                                firestoreDb.collection(GamersHub_ParentCollection).document(user.getEmail()).set(userProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-
-                                        Toast.makeText(LoginActivity.this, "Welcome User", Toast.LENGTH_SHORT).show();
-                                        Paper.book().write(UserMail,user.getEmail());
-                                        Paper.book().write(UserInfo,userProfile);
-                                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                });
-
-                            }
-
-                        }
-
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(LoginActivity.this, "failed "+e, Toast.LENGTH_SHORT).show();
-
-                    }
-                });
-            }
-            else {
-                Toast.makeText(this, "user is null", Toast.LENGTH_SHORT).show();
-            }
 
             // ...
         } else {
 
 
-            Toast.makeText(this, "Login Failed "+ result.getIdpResponse()+" "+result.getResultCode(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Login Failed " + result.getIdpResponse() + " " + result.getResultCode(), Toast.LENGTH_SHORT).show();
 
-            // Sign in failed. If response is null the user canceled the
-            // sign-in flow using the back button. Otherwise check
-            // response.getError().getErrorCode() and handle the error.
-            // ...
+
         }
 
     }
@@ -437,18 +386,22 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
     @Override
     public void onActivityResult(FirebaseAuthUIAuthenticationResult result) {
 
-        Toast.makeText(this, "result "+ result.getIdpResponse()+" "+result.getResultCode(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "result " + result.getIdpResponse() + " " + result.getResultCode(), Toast.LENGTH_SHORT).show();
 
     }
 
 
-
-    private void callLoginUser()
-    {
-        viewModel.callGetUserProfile();
+    private void callLoginUser() {
+        viewModel.callLoginUser();
     }
-    private void callRegisterUser(UserProfile userProfile)
-    {
+
+    private void callRegisterUser(UserProfile userProfile) {
+        registerUserProfile = userProfile;
         viewModel.callRegisterUserProfile(userProfile);
+    }
+
+    private void callUpdateUser(UserProfile userProfile) {
+        loginUserProfile = userProfile;
+        viewModel.callUpdateUserProfile(userProfile);
     }
 }

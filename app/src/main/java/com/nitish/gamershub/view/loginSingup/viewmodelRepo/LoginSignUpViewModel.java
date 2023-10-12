@@ -1,7 +1,6 @@
 package com.nitish.gamershub.view.loginSingup.viewmodelRepo;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.nitish.gamershub.model.firebase.UserProfile;
@@ -14,12 +13,12 @@ public class LoginSignUpViewModel extends ViewModel {
 
 
 
-    public LiveData<NetworkResponse<UserProfile>> getUserProfileLD = loginSignupRepository.getUserProfileLD;
+    public LiveData<NetworkResponse<UserProfile>> loginUserLD = loginSignupRepository.getLoginUserLD;
 
 
-    public void callGetUserProfile() {
+    public void callLoginUser() {
 
-        loginSignupRepository.callGetUserProfile();
+        loginSignupRepository.callLoginUser();
 
     }
 
@@ -27,7 +26,14 @@ public class LoginSignUpViewModel extends ViewModel {
 
     public void callRegisterUserProfile(UserProfile userProfile) {
 
-        loginSignupRepository.callSetUserProfile(userProfile);
+        loginSignupRepository.callRegisterUserProfile(userProfile);
+
+    }
+    public LiveData<NetworkResponse<Object>> updateUserProfileLD = loginSignupRepository.updateUserProfileLD;
+
+    public void callUpdateUserProfile(UserProfile userProfile) {
+
+        loginSignupRepository.callUpdateUserProfile(userProfile);
 
     }
 

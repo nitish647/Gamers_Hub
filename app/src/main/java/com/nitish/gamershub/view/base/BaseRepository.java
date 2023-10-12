@@ -30,8 +30,7 @@ abstract public class BaseRepository {
 
             @Override
             public void documentExists(Boolean documentExists, DocumentSnapshot documentSnapshot) {
-                if(documentExists)
-                {
+                if (documentExists) {
                     try {
                         JSONObject jsonObject = new JSONObject(documentSnapshot.getData());
 
@@ -54,7 +53,6 @@ abstract public class BaseRepository {
 
 
                     mutableLiveData.postValue(new NetworkResponse.Error<>(FireBaseService.FirebaseMessage.DOCUMENT_DOES_NOT_EXISTS.toString()));
-
 
 
                 }
@@ -123,11 +121,19 @@ abstract public class BaseRepository {
 
     }
 
-    public <K> void setFirebaseDocumentReference(DocumentReference documentReference,MutableLiveData<NetworkResponse<K>> mutableLiveData,Object dataObject)
-    {
+    public <K> void setFirebaseDocumentReference(DocumentReference documentReference, MutableLiveData<NetworkResponse<K>> mutableLiveData, Object dataObject, SetOptions setOptions) {
+
+        Task<Void> task = null;
+        if (setOptions == null)
+            task = documentReference.set(dataObject);
+        else {
+            task = documentReference.set(dataObject, SetOptions.merge());
+        }
+
+
         mutableLiveData.postValue(new NetworkResponse.Loading<>());
 
-        documentReference.set(dataObject, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+        task.addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
 
