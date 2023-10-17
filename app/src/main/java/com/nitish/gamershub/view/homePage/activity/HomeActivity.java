@@ -87,8 +87,7 @@ public class HomeActivity extends BaseActivity {
     ActivityHomeBinding homeBinding;
 
 
-    int currentSelectedFragPosition=0;
-
+    int currentSelectedFragPosition = 0;
 
 
     HomeFragment homeFragment;
@@ -115,25 +114,21 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         homeBinding = DataBindingUtil.setContentView(this, R.layout.activity_home);
-
-        Paper.init(this);
 
 
         firestoreDb = FirebaseFirestore.getInstance();
         requestQueue = Volley.newRequestQueue(HomeActivity.this);
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(HomeActivity.this);
-        Paper.book().write(GoogleSignInAccountUser,acct);
+        Paper.book().write(GoogleSignInAccountUser, acct);
         setViews();
-
 
 
         String playStoreVersionCode = FirebaseRemoteConfig.getInstance().getString(
                 "appVersion");
 
-        Log.d("pResponse","playStoreVersionCode "+  playStoreVersionCode);
+        Log.d("pResponse", "playStoreVersionCode " + playStoreVersionCode);
 //        categoriesList = new ArrayList<>();
 //        navigationView.setVisibility(View.VISIBLE);
 
@@ -148,7 +143,7 @@ public class HomeActivity extends BaseActivity {
 
 //        setCategory();
 
-       MobileAds.initialize(this, new OnInitializationCompleteListener() {
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(@NonNull InitializationStatus initializationStatus) {
             }
@@ -165,14 +160,13 @@ public class HomeActivity extends BaseActivity {
 
         // just writing an empty favourite list to avoid null pointer when reading the data
 
-        if(!Paper.book().contains(FavouriteList)||Paper.book().read(FavouriteList)==null) {
+        if (!Paper.book().contains(FavouriteList) || Paper.book().read(FavouriteList) == null) {
             ArrayList<AllGamesItems> favouriteArrayList = new ArrayList<>();
             Paper.book().write(FavouriteList, favouriteArrayList);
         }
 
 
-
-            setBottomNavigationView();
+        setBottomNavigationView();
 
 
     }
@@ -183,8 +177,7 @@ public class HomeActivity extends BaseActivity {
     }
 
 
-    public void showLogOutDialog()
-    {
+    public void showLogOutDialog() {
         showConfirmationDialog("Confirmation", "Do you want to log out?", new ConfirmationDialogListener() {
             @Override
             public void onDismissListener() {
@@ -209,9 +202,8 @@ public class HomeActivity extends BaseActivity {
 
     }
 
-    public AdmobInterstitialAdListener interstitialAdListener()
-    {
-        return  new AdmobInterstitialAdListener() {
+    public AdmobInterstitialAdListener interstitialAdListener() {
+        return new AdmobInterstitialAdListener() {
             @Override
             public void onAdDismissed() {
 
@@ -236,51 +228,46 @@ public class HomeActivity extends BaseActivity {
         };
     }
 
-  public void   openGameDetailsActivity()
-    {
+    public void openGameDetailsActivity() {
 //        startActivityIntent(HomeActivity.this,GameDetailActivity2.class);
         Intent intent = new Intent(HomeActivity.this, GameDetailActivity2.class);
         intent.putExtra(From, HomeActivity.class.getSimpleName());
-        intent.putExtra(IntentData,  mAllGamesItems);
+        intent.putExtra(IntentData, mAllGamesItems);
         startActivity(intent);
 
     }
-    public void setBottomNavigationView()
-    {
+
+    public void setBottomNavigationView() {
 
 
-        homeFragment = HomeFragment.newInstance("","");
-        showHideFragment(homeFragment,homeFragment.getTag());
+        homeFragment = HomeFragment.newInstance("", "");
+        showHideFragment(homeFragment, homeFragment.getTag());
         homeBinding.bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 item.setChecked(true);
-                switch (item.getItemId())
-                {
+                switch (item.getItemId()) {
                     case R.id.homeMenu:
-                        if(homeFragment==null)
-                        {
-                            homeFragment = HomeFragment.newInstance("","");
+                        if (homeFragment == null) {
+                            homeFragment = HomeFragment.newInstance("", "");
 
                         }
-                        showHideFragment(homeFragment,homeFragment.getTag());
+                        showHideFragment(homeFragment, homeFragment.getTag());
 
 
                         break;
 
                     case R.id.profileMenu:
 
-                        if(profileFragment ==null)
-                        {
-                            profileFragment = profileFragment.newInstance("","");
+                        if (profileFragment == null) {
+                            profileFragment = profileFragment.newInstance("", "");
 
                         }
                         showHideFragment(profileFragment, profileFragment.getTag());
                         break;
                     case R.id.categoryGamesMenu:
-                        if(categoryGamesFragment ==null)
-                        {
-                            categoryGamesFragment = categoryGamesFragment.newInstance("","");
+                        if (categoryGamesFragment == null) {
+                            categoryGamesFragment = categoryGamesFragment.newInstance("", "");
 
                         }
                         showHideFragment(categoryGamesFragment, categoryGamesFragment.getTag());
@@ -291,24 +278,19 @@ public class HomeActivity extends BaseActivity {
         });
     }
 
-    public void showHideFragment(Fragment fragment ,String tag)
-    {
-        if(fragment==previousFragment)
-        {
+    public void showHideFragment(Fragment fragment, String tag) {
+        if (fragment == previousFragment) {
             return;
         }
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
-        if(!fragment.isAdded())
-        {
-           fragmentTransaction.add(R.id.frameLayout,fragment,tag);
-           if(previousFragment!=null)
-           {
-               fragmentTransaction.hide(previousFragment);
-           }
-        }
-        else {
+        if (!fragment.isAdded()) {
+            fragmentTransaction.add(R.id.frameLayout, fragment, tag);
+            if (previousFragment != null) {
+                fragmentTransaction.hide(previousFragment);
+            }
+        } else {
             fragmentTransaction.show(fragment);
             fragmentTransaction.hide(previousFragment);
         }
@@ -317,11 +299,7 @@ public class HomeActivity extends BaseActivity {
     }
 
 
-
-
-
-    public void updateUserInfo()
-    {
+    public void updateUserInfo() {
 
 
         getUserProfileGlobal(getUserProfileDataListener());
@@ -329,12 +307,11 @@ public class HomeActivity extends BaseActivity {
 
     }
 
-    public TimerStatus createTimerStatus()
-    {
-       TimerStatus timerStatus = new TimerStatus();
+    public TimerStatus createTimerStatus() {
+        TimerStatus timerStatus = new TimerStatus();
 
 
-       // DAILY BONUS
+        // DAILY BONUS
         TimerStatus.DailyBonus dailyBonus = new TimerStatus.DailyBonus();
 
         dailyBonus.setClaimed(false);
@@ -342,7 +319,7 @@ public class HomeActivity extends BaseActivity {
 
         String currentDateTime = DateTimeHelper.getDatePojo().getGetCurrentDateString();
 
-        dailyBonus.setLastResetDateTime(DateTimeHelper.resetDateToATime(currentDateTime,DateTimeHelper.time_7_am));
+        dailyBonus.setLastResetDateTime(DateTimeHelper.resetDateToATime(currentDateTime, DateTimeHelper.time_7_am));
         dailyBonus.setClaimedDate(currentDateTime);
 
         timerStatus.setDailyBonus(dailyBonus);
@@ -353,46 +330,40 @@ public class HomeActivity extends BaseActivity {
         watchViewReward.setClaimedTime(currentDateTime);
         timerStatus.setWatchViewReward(watchViewReward);
 
-        return  timerStatus;
+        return timerStatus;
     }
 
 
+    public void updateTimerStatus(TimerStatus.DailyBonus dailyBonus) {
 
-    public void updateTimerStatus(TimerStatus.DailyBonus dailyBonus)
-    {
-
-        firestoreDb.collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail)+"").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        firestoreDb.collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail) + "").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful())
-                {
+                if (task.isSuccessful()) {
                     DocumentSnapshot documentSnapshot = task.getResult();
 
-                    if(documentSnapshot.exists())
-                    {
+                    if (documentSnapshot.exists()) {
 
-                        UserProfile  userProfile=   documentSnapshot.toObject(UserProfile.class);
+                        UserProfile userProfile = documentSnapshot.toObject(UserProfile.class);
                         TimerStatus timerStatus = userProfile.getTimerStatus();
 
                         userProfile.getTimerStatus().setDailyBonus(dailyBonus);
                         userProfile.setTimerStatus(timerStatus);
 
-                        firestoreDb.collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail)+"").set(userProfile, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        firestoreDb.collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail) + "").set(userProfile, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                if(task.isSuccessful())
-                                {
+                                if (task.isSuccessful()) {
 
 
-                               //     Toast.makeText(HomeActivity.this, "daily earn enabled", Toast.LENGTH_LONG).show();
+                                    //     Toast.makeText(HomeActivity.this, "daily earn enabled", Toast.LENGTH_LONG).show();
 
 
                                 }
                             }
                         });
 
-                    }
-                    else {
+                    } else {
                         Toast.makeText(HomeActivity.this, "document does not exist11221", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -405,34 +376,28 @@ public class HomeActivity extends BaseActivity {
         });
 
 
-
     }
-    // post method
-    public void getTimeApi(TimerStatus.DailyBonus dailyBonus)
-    {
 
+    // post method
+    public void getTimeApi(TimerStatus.DailyBonus dailyBonus) {
 
 
         String url = getString(R.string.getCurrentTimeAsiaKolkata);
 
 
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url,null,
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
                         //    progressBarDialog.dismiss(); // close the progressbar
-                        Log.d("pResponse","offlinebillgenerate response : "+response.toString());
+                        Log.d("pResponse", "offlinebillgenerate response : " + response.toString());
                         try {
 
 
+                            if (response.has("dateTime")) {
 
-                            if(response.has("dateTime"))
-
-                            {
-
-                                NetWorkTimerResult netWorkTimerResult  = new Gson().fromJson(response.toString(),NetWorkTimerResult.class);
+                                NetWorkTimerResult netWorkTimerResult = new Gson().fromJson(response.toString(), NetWorkTimerResult.class);
                                 checkDailyBonus(netWorkTimerResult.toString(), dailyBonus);
                             }
 
@@ -441,7 +406,7 @@ public class HomeActivity extends BaseActivity {
 
                             Toast.makeText(context, " Error333 ,  ", Toast.LENGTH_LONG).show();
 
-                            Log.e("pError3223",e.toString());
+                            Log.e("pError3223", e.toString());
                             e.printStackTrace();
                         }
 
@@ -455,15 +420,11 @@ public class HomeActivity extends BaseActivity {
 //                        progressBarDialog.dismiss(); // close the progressbar
 
 
-                        Log.e("pError",error.toString());
+                        Log.e("pError", error.toString());
 
 
                     }
-                })
-
-
-
-        {
+                }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
@@ -472,8 +433,6 @@ public class HomeActivity extends BaseActivity {
 //             params.put("authtoken", Paper.book().read("authToken"));
 //
                 params.put("authtoken", Paper.book().read("authToken"));
-
-
 
 
                 return params;
@@ -488,130 +447,113 @@ public class HomeActivity extends BaseActivity {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
 
-
-
         requestQueue.add(jsonObjectRequest);
     }
-    private void  setTimerStatus(UserProfile userProfile)
-    {
-            TimerStatus.DailyBonus dailyBonus = userProfile.getTimerStatus().getDailyBonus();
 
-            if(dailyBonus!=null)
-            {
+    private void setTimerStatus(UserProfile userProfile) {
+        TimerStatus.DailyBonus dailyBonus = userProfile.getTimerStatus().getDailyBonus();
 
-                // when the daily bonus is claimed then check for the time
-                if(dailyBonus.getClaimed())
-                   getTimeApi(dailyBonus);
-                else
-                {
-                    showBottomSheet();
-                }
+        if (dailyBonus != null) {
 
-
-            }
+            // when the daily bonus is claimed then check for the time
+            if (dailyBonus.getClaimed())
+                getTimeApi(dailyBonus);
             else {
-             dailyBonus = new TimerStatus.DailyBonus();
-             userProfile.getTimerStatus().setDailyBonus(dailyBonus);
+                showBottomSheet();
             }
 
-            // initialize video reward
-        if(userProfile.getTimerStatus().getWatchViewReward()==null)
-        {
+
+        } else {
+            dailyBonus = new TimerStatus.DailyBonus();
+            userProfile.getTimerStatus().setDailyBonus(dailyBonus);
+        }
+
+        // initialize video reward
+        if (userProfile.getTimerStatus().getWatchViewReward() == null) {
             WatchViewReward watchViewReward = new WatchViewReward();
             watchViewReward.setClaimed(false);
             watchViewReward.setClaimedTime(DateTimeHelper.getDatePojo().getGetCurrentDateString());
 
             userProfile.getTimerStatus().setWatchViewReward(watchViewReward);
-        }
-        else {
+        } else {
 
             WatchViewReward watchViewReward = userProfile.getTimerStatus().getWatchViewReward();
 
-            if(!watchViewReward.isClaimed())
-            {
+            if (!watchViewReward.isClaimed()) {
                 showBottomSheet();
             }
         }
-        }
-        private void setGamePlayedStatus(UserProfile userProfile)
-        {
-            if(userProfile.getGamePlayedStatus()==null) {
-                GamePlayedStatus gamePlayedStatus = new GamePlayedStatus();
+    }
+
+    private void setGamePlayedStatus(UserProfile userProfile) {
+        if (userProfile.getGamePlayedStatus() == null) {
+            GamePlayedStatus gamePlayedStatus = new GamePlayedStatus();
+            gamePlayedStatus.setLastGamePlayedDate(DateTimeHelper.getDatePojo().getGetCurrentDateString());
+            userProfile.setGamePlayedStatus(gamePlayedStatus);
+        } else {
+            GamePlayedStatus gamePlayedStatus = userProfile.getGamePlayedStatus();
+            if (gamePlayedStatus.getLastGamePlayedDate() == null
+                    || gamePlayedStatus.getLastGamePlayedDate().trim().isEmpty()) {
                 gamePlayedStatus.setLastGamePlayedDate(DateTimeHelper.getDatePojo().getGetCurrentDateString());
-                userProfile.setGamePlayedStatus(gamePlayedStatus);
             }
-            else {
-                GamePlayedStatus gamePlayedStatus = userProfile.getGamePlayedStatus();
-                if(gamePlayedStatus.getLastGamePlayedDate()==null
-                ||gamePlayedStatus.getLastGamePlayedDate().trim().isEmpty())
-                {
-                    gamePlayedStatus.setLastGamePlayedDate(DateTimeHelper.getDatePojo().getGetCurrentDateString());
-                }
-                // reset the game play limit if current date is greater to the last played date
-                else   if(DateTimeHelper.compareDate(DateTimeHelper.getDatePojo().getGetCurrentDateString(),gamePlayedStatus.getLastGamePlayedDate())>0)
-                {
-                   gamePlayedStatus.setLastGamePlayedDate(DateTimeHelper.getDatePojo().getGetCurrentDateString());
-                    gamePlayedStatus.setGamePlayedToday(0);
+            // reset the game play limit if current date is greater to the last played date
+            else if (DateTimeHelper.compareDate(DateTimeHelper.getDatePojo().getGetCurrentDateString(), gamePlayedStatus.getLastGamePlayedDate()) > 0) {
+                gamePlayedStatus.setLastGamePlayedDate(DateTimeHelper.getDatePojo().getGetCurrentDateString());
+                gamePlayedStatus.setGamePlayedToday(0);
 
-                }
-                userProfile.setGamePlayedStatus(gamePlayedStatus);
             }
+            userProfile.setGamePlayedStatus(gamePlayedStatus);
         }
+    }
 
-        private void updateTransactionStatus(UserProfile userProfile)
-        {
-         UserTransactions userTransactions = userProfile.getUserTransactions();
-            int isTransactionPending = 0;
-         if(userTransactions!=null && userTransactions.getTransactionRequestArrayList()!=null)
-         {
-             for(UserTransactions.TransactionRequest transactionRequest : userTransactions.getTransactionRequestArrayList())
-             {
+    private void updateTransactionStatus(UserProfile userProfile) {
+        UserTransactions userTransactions = userProfile.getUserTransactions();
+        int isTransactionPending = 0;
+        if (userTransactions != null && userTransactions.getTransactionRequestArrayList() != null) {
+            for (UserTransactions.TransactionRequest transactionRequest : userTransactions.getTransactionRequestArrayList()) {
 
 
-                 // todo
+                // todo
 //                 if((transactionRequest.transactionStatus == null) )
 //                     continue;
-                 // add  a condition with transactionRequest.isTransactionComplete
+                // add  a condition with transactionRequest.isTransactionComplete
 //                 if ( !transactionRequest.isTransactionComplete() ||
 //                         transactionRequest.transactionStatus.equals(ConstantsHelper.TransactionStatusPending))
 //
-                 if ( !transactionRequest.isTransactionComplete()) {
-                     isTransactionPending = 1;
-                     break;
-                 }
-             }
-         }
-          UserAccountStatus userAccountStatus =  userProfile.getUserAccountStatus();
-         userAccountStatus.setAnyTransactionsPending(isTransactionPending);
+                if (!transactionRequest.isTransactionComplete()) {
+                    isTransactionPending = 1;
+                    break;
+                }
+            }
         }
+        UserAccountStatus userAccountStatus = userProfile.getUserAccountStatus();
+        userAccountStatus.setAnyTransactionsPending(isTransactionPending);
+    }
 
 
-
-
-    public void startIntent(AllGamesItems allGamesItems)
-    {
+    public void startIntent(AllGamesItems allGamesItems) {
         mAllGamesItems = allGamesItems;
-          showInterstitialAdNew(interstitialAdListener());
+        showInterstitialAdNew(interstitialAdListener());
 
     }
-    public void setUpBannerAd()
-    {
+
+    public void setUpBannerAd() {
 
         AdRequest adRequest = new AdRequest.Builder().build();
         homeBinding.googleBannerAdView.loadAd(adRequest);
 
     }
 
-    public  void checkDailyBonus(String currentTime, TimerStatus.DailyBonus dailyBonus) {
+    public void checkDailyBonus(String currentTime, TimerStatus.DailyBonus dailyBonus) {
 
         String lastModifiedTime = dailyBonus.getLastResetDateTime();
-        Log.d("pResponse","current time "+currentTime);
+        Log.d("pResponse", "current time " + currentTime);
 
         Date date1CurrentDate1 = null;
         try {
             date1CurrentDate1 = DateTimeHelper.convertStringIntoDate(currentTime);
             Date date2lastModifiedTime = DateTimeHelper.convertStringIntoDate(lastModifiedTime);
-            long mills =  date1CurrentDate1.getTime()-date2lastModifiedTime.getTime() ;
+            long mills = date1CurrentDate1.getTime() - date2lastModifiedTime.getTime();
 
 
             Log.v("Data1", "" + date1CurrentDate1.toString());
@@ -622,19 +564,18 @@ public class HomeActivity extends BaseActivity {
             int mins = (int) (mills / (1000 * 60)) % 60;
 
             String diff = hours + ":" + mins; // u
-            Log.d("pTimer","time difference " + diff);
+            Log.d("pTimer", "time difference " + diff);
 
 
             // reset the time to 8 pm when the time difference is 24 hours
             // enable the daily bonus
-            if(hours>=24)
-            {
+            if (hours >= 24) {
                 showBottomSheet();
                 dailyBonus.setClaimed(false);
-                dailyBonus.setClaimedDate(DateTimeHelper.getDatePojo().getSimpleDateFormat().format(date1CurrentDate1)+"");
-                dailyBonus.setLastResetDateTime(DateTimeHelper.resetDateToATime(date1CurrentDate1,DateTimeHelper.time_7_am));
+                dailyBonus.setClaimedDate(DateTimeHelper.getDatePojo().getSimpleDateFormat().format(date1CurrentDate1) + "");
+                dailyBonus.setLastResetDateTime(DateTimeHelper.resetDateToATime(date1CurrentDate1, DateTimeHelper.time_7_am));
 
-                Log.d("pTimer","Calender timer " +  DateTimeHelper.getDatePojo().getSimpleDateFormat().format(date1CurrentDate1));
+                Log.d("pTimer", "Calender timer " + DateTimeHelper.getDatePojo().getSimpleDateFormat().format(date1CurrentDate1));
                 updateTimerStatus(dailyBonus);
 
 
@@ -642,8 +583,8 @@ public class HomeActivity extends BaseActivity {
             }
 
 
-        } catch ( Exception e) {
-            Log.d("pTimer","Hello, error ! " + e);
+        } catch (Exception e) {
+            Log.d("pTimer", "Hello, error ! " + e);
 
             e.printStackTrace();
         }
@@ -661,11 +602,12 @@ public class HomeActivity extends BaseActivity {
         super.onPause();
     }
 
-    /** Called when returning to the activity */
+    /**
+     * Called when returning to the activity
+     */
     @Override
     public void onResume() {
         super.onResume();
-
 
 
         if (homeBinding.googleBannerAdView != null) {
@@ -676,7 +618,9 @@ public class HomeActivity extends BaseActivity {
 
     }
 
-    /** Called before the activity is destroyed */
+    /**
+     * Called before the activity is destroyed
+     */
     @Override
     public void onDestroy() {
         if (homeBinding.googleBannerAdView != null) {
@@ -687,41 +631,32 @@ public class HomeActivity extends BaseActivity {
     }
 
 
-
     @Override
     protected void onStop() {
         super.onStop();
 
         interstitialAdDismissed = false;
-     //   Toast.makeText(this, "On stop", Toast.LENGTH_SHORT).show();
+        //   Toast.makeText(this, "On stop", Toast.LENGTH_SHORT).show();
 
 
     }
 
 
+    public void setHeader() {
 
 
-    public void setHeader()
-    {
+        if (getGoogleSignInAccount() != null) {
 
+            Log.d("pResonse", "google id name" + getGoogleSignInAccount().getDisplayName() + " image " + getGoogleSignInAccount().getPhotoUrl());
 
-
-        if(getGoogleSignInAccount()!=null) {
-
-            Log.d("pResonse","google id name"+getGoogleSignInAccount().getDisplayName()+" image "+getGoogleSignInAccount().getPhotoUrl());
-
-        }
-        else {
+        } else {
             Toast.makeText(this, "current user is null", Toast.LENGTH_SHORT).show();
         }
 
 
-
-
-
     }
-    public void setViews()
-    {
+
+    public void setViews() {
 
 
         progressDialog = ProgressBarHelper.setProgressBarDialog(this);
@@ -729,9 +664,8 @@ public class HomeActivity extends BaseActivity {
 
     }
 
-    public GetUserProfileDataListener getUserProfileDataListener()
-    {
-        return  new GetUserProfileDataListener() {
+    public GetUserProfileDataListener getUserProfileDataListener() {
+        return new GetUserProfileDataListener() {
             @Override
             public void onTaskSuccessful(UserProfile userProfile) {
 
@@ -740,18 +674,15 @@ public class HomeActivity extends BaseActivity {
                         @Override
                         public void onTaskSuccessful(GamersHubData gamersHubData) {
 
-                            if( !AppHelper.isAppUpdated()) {
+                            if (!AppHelper.isAppUpdated()) {
                                 showUpdate(gamersHubData);
                             }
 
                         }
                     });
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
 
                 }
-
 
 
                 if (userProfile.getTimerStatus() != null) {
@@ -759,21 +690,18 @@ public class HomeActivity extends BaseActivity {
                     setTimerStatus(userProfile);
 
 
-                }
-                else {
+                } else {
                     userProfile.setTimerStatus(createTimerStatus());
                 }
 
-                    setGamePlayedStatus(userProfile);
+                setGamePlayedStatus(userProfile);
 
 
-                if(userProfile.getUserAccountStatus()==null)
-                {
+                if (userProfile.getUserAccountStatus() == null) {
                     UserAccountStatus userAccountStatus = new UserAccountStatus();
                     userAccountStatus.setSuspensionInfo(getString(R.string.suspensionMessage));
                     userProfile.setUserAccountStatus(userAccountStatus);
-                }
-                else {
+                } else {
                     getUserAccountStatus(userProfile);
                 }
 
@@ -787,12 +715,10 @@ public class HomeActivity extends BaseActivity {
 
                 if (profileData != null) {
 
-                    if(profileData.getName()==null|| profileData.getName().trim().isEmpty())
-                    {
+                    if (profileData.getName() == null || profileData.getName().trim().isEmpty()) {
                         profileData.setName(UserProfile.ProfileData.getProfileData().getName());
                     }
-                    if(profileData.getEmail()==null|| profileData.getEmail().trim().isEmpty())
-                    {
+                    if (profileData.getEmail() == null || profileData.getEmail().trim().isEmpty()) {
                         profileData.setEmail(UserProfile.ProfileData.getProfileData().getEmail());
                     }
                     profileData.setVersionName(AppHelper.getAppVersionName(HomeActivity.this));
@@ -805,8 +731,7 @@ public class HomeActivity extends BaseActivity {
                     userProfile.setProfileData(profileData);
 
 
-                }
-                else {
+                } else {
                     UserProfile.ProfileData profileData1 = new UserProfile.ProfileData();
                     userProfile.setProfileData(profileData1);
                 }
@@ -823,12 +748,10 @@ public class HomeActivity extends BaseActivity {
         };
     }
 
-    public void getUserAccountStatus(UserProfile userProfile)
-    {
-        UserAccountStatus userAccountStatus =  userProfile.getUserAccountStatus();
+    public void getUserAccountStatus(UserProfile userProfile) {
+        UserAccountStatus userAccountStatus = userProfile.getUserAccountStatus();
 
-        if(userAccountStatus.getAccountStatus()!= AppConstants.AccountActive)
-        {
+        if (userAccountStatus.getAccountStatus() != AppConstants.AccountActive) {
             showSuspendDialog(userAccountStatus.getSuspensionMessage());
         }
 
@@ -836,40 +759,37 @@ public class HomeActivity extends BaseActivity {
         updateTransactionStatus(userProfile);
     }
 
-   public void showUpdate(GamersHubData gamersHubData){
-       ConfirmationDialogListener confirmationDialogListener = new ConfirmationDialogListener() {
-           @Override
-           public void onDismissListener() {
+    public void showUpdate(GamersHubData gamersHubData) {
+        ConfirmationDialogListener confirmationDialogListener = new ConfirmationDialogListener() {
+            @Override
+            public void onDismissListener() {
 
-           }
+            }
 
-           @Override
-           public void onYesClick() {
-               openPlayStore();
-           }
+            @Override
+            public void onYesClick() {
+                openPlayStore();
+            }
 
-           @Override
-           public void onNoClick() {
+            @Override
+            public void onNoClick() {
 
-           }
+            }
 
-           @Override
-           public void onRewardGrantedListener() {
+            @Override
+            public void onRewardGrantedListener() {
 
-           }
-       };
+            }
+        };
 
-        if(gamersHubData.getGamesData().isForceUpdate())
-        {
-            showConfirmationDialogSingleButton("Update","Pending Update","A new update of the app has been released , please update ",confirmationDialogListener);
+        if (gamersHubData.getGamesData().isForceUpdate()) {
+            showConfirmationDialogSingleButton("Update", "Pending Update", "A new update of the app has been released , please update ", confirmationDialogListener);
 
-        }
-        else {
-            showConfirmationDialog("Pending Update","A new update of the app has been released , please update ",confirmationDialogListener
+        } else {
+            showConfirmationDialog("Pending Update", "A new update of the app has been released , please update ", confirmationDialogListener
             );
         }
     }
-
 
 
 }

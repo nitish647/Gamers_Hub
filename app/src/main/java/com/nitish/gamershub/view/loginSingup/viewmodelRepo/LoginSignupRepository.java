@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.firestore.SetOptions;
+import com.nitish.gamershub.model.firebase.GamersHubData;
 import com.nitish.gamershub.model.firebase.UserProfile;
 import com.nitish.gamershub.utils.NetworkResponse;
 import com.nitish.gamershub.utils.firebaseUtils.FireBaseService;
@@ -38,6 +39,15 @@ public class LoginSignupRepository extends BaseRepository {
     public void callUpdateUserProfile(UserProfile userProfile) {
 
         setFirebaseDocumentReference(FireBaseService.getFirebaseUser(), updateUserProfileMLD,userProfile, null);
+
+    }
+
+    private MutableLiveData<NetworkResponse<GamersHubData>> getGamersHubDataMLD = new MutableLiveData<>();
+    public LiveData<NetworkResponse<GamersHubData>> getGamersHubDataLD = getGamersHubDataMLD;
+
+    public void callGetGamersHubData() {
+
+        getFireBaseDocumentReference(FireBaseService.getFirebaseUser(), getGamersHubDataMLD, GamersHubData.class);
 
     }
 

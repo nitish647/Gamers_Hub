@@ -46,7 +46,9 @@
         <activity
             android:name=".view.homePage.activity.CategoryActivity"
             android:exported="false" />
-
+        <activity
+            android:name=".view.gamePlay.GameDetailActivity2"
+            android:exported="false" />
 
         <activity
             android:name=".view.homePage.activity.HomeActivity"
