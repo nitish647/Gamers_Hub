@@ -67,7 +67,7 @@ public class AppConstants {
 
 
     public static String PrefGamersHubMain="PrefGamersHubMain";
-
+    public static String PrefUserProfile="PrefUserProfile";
 
 
 

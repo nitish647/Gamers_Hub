@@ -1,9 +1,13 @@
 package com.nitish.gamershub.view.loginSingup.viewmodelRepo;
 
+import android.content.Context;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.nitish.gamershub.model.firebase.GamersHubData;
 import com.nitish.gamershub.model.firebase.UserProfile;
+import com.nitish.gamershub.model.local.NetWorkTimerResult;
 import com.nitish.gamershub.utils.NetworkResponse;
 
 public class LoginSignUpViewModel extends ViewModel {
@@ -34,6 +38,22 @@ public class LoginSignUpViewModel extends ViewModel {
     public void callUpdateUserProfile(UserProfile userProfile) {
 
         loginSignupRepository.callUpdateUserProfile(userProfile);
+
+    }
+
+    public LiveData<NetworkResponse<GamersHubData>> getGamersHubDataLD = loginSignupRepository.getGamersHubDataLD;
+
+    public void callGetGamersHub() {
+
+        loginSignupRepository.callGetGamersHubData();
+
+    }
+
+    public LiveData<NetworkResponse<NetWorkTimerResult>> getNetworkTime = loginSignupRepository.getNetworkTimeLD;
+
+    public void callNetworkTime(Context context) {
+
+        loginSignupRepository.callGetNetworkTime(context);
 
     }
 

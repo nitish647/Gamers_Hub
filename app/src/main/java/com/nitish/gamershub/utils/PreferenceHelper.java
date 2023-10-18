@@ -4,6 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 
+import androidx.annotation.NonNull;
+
+import com.google.gson.Gson;
+import com.nitish.gamershub.model.firebase.UserProfile;
+
 import java.util.prefs.Preferences;
 
 public class PreferenceHelper {
@@ -13,7 +18,7 @@ public class PreferenceHelper {
     private SharedPreferences.Editor editor = null;
 
 
-    PreferenceHelper(Context context) {
+    public PreferenceHelper(Context context) {
 
         sharedPreferences = initializeSharePreferences(context);
 
@@ -40,9 +45,9 @@ public class PreferenceHelper {
 
     }
 
-    public void getString(String name, String defaultValue) {
+    public String getString(String name, String defaultValue) {
 
-        sharedPreferences.getString(name, defaultValue);
+        return sharedPreferences.getString(name, defaultValue);
     }
 
     public void saveBoolean(String name, Boolean value) {
@@ -51,9 +56,9 @@ public class PreferenceHelper {
 
     }
 
-    public void getBoolean(String name, Boolean defaultValue) {
+    public Boolean getBoolean(String name, Boolean defaultValue) {
 
-        sharedPreferences.getBoolean(name, defaultValue);
+        return sharedPreferences.getBoolean(name, defaultValue);
     }
 
     public void saveInt(String name, Integer value) {
@@ -62,9 +67,9 @@ public class PreferenceHelper {
 
     }
 
-    public void getInt(String name, Integer defaultValue) {
+    public Integer getInt(String name, Integer defaultValue) {
 
-        sharedPreferences.getInt(name, defaultValue);
+        return sharedPreferences.getInt(name, defaultValue);
     }
 
     public void saveFloat(String name, Float value) {
@@ -74,14 +79,24 @@ public class PreferenceHelper {
     }
 
 
-    public void getFloat(String name, Float defaultValue) {
+    public Float getFloat(String name, Float defaultValue) {
 
-        sharedPreferences.getFloat(name, defaultValue);
+        return sharedPreferences.getFloat(name, defaultValue);
     }
 
 
+    public void saveUserProfile(@NonNull UserProfile userProfile) {
+        String userProfileString = new Gson().toJson(userProfile);
+        saveString(AppConstants.PrefUserProfile, userProfileString);
+    }
 
+    public UserProfile getUserProfile() {
+        String userProfileString = getString(AppConstants.PrefUserProfile, "");
 
+        UserProfile userProfile = new Gson().fromJson(userProfileString, UserProfile.class);
+        return userProfile;
+
+    }
 
 
 }

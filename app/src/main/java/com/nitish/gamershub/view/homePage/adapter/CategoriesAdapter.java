@@ -20,9 +20,9 @@ import java.util.List;
 
 public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.MyViewHolder> {
 
-    public static
 
-    Context context;
+
+   private Context context;
     List<Categories> categoriesList;
 
     public CategoriesAdapter(Context context, List<Categories> categoriesList) {

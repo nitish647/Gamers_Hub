@@ -56,6 +56,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.SetOptions;
 import com.google.gson.Gson;
+import com.nitish.gamershub.utils.PreferenceHelper;
 import com.nitish.gamershub.view.homePage.activity.HomeActivity;
 import com.nitish.gamershub.view.dialogs.BottomSheetDialog;
 import com.nitish.gamershub.utils.interfaces.AdmobInterstitialAdListener;
@@ -104,6 +105,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private UserProfile userProfileGlobal;
     private GamersHubData gamersHubDataGlobal;
     TimeChangedReceiver2 timeChangedReceiver2;
+    PreferenceHelper preferenceHelper;
     static boolean bottomSheetDialogShown = false;
 
     @Nullable
@@ -120,6 +122,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         Paper.init(this);
         progressDialog = ProgressBarHelper.setProgressBarDialog(BaseActivity.this);
+        preferenceHelper = new PreferenceHelper(this);
         timeChangedReceiver2 = new TimeChangedReceiver2();
 
         logOutDialog2();
@@ -163,6 +166,10 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .build();
     }
 
+    public PreferenceHelper getPreferencesMain()
+    {
+        return preferenceHelper;
+    }
 
     public void getGamersHubData(GetGamersHubDataListener gamersHubDataListener) {
 

@@ -1,6 +1,7 @@
 package com.nitish.gamershub.view.homePage.activity;
 
-import static com.nitish.gamershub.view.homePage.adapter.CategoriesAdapter.context;
+import static com.nitish.gamershub.utils.AppConstants.GamersHubDataGlobal;
+import static com.nitish.gamershub.utils.AppConstants.UserInfo;
 import static com.nitish.gamershub.utils.AppConstants.FavouriteList;
 import static com.nitish.gamershub.utils.AppConstants.From;
 import static com.nitish.gamershub.utils.AppConstants.GamersHub_ParentCollection;
@@ -20,6 +21,8 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -46,6 +49,9 @@ import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.gson.Gson;
 import com.nitish.gamershub.databinding.ActivityHomeBinding;
+import com.nitish.gamershub.utils.NetworkResponse;
+import com.nitish.gamershub.utils.ToastHelper;
+import com.nitish.gamershub.utils.firebaseUtils.FireBaseService;
 import com.nitish.gamershub.utils.interfaces.AdmobInterstitialAdListener;
 import com.nitish.gamershub.model.local.AllGamesItems;
 import com.nitish.gamershub.model.firebase.AdViewedStats;
@@ -69,6 +75,8 @@ import com.nitish.gamershub.view.gamePlay.GameDetailActivity2;
 import com.nitish.gamershub.view.homePage.fragment.CategoryGamesFragment;
 import com.nitish.gamershub.view.homePage.fragment.HomeFragment;
 import com.nitish.gamershub.view.homePage.fragment.ProfileFragment;
+import com.nitish.gamershub.view.loginSingup.activity.LoginActivity;
+import com.nitish.gamershub.view.loginSingup.viewmodelRepo.LoginSignUpViewModel;
 
 import org.json.JSONObject;
 
@@ -98,17 +106,20 @@ public class HomeActivity extends BaseActivity {
     RequestQueue requestQueue;
 
     boolean interstitialAdDismissed = false;
+    private LoginSignUpViewModel viewModel;
 
     private RewardedAd rewardedAd;
     boolean isLoading;
     ArrayList<AllGamesItems> mainGamesArrayList;
     ProgressDialog progressDialog;
+    TimerStatus.DailyBonus dailyBonusToUpdate;
 
 
     // firebase auth
 
     FirebaseFirestore firestoreDb;
 
+    UserProfile updatedUserProfile;
 
     AllGamesItems mAllGamesItems;
 
@@ -117,14 +128,14 @@ public class HomeActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         homeBinding = DataBindingUtil.setContentView(this, R.layout.activity_home);
 
-
+        viewModel = ViewModelProviders.of(this).get(LoginSignUpViewModel.class);
         firestoreDb = FirebaseFirestore.getInstance();
         requestQueue = Volley.newRequestQueue(HomeActivity.this);
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(HomeActivity.this);
         Paper.book().write(GoogleSignInAccountUser, acct);
         setViews();
-
-
+        updateUserProfileData((UserProfile) Paper.book().read(UserInfo));
+        bindObservers();
         String playStoreVersionCode = FirebaseRemoteConfig.getInstance().getString(
                 "appVersion");
 
@@ -134,7 +145,7 @@ public class HomeActivity extends BaseActivity {
 
         NotificationHelper.generateFcmToken();
         setHeader();
-        updateUserInfo();
+//        updateUserInfo();
 
         loadInterstitialAdNew();
         setUpBannerAd();
@@ -171,11 +182,94 @@ public class HomeActivity extends BaseActivity {
 
     }
 
+
     @Override
     protected int getLayoutResourceId() {
         return R.layout.activity_home;
     }
 
+
+    private void bindObservers() {
+
+        viewModel.updateUserProfileLD.observe(this, new Observer<NetworkResponse<Object>>() {
+            @Override
+            public void onChanged(NetworkResponse<Object> response) {
+                if (response instanceof NetworkResponse.Success) {
+
+
+                    dismissProgressBar();
+
+
+                    Paper.book().write(UserInfo, updatedUserProfile);
+
+                    callGetGamersHubData();
+
+
+                } else if (response instanceof NetworkResponse.Error) {
+
+                    String message = ((NetworkResponse.Error<Object>) response).getMessage();
+
+                    dismissProgressBar();
+                } else if (response instanceof NetworkResponse.Loading) {
+
+                    showProgressBar();
+                }
+            }
+        });
+
+        viewModel.getGamersHubDataLD.observe(this, new Observer<NetworkResponse<GamersHubData>>() {
+
+            @Override
+            public void onChanged(NetworkResponse<GamersHubData> response) {
+                if (response instanceof NetworkResponse.Success) {
+                    dismissProgressBar();
+
+                    GamersHubData gamersHubData = ((NetworkResponse.Success<GamersHubData>) response).getData();
+
+
+                    if (!AppHelper.isAppUpdated()) {
+                        showUpdate(gamersHubData);
+                    }
+
+
+                } else if (response instanceof NetworkResponse.Error) {
+
+                    String message = ((NetworkResponse.Error<GamersHubData>) response).getMessage();
+
+                    dismissProgressBar();
+                } else if (response instanceof NetworkResponse.Loading) {
+
+                    showProgressBar();
+                }
+            }
+        });
+
+        viewModel.getNetworkTime.observe(this, new Observer<NetworkResponse<NetWorkTimerResult>>() {
+
+            @Override
+            public void onChanged(NetworkResponse<NetWorkTimerResult> response) {
+                if (response instanceof NetworkResponse.Success) {
+                    dismissProgressBar();
+
+                    NetWorkTimerResult netWorkTimerResult = ((NetworkResponse.Success<NetWorkTimerResult>) response).getData();
+
+
+                    checkDailyBonus(netWorkTimerResult.toString(), dailyBonusToUpdate);
+
+
+                } else if (response instanceof NetworkResponse.Error) {
+
+                    String message = ((NetworkResponse.Error<NetWorkTimerResult>) response).getMessage();
+
+                    dismissProgressBar();
+                } else if (response instanceof NetworkResponse.Loading) {
+
+                    showProgressBar();
+                }
+            }
+        });
+
+    }
 
     public void showLogOutDialog() {
         showConfirmationDialog("Confirmation", "Do you want to log out?", new ConfirmationDialogListener() {
@@ -298,14 +392,61 @@ public class HomeActivity extends BaseActivity {
         previousFragment = fragment;
     }
 
+    private void updateUserProfileData(UserProfile userProfile) {
+        if (userProfile.getTimerStatus() != null) {
 
-    public void updateUserInfo() {
+            setTimerStatus(userProfile);
 
 
-        getUserProfileGlobal(getUserProfileDataListener());
+        } else {
+            userProfile.setTimerStatus(createTimerStatus());
+        }
+
+        setGamePlayedStatus(userProfile);
 
 
+        if (userProfile.getUserAccountStatus() == null) {
+            UserAccountStatus userAccountStatus = new UserAccountStatus();
+            userAccountStatus.setSuspensionInfo(getString(R.string.suspensionMessage));
+            userProfile.setUserAccountStatus(userAccountStatus);
+        } else {
+            getUserAccountStatus(userProfile);
+        }
+
+        if (userProfile.getAdViewedStats() == null) {
+            userProfile.setAdViewedStats(new AdViewedStats());
+        }
+
+        // update profile data
+
+        UserProfile.ProfileData profileData = userProfile.getProfileData();
+
+        if (profileData != null) {
+
+            if (profileData.getName() == null || profileData.getName().trim().isEmpty()) {
+                profileData.setName(UserProfile.ProfileData.getProfileData().getName());
+            }
+            if (profileData.getEmail() == null || profileData.getEmail().trim().isEmpty()) {
+                profileData.setEmail(UserProfile.ProfileData.getProfileData().getEmail());
+            }
+            profileData.setVersionName(AppHelper.getAppVersionName(HomeActivity.this));
+            profileData.setFirebaseFcmToken(AppHelper.getFireBaseFcmToken());
+            profileData.setLastOpened(DateTimeHelper.getDatePojo().getGetCurrentDateString());
+            profileData.setDeviceInfo(DeviceHelper.getDeviceNameAndVersion());
+            if (profileData.getCreatedAt().trim().isEmpty() && DateTimeHelper.isDateCorrect(profileData.getCreatedAt())) {
+                profileData.setCreatedAt(DateTimeHelper.getDatePojo().getGetCurrentDateString());
+            }
+            userProfile.setProfileData(profileData);
+
+
+        } else {
+            UserProfile.ProfileData profileData1 = new UserProfile.ProfileData();
+            userProfile.setProfileData(profileData1);
+        }
+
+        callUpdateUser(userProfile);
     }
+
 
     public TimerStatus createTimerStatus() {
         TimerStatus timerStatus = new TimerStatus();
@@ -378,77 +519,6 @@ public class HomeActivity extends BaseActivity {
 
     }
 
-    // post method
-    public void getTimeApi(TimerStatus.DailyBonus dailyBonus) {
-
-
-        String url = getString(R.string.getCurrentTimeAsiaKolkata);
-
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        //    progressBarDialog.dismiss(); // close the progressbar
-                        Log.d("pResponse", "offlinebillgenerate response : " + response.toString());
-                        try {
-
-
-                            if (response.has("dateTime")) {
-
-                                NetWorkTimerResult netWorkTimerResult = new Gson().fromJson(response.toString(), NetWorkTimerResult.class);
-                                checkDailyBonus(netWorkTimerResult.toString(), dailyBonus);
-                            }
-
-
-                        } catch (Exception e) {
-
-                            Toast.makeText(context, " Error333 ,  ", Toast.LENGTH_LONG).show();
-
-                            Log.e("pError3223", e.toString());
-                            e.printStackTrace();
-                        }
-
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-//                        Toast.makeText(getContext(), "error "+error.toString(), Toast.LENGTH_LONG).show();
-//                        progressBarDialog.dismiss(); // close the progressbar
-
-
-                        Log.e("pError", error.toString());
-
-
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-
-                //instead o f pass current user authtoken
-//             params.put("authtoken", Paper.book().read("authToken"));
-//
-                params.put("authtoken", Paper.book().read("authToken"));
-
-
-                return params;
-
-            }
-        };
-
-
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
-                6000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-
-        requestQueue.add(jsonObjectRequest);
-    }
 
     private void setTimerStatus(UserProfile userProfile) {
         TimerStatus.DailyBonus dailyBonus = userProfile.getTimerStatus().getDailyBonus();
@@ -457,7 +527,11 @@ public class HomeActivity extends BaseActivity {
 
             // when the daily bonus is claimed then check for the time
             if (dailyBonus.getClaimed())
-                getTimeApi(dailyBonus);
+
+            {
+                callNetworkTime(dailyBonus);
+//                getTimeApi(dailyBonus);
+            }
             else {
                 showBottomSheet();
             }
@@ -664,89 +738,6 @@ public class HomeActivity extends BaseActivity {
 
     }
 
-    public GetUserProfileDataListener getUserProfileDataListener() {
-        return new GetUserProfileDataListener() {
-            @Override
-            public void onTaskSuccessful(UserProfile userProfile) {
-
-                try {
-                    getGamersHubData(new GetGamersHubDataListener() {
-                        @Override
-                        public void onTaskSuccessful(GamersHubData gamersHubData) {
-
-                            if (!AppHelper.isAppUpdated()) {
-                                showUpdate(gamersHubData);
-                            }
-
-                        }
-                    });
-                } catch (Exception e) {
-
-                }
-
-
-                if (userProfile.getTimerStatus() != null) {
-
-                    setTimerStatus(userProfile);
-
-
-                } else {
-                    userProfile.setTimerStatus(createTimerStatus());
-                }
-
-                setGamePlayedStatus(userProfile);
-
-
-                if (userProfile.getUserAccountStatus() == null) {
-                    UserAccountStatus userAccountStatus = new UserAccountStatus();
-                    userAccountStatus.setSuspensionInfo(getString(R.string.suspensionMessage));
-                    userProfile.setUserAccountStatus(userAccountStatus);
-                } else {
-                    getUserAccountStatus(userProfile);
-                }
-
-                if (userProfile.getAdViewedStats() == null) {
-                    userProfile.setAdViewedStats(new AdViewedStats());
-                }
-
-                // update profile data
-
-                UserProfile.ProfileData profileData = userProfile.getProfileData();
-
-                if (profileData != null) {
-
-                    if (profileData.getName() == null || profileData.getName().trim().isEmpty()) {
-                        profileData.setName(UserProfile.ProfileData.getProfileData().getName());
-                    }
-                    if (profileData.getEmail() == null || profileData.getEmail().trim().isEmpty()) {
-                        profileData.setEmail(UserProfile.ProfileData.getProfileData().getEmail());
-                    }
-                    profileData.setVersionName(AppHelper.getAppVersionName(HomeActivity.this));
-                    profileData.setFirebaseFcmToken(AppHelper.getFireBaseFcmToken());
-                    profileData.setLastOpened(DateTimeHelper.getDatePojo().getGetCurrentDateString());
-                    profileData.setDeviceInfo(DeviceHelper.getDeviceNameAndVersion());
-                    if (profileData.getCreatedAt().trim().isEmpty() && DateTimeHelper.isDateCorrect(profileData.getCreatedAt())) {
-                        profileData.setCreatedAt(DateTimeHelper.getDatePojo().getGetCurrentDateString());
-                    }
-                    userProfile.setProfileData(profileData);
-
-
-                } else {
-                    UserProfile.ProfileData profileData1 = new UserProfile.ProfileData();
-                    userProfile.setProfileData(profileData1);
-                }
-
-                setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
-                    @Override
-                    public void onTaskSuccessful() {
-
-                    }
-                });
-
-            }
-
-        };
-    }
 
     public void getUserAccountStatus(UserProfile userProfile) {
         UserAccountStatus userAccountStatus = userProfile.getUserAccountStatus();
@@ -758,6 +749,7 @@ public class HomeActivity extends BaseActivity {
         // updating the user transaction
         updateTransactionStatus(userProfile);
     }
+
 
     public void showUpdate(GamersHubData gamersHubData) {
         ConfirmationDialogListener confirmationDialogListener = new ConfirmationDialogListener() {
@@ -792,6 +784,24 @@ public class HomeActivity extends BaseActivity {
     }
 
 
+    private void callGetGamersHubData() {
+        viewModel.callGetGamersHub();
+    }
+
+    private void callUpdateUser(UserProfile userProfile) {
+        updatedUserProfile = userProfile;
+        viewModel.callUpdateUserProfile(userProfile);
+    }
+
+    private void callNetworkTime(TimerStatus.DailyBonus dailyBonus){
+        dailyBonusToUpdate = dailyBonus;
+
+        viewModel.callNetworkTime(HomeActivity.this);
+    }
+
+    private void callGetUserProfileData() {
+        viewModel.callLoginUser();
+    }
 }
 
 
