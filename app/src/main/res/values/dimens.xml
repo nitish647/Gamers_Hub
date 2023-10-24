@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="textXXSmall">@dimen/_9sdp</dimen>
+
+    <dimen name="textExtraSmall">@dimen/_10sdp</dimen>
+
+    <dimen name="textSmall">@dimen/_11sdp</dimen>
+    <dimen name="textNormal">@dimen/_12sdp</dimen>
+    <dimen name="textTitle">@dimen/_13sdp</dimen>
+    <dimen name="textTitleLarge">@dimen/_14sdp</dimen>
+    <dimen name="textHeading">@dimen/_15sdp</dimen>
+    <dimen name="textHeadingLarge">@dimen/_16sdp</dimen>
+    <dimen name="textHeadingXLarge">@dimen/_18sdp</dimen>
+    <dimen name="textHeadingXLarge1">@dimen/_19sdp</dimen>
+
+    <dimen name="textHeadingXXLarge">@dimen/_20sdp</dimen>
+    <dimen name="textHeadingXXLarge1">@dimen/_21sdp</dimen>
+
+    <dimen name="textHeadingXXXLarge">@dimen/_22sdp</dimen>
+    <dimen name="textHeadingXXXLarge1">@dimen/_25sdp</dimen>
+    <dimen name="textHeadingXXXLarge2">@dimen/_30sdp</dimen>
+
+    <dimen name="parentPaddingStart">@dimen/_20sdp</dimen>
+    <dimen name="parentPaddingTop">@dimen/_30sdp</dimen>
+    <dimen name="parentPaddingEnd">@dimen/_20sdp</dimen>
+    <dimen name="parentPaddingBottom">@dimen/_10sdp</dimen>
+
+
+    <dimen name="titleTextPadding">@dimen/_2sdp</dimen>
+    <dimen name="ImageLeftRightMargin1">@dimen/_50sdp</dimen>
+    <dimen name="seek_bar_small_thickness">@dimen/_2sdp</dimen>
+
+    <dimen name="editTitlePadding">@dimen/_5sdp</dimen>
+    <dimen name="leftRightMargin">@dimen/_13sdp</dimen>
+    <dimen name="leftRightMargin1">@dimen/_17sdp</dimen>
+    <dimen name="editTextPadding">@dimen/_10sdp</dimen>
+
+    <dimen name="login_signup_width">@dimen/_100sdp</dimen>
+    <dimen name="login_signup_height">@dimen/_40sdp</dimen>
+    <dimen name="large_width">@dimen/_150sdp</dimen>
+
+    <dimen name="smallXSpacing">@dimen/_5sdp</dimen>
+    <dimen name="smallSpacing">@dimen/_10sdp</dimen>
+    <dimen name="midSpacing">@dimen/_20sdp</dimen>
+    <dimen name="largeSpacing">@dimen/_35sdp</dimen>
+    <dimen name="largeXSpacing">@dimen/_50sdp</dimen>
+
+    <dimen name="iconXXXLarge">@dimen/_150sdp</dimen>
+    <dimen name="iconXXLarge">@dimen/_120sdp</dimen>
+    <dimen name="iconXLarge">@dimen/_100sdp</dimen>
+    <dimen name="iconLarge1">@dimen/_80sdp</dimen>
+    <dimen name="iconMedium2">@dimen/_65sdp</dimen>
+    <dimen name="iconMedium1">@dimen/_50sdp</dimen>
+    <dimen name="iconSmall1">@dimen/_30sdp</dimen>
+    <dimen name="iconSmall">@dimen/_25sdp</dimen>
+    <dimen name="iconExtraSmall">@dimen/_20sdp</dimen>
+    <dimen name="iconXXSmall">@dimen/_15sdp</dimen>
+    <dimen name="iconXXXSmall">@dimen/_12sdp</dimen>
+
+</resources>

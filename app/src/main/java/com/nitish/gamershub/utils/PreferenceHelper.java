@@ -7,9 +7,8 @@ import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.nitish.gamershub.model.firebase.GamersHubData;
 import com.nitish.gamershub.model.firebase.UserProfile;
-
-import java.util.prefs.Preferences;
 
 public class PreferenceHelper {
 
@@ -98,5 +97,17 @@ public class PreferenceHelper {
 
     }
 
+    public void saveGamersHubData(@NonNull GamersHubData gamersHubData) {
+        String gamersHubDataString = new Gson().toJson(gamersHubData);
+        saveString(AppConstants.PrefGamersHubData, gamersHubDataString);
+    }
+
+    public GamersHubData getGamersHubData() {
+        String gamersHubDataString = getString(AppConstants.PrefGamersHubData, "");
+
+        GamersHubData gamersHubData = new Gson().fromJson(gamersHubDataString, GamersHubData.class);
+        return gamersHubData;
+
+    }
 
 }

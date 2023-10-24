@@ -20,9 +20,9 @@ public class LoginSignUpViewModel extends ViewModel {
     public LiveData<NetworkResponse<UserProfile>> loginUserLD = loginSignupRepository.getLoginUserLD;
 
 
-    public void callLoginUser() {
+    public void callGetUserProfile() {
 
-        loginSignupRepository.callLoginUser();
+        loginSignupRepository.callGetUserProfile();
 
     }
 
@@ -37,7 +37,12 @@ public class LoginSignUpViewModel extends ViewModel {
 
     public void callUpdateUserProfile(UserProfile userProfile) {
 
-        loginSignupRepository.callUpdateUserProfile(userProfile);
+        loginSignupRepository.callUpdateUserProfile(userProfile,"");
+
+    }
+    public void callUpdateUserProfile(UserProfile userProfile,String message) {
+
+        loginSignupRepository.callUpdateUserProfile(userProfile,message);
 
     }
 

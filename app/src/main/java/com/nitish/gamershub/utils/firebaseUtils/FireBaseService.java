@@ -1,5 +1,6 @@
 package com.nitish.gamershub.utils.firebaseUtils;
 
+import static com.nitish.gamershub.utils.AppConstants.GamersHub_DATA;
 import static com.nitish.gamershub.utils.AppConstants.GamersHub_ParentCollection;
 import static com.nitish.gamershub.utils.AppConstants.UserMail;
 
@@ -16,6 +17,10 @@ public interface FireBaseService {
        TASK_COMPLETED_SUCCESSFULLY()
     }
 
+
+    public static DocumentReference getFirebaseGamersHubData() {
+        return FirebaseFirestore.getInstance().collection(GamersHub_DATA).document("gamersHubData");
+    }
 
     public static DocumentReference getFirebaseUser() {
         return FirebaseFirestore.getInstance().collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail) + "");

@@ -1,6 +1,5 @@
 package com.nitish.gamershub.view.homePage.activity;
 
-import static com.nitish.gamershub.utils.AppConstants.GamersHubDataGlobal;
 import static com.nitish.gamershub.utils.AppConstants.UserInfo;
 import static com.nitish.gamershub.utils.AppConstants.FavouriteList;
 import static com.nitish.gamershub.utils.AppConstants.From;
@@ -24,13 +23,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
@@ -47,11 +40,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.gson.Gson;
 import com.nitish.gamershub.databinding.ActivityHomeBinding;
 import com.nitish.gamershub.utils.NetworkResponse;
-import com.nitish.gamershub.utils.ToastHelper;
-import com.nitish.gamershub.utils.firebaseUtils.FireBaseService;
 import com.nitish.gamershub.utils.interfaces.AdmobInterstitialAdListener;
 import com.nitish.gamershub.model.local.AllGamesItems;
 import com.nitish.gamershub.model.firebase.AdViewedStats;
@@ -75,15 +65,12 @@ import com.nitish.gamershub.view.gamePlay.GameDetailActivity2;
 import com.nitish.gamershub.view.homePage.fragment.CategoryGamesFragment;
 import com.nitish.gamershub.view.homePage.fragment.HomeFragment;
 import com.nitish.gamershub.view.homePage.fragment.ProfileFragment;
-import com.nitish.gamershub.view.loginSingup.activity.LoginActivity;
 import com.nitish.gamershub.view.loginSingup.viewmodelRepo.LoginSignUpViewModel;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import io.paperdb.Paper;
 
@@ -800,7 +787,7 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void callGetUserProfileData() {
-        viewModel.callLoginUser();
+        viewModel.callGetUserProfile();
     }
 }
 

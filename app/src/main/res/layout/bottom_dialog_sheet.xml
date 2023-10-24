@@ -1,160 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-<RelativeLayout
+    <RelativeLayout
 
-    android:background="@color/fui_transparent"
-    android:backgroundTint="@color/lightGrey2"
-    android:paddingHorizontal="15dp"
-    android:layout_marginHorizontal="10dp"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <LinearLayout
-        android:backgroundTint="@color/lightGrey2"
-        android:background="@drawable/top_round_corners"
-        android:layout_marginBottom="50dp"
-        android:layout_marginTop="10dp"
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
 
-        <TextView
-            android:padding="5dp"
-            android:textColor="@color/paytmBlue"
-            android:textSize="25sp"
-            android:text="Rewards"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:background="@color/fui_transparent"
+        android:backgroundTint="@color/lightGrey2"
+        android:padding="@dimen/_5sdp"
+        android:paddingHorizontal="@dimen/_15sdp">
 
-        </TextView>
-        <RelativeLayout
-            android:id="@+id/dailyBonusRelative"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/round_corners"
-            android:elevation="4dp"
-            android:padding="5dp"
-
-            android:textSize="20sp">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:orientation="horizontal">
-
-                <ImageView
-
-
-                    style="@style/optionIcon2"
-                    android:src="@drawable/reward">
-
-                </ImageView>
-
-                <TextView
-
-                    style="@style/contentTextview"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="20dp"
-                    android:text="Daily Bonus"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp"
-
-
-                    >
-
-                </TextView>
-
-            </LinearLayout>
-
-
-            <TextView
-                android:id="@+id/claimTextview"
-                style="@style/contentTextviewBlue"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="5dp"
-                android:text="Claim">
-
-            </TextView>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/watchVideoRelative"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/round_corners"
-            android:elevation="@dimen/cardview_default_elevation"
-            android:padding="5dp"
-            android:minHeight="60dp"
-            android:paddingBottom="10dp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="50dp"
+            android:background="@drawable/top_round_corners"
+            android:backgroundTint="@color/lightGrey2"
+            android:orientation="vertical"
+            android:padding="@dimen/_5sdp">
 
-            >
-
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <TextView
+                style="@style/bold_arima_textview"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:orientation="horizontal">
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:padding="@dimen/_5sdp"
+                android:text="@string/rewards"
+                android:textColor="@color/paytmBlue"
+                android:textSize="@dimen/textHeadingXXXLarge">
 
-                <ImageView
+            </TextView>
+
+            <RelativeLayout
+                android:id="@+id/dailyBonusRelative"
+                style="@style/relative_rewards_layout">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:orientation="horizontal">
+
+                    <ImageView
+
+                        style="@style/optionIcon2"
+                        android:src="@drawable/reward">
+
+                    </ImageView>
+
+                    <TextView
+
+                        style="@style/bold_arima_textview"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="@dimen/_18sdp"
+                        android:text="@string/daily_Bonus"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/textNormal"
 
 
-                    style="@style/optionIcon2"
-                    android:src="@drawable/video_reward">
+                        >
 
-                </ImageView>
+                    </TextView>
+
+                </LinearLayout>
+
+
+                <TextView
+                    android:id="@+id/claimTextview"
+                    style="@style/contentTextviewBlue"
+                    android:paddingHorizontal="@dimen/_10sdp"
+                    android:paddingVertical="@dimen/_5sdp"
+                    android:text="Claim">
+
+                </TextView>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/watchVideoRelative"
+
+                style="@style/relative_rewards_layout">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:orientation="horizontal">
+
+                    <ImageView
+
+
+                        style="@style/optionIcon2"
+                        android:src="@drawable/video_reward">
+
+                    </ImageView>
+
+                    <TextView
+                        style="@style/bold_arima_textview"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="@dimen/_18sdp"
+                        android:text="@string/watch_an_Ad_and_Earn"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/textNormal">
+
+                    </TextView>
+                </LinearLayout>
+
+
+                <TextView
+                    android:id="@+id/watchVideoTextview"
+                    style="@style/contentTextviewBlue"
+                    android:paddingHorizontal="@dimen/_10sdp"
+                    android:paddingVertical="@dimen/_5sdp"
+                    android:text="@string/watch">
+
+                </TextView>
 
                 <TextView
 
-                    style="@style/contentTextview"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="20dp"
-                    android:text="Watch an Ad and Earn"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp"
-
-
-                    >
+                    android:id="@+id/timerTextview"
+                    style="@style/regular_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/watchVideoTextview"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:paddingVertical="5dp"
+                    android:text="@string/daily">
 
                 </TextView>
-            </LinearLayout>
+            </RelativeLayout>
+        </LinearLayout>
 
-
-            <TextView
-                android:id="@+id/watchVideoTextview"
-                style="@style/contentTextviewBlue"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="5dp"
-                android:text="Watch">
-
-            </TextView>
-
-            <TextView
-
-                android:id="@+id/timerTextview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/watchVideoTextview"
-                android:layout_alignParentEnd="true"
-
-                android:layout_marginTop="25dp"
-                android:layout_marginEnd="10dp"
-                android:gravity="center"
-                android:padding="5dp"
-                android:paddingVertical="5dp"
-                android:text="Watch">
-
-            </TextView>
-        </RelativeLayout>
-    </LinearLayout>
-
-</RelativeLayout>
+    </RelativeLayout>
 
 </layout>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="preloaded_fonts" translatable="false">
+        <item>@font/arbutus_bold</item>
+        <item>@font/arima_madurai</item>
+        <item>@font/arima_madurai_black</item>
+        <item>@font/arima_madurai_bold</item>
+        <item>@font/arima_madurai_extra_bold</item>
+        <item>@font/arima_madurai_medium</item>
+        <item>@font/lemonada_light</item>
+    </array>
+</resources>

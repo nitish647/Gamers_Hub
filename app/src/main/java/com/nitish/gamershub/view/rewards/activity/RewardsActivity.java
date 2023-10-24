@@ -1,10 +1,14 @@
 package com.nitish.gamershub.view.rewards.activity;
 
+import static com.nitish.gamershub.utils.AppConstants.UserInfo;
+import static com.nitish.gamershub.utils.AppConstants.UserMail;
 import static com.nitish.gamershub.utils.AppHelper.getGamersHubDataGlobal;
 import static com.nitish.gamershub.utils.AppHelper.getUserProfileGlobalData;
 import static com.nitish.gamershub.utils.AppConstants.timerHourMinuteSecond;
 
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +17,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.nitish.gamershub.model.local.DialogItems;
+import com.nitish.gamershub.utils.NetworkResponse;
+import com.nitish.gamershub.utils.ToastHelper;
 import com.nitish.gamershub.utils.interfaces.AdmobInterstitialAdListener;
 import com.nitish.gamershub.model.firebase.TimerStatus;
 import com.nitish.gamershub.model.firebase.UserProfile;
@@ -21,11 +28,17 @@ import com.nitish.gamershub.R;
 import com.nitish.gamershub.utils.timeUtils.DateTimeHelper;
 import com.nitish.gamershub.databinding.ActivityRewardsBinding;
 import com.nitish.gamershub.view.base.BaseActivity;
+import com.nitish.gamershub.view.dialogs.DialogListener;
+import com.nitish.gamershub.view.homePage.activity.HomeActivity;
+import com.nitish.gamershub.view.loginSingup.activity.LoginActivity;
+import com.nitish.gamershub.view.loginSingup.viewmodelRepo.LoginSignUpViewModel;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import io.paperdb.Paper;
 
 public class RewardsActivity extends BaseActivity {
 
@@ -35,15 +48,26 @@ public class RewardsActivity extends BaseActivity {
     boolean isLoading;
     public int seconds = 0;
 
+    private LoginSignUpViewModel viewModel;
+
+    String Usage_Update_Daily_Reward = "Usage_Update_Daily_Reward";
+    String Usage_Update_watchViewReward = "Usage_Update_watchViewReward";
+    String successDailyCheckRewardBonusMessage;
+    String successUpdateWatchViewRewardMessage;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_rewards);
+        viewModel = ViewModelProviders.of(this).get(LoginSignUpViewModel.class);
+
         setOnclickListeners();
         loadInterstitialAdNew();
         getProfileData();
+        bindObservers();
     }
+
 
     public void setOnclickListeners() {
 
@@ -101,6 +125,53 @@ public class RewardsActivity extends BaseActivity {
 
     }
 
+
+    public void bindObservers() {
+        viewModel.updateUserProfileLD.observe(this, new Observer<NetworkResponse<Object>>() {
+            @Override
+            public void onChanged(NetworkResponse<Object> response) {
+                if (response instanceof NetworkResponse.Success) {
+                    dismissProgressBar();
+                    String usage = ((NetworkResponse.Success<Object>) response).getMessage();
+
+
+                    if (usage.equals(Usage_Update_Daily_Reward)) {
+
+                        mShowRewardDialog(successDailyCheckRewardBonusMessage,usage);
+//                        showRewardDialog(successDailyCheckRewardBonusMessage, R.raw.rupee_piggy_bank_award, new OnDialogLister() {
+//                            @Override
+//                            public void onDialogDismissLister() {
+//                                showInterstitialAdNew(setInterstitialAdListener());
+//
+//                            }
+//                        });
+                    } else if (usage.equals(Usage_Update_watchViewReward)) {
+                        mShowRewardDialog(successUpdateWatchViewRewardMessage,usage);
+
+//                        showRewardDialog(successUpdateWatchViewRewardMessage, R.raw.rupee_piggy_bank_award, new OnDialogLister() {
+//                            @Override
+//                            public void onDialogDismissLister() {
+//
+//                            }
+//                        });
+
+                        timerForRewardVideo();
+                    }
+
+
+                } else if (response instanceof NetworkResponse.Error) {
+
+                    String message = ((NetworkResponse.Error<Object>) response).getMessage();
+
+                    dismissProgressBar();
+                } else if (response instanceof NetworkResponse.Loading) {
+
+                    showProgressBar();
+                }
+            }
+        });
+
+    }
 
     @Override
     protected int getLayoutResourceId() {
@@ -164,37 +235,26 @@ public class RewardsActivity extends BaseActivity {
                 userProfile.getProfileData().setGameCoins(userProfile.getProfileData().getGameCoins() + getDailyCheckReward);
 
 
-                setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
-                    @Override
-                    public void onTaskSuccessful() {
-
-                        showRewardDialog("Successfully credited " + getDailyCheckReward + " coins for Daily bonus", R.raw.rupee_piggy_bank_award, new OnDialogLister() {
-                            @Override
-                            public void onDialogDismissLister() {
-                                showInterstitialAdNew(setInterstitialAdListener());
-                            }
-                        });
-
-                        getUserProfileGlobal(getUserProfileDataListener());
-                    }
-                });
+                successDailyCheckRewardBonusMessage = "Successfully credited " + getDailyCheckReward + " coins for Daily bonus";
+                callUpdateUser(userProfile, Usage_Update_Daily_Reward);
+//                setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
+//                    @Override
+//                    public void onTaskSuccessful() {
+//
+//                        showRewardDialog("Successfully credited " + getDailyCheckReward + " coins for Daily bonus", R.raw.rupee_piggy_bank_award, new OnDialogLister() {
+//                            @Override
+//                            public void onDialogDismissLister() {
+//                                showInterstitialAdNew(setInterstitialAdListener());
+//                            }
+//                        });
+//
+//                        getUserProfileGlobal(getUserProfileDataListener());
+//                    }
+//                });
             }
 
 
         }
-    }
-
-    public GetUserProfileDataListener getUserProfileDataListener() {
-        return new GetUserProfileDataListener() {
-            @Override
-            public void onTaskSuccessful(UserProfile userProfile) {
-
-//                RewardsActivity.this.userProfile = userProfile;
-//
-//                updateViews(userProfile);
-
-            }
-        };
     }
 
 
@@ -259,20 +319,55 @@ public class RewardsActivity extends BaseActivity {
         userProfile.getProfileData().setGameCoins(totalCoins);
         userProfile.getTimerStatus().setWatchViewReward(watchViewReward);
 
-        setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
+
+        successUpdateWatchViewRewardMessage = "Successfully credited " + getWatchVideoReward + " coins for Watching video";
+        callUpdateUser(userProfile, Usage_Update_watchViewReward);
+//        setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
+//            @Override
+//            public void onTaskSuccessful() {
+//                showRewardDialog("Successfully credited " + getWatchVideoReward + " coins for Watching video", R.raw.rupee_piggy_bank_award, new OnDialogLister() {
+//                    @Override
+//                    public void onDialogDismissLister() {
+//
+//                    }
+//                });
+//
+//                timerForRewardVideo();
+//                getUserProfileGlobal(getUserProfileDataListener());
+//            }
+//        });
+
+    }
+    private DialogListener rewardDialogListener(String usage)
+    {
+        return  new DialogListener() {
             @Override
-            public void onTaskSuccessful() {
-                showRewardDialog("Successfully credited " + getWatchVideoReward + " coins for Watching video", R.raw.rupee_piggy_bank_award, new OnDialogLister() {
-                    @Override
-                    public void onDialogDismissLister() {
+            public void onYesClick() {
 
-                    }
-                });
-
-                timerForRewardVideo();
-                getUserProfileGlobal(getUserProfileDataListener());
             }
-        });
+
+            @Override
+            public void onNoClick() {
+
+            }
+
+            @Override
+            public void onDialogDismissed() {
+               if(usage.equals(Usage_Update_Daily_Reward))
+               {
+                   showInterstitialAdNew(setInterstitialAdListener());
+               }
+
+            }
+        };
+    }
+    public void mShowRewardDialog(String message,String usage)
+    {
+        DialogItems dialogItems = new DialogItems();
+        dialogItems.setRawAnimation(R.raw.rupee_piggy_bank_award);
+        dialogItems.setMessage(message);
+
+        showRewardDialog(dialogItems,rewardDialogListener(usage));
 
     }
 
@@ -328,12 +423,13 @@ public class RewardsActivity extends BaseActivity {
                                      binding.timerTextview.setVisibility(View.GONE);
                                      userProfile.getTimerStatus().getWatchViewReward().setClaimed(false);
 
-                                     setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
-                                         @Override
-                                         public void onTaskSuccessful() {
-
-                                         }
-                                     });
+//                                     setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
+//                                         @Override
+//                                         public void onTaskSuccessful() {
+//
+//                                         }
+//                                     });
+                                     callUpdateUser(userProfile, "");
                                      return;
 
                                  } else {
@@ -364,5 +460,11 @@ public class RewardsActivity extends BaseActivity {
         userProfile = getUserProfileGlobalData();
         if (userProfile.getTimerStatus() != null)
             updateViews(userProfile);
+    }
+
+
+    private void callUpdateUser(UserProfile userProfile, String usage) {
+
+        viewModel.callUpdateUserProfile(userProfile, usage);
     }
 }

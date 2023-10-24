@@ -68,7 +68,7 @@ public class AppConstants {
 
     public static String PrefGamersHubMain="PrefGamersHubMain";
     public static String PrefUserProfile="PrefUserProfile";
-
+    public static String PrefGamersHubData="PrefGamersHubData";
 
 
     public static void populateCategoryList() {

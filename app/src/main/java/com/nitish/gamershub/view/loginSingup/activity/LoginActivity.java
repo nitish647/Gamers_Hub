@@ -318,7 +318,7 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w("pResponse", "signInResult:failed code=" + e.getStatusCode());
+            Log.e("pResponse", "signInResult:failed code=" + e.getStatusCode());
         }
     }
 
@@ -392,7 +392,7 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
 
 
     private void callLoginUser() {
-        viewModel.callLoginUser();
+        viewModel.callGetUserProfile();
     }
 
     private void callRegisterUser(UserProfile userProfile) {

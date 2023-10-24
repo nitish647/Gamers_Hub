@@ -81,4 +81,27 @@
     <string name="contact_mail">
        gamershub@dr.com
     </string>
+
+
+
+
+          <!--                 Rewards bottom dialog               -->
+
+
+    <string name="watch_an_Ad_and_Earn">Watch an Ad and Earn</string>
+    <string name="daily_Bonus">Daily Bonus</string>
+    <string name="daily">Daily</string>
+    <string name="watch">Watch</string>
+
+    <string name="rewards">Rewards</string>
+
+
+
+
+
+
+
+
+
+
 </resources>

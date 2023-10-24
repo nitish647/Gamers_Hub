@@ -56,7 +56,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.SetOptions;
 import com.google.gson.Gson;
+import com.nitish.gamershub.model.local.DialogItems;
 import com.nitish.gamershub.utils.PreferenceHelper;
+import com.nitish.gamershub.view.dialogs.DialogGamerReward;
+import com.nitish.gamershub.view.dialogs.DialogListener;
 import com.nitish.gamershub.view.homePage.activity.HomeActivity;
 import com.nitish.gamershub.view.dialogs.BottomSheetDialog;
 import com.nitish.gamershub.utils.interfaces.AdmobInterstitialAdListener;
@@ -125,7 +128,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         preferenceHelper = new PreferenceHelper(this);
         timeChangedReceiver2 = new TimeChangedReceiver2();
 
-        logOutDialog2();
         loadInterstitialAdNew();
         loadRewardedAd2();
         getGoogleSignInOptions();
@@ -171,45 +173,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         return preferenceHelper;
     }
 
-    public void getGamersHubData(GetGamersHubDataListener gamersHubDataListener) {
-
-
-        getFirebaseGamersHubData().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                dismissProgressBar();
-
-                if (task.isSuccessful()) {
-                    DocumentSnapshot documentSnapshot = task.getResult();
-
-                    if (documentSnapshot.exists()) {
-
-
-                        if (progressDialog.isShowing())
-                            dismissProgressBar();
-
-
-                        GamersHubData gamersHubData = documentSnapshot.toObject(GamersHubData.class);
-                        saveGamersHubDataGlobal(gamersHubData);
-                        gamersHubDataListener.onTaskSuccessful(gamersHubData);
-
-
-                    } else {
-                        Toast.makeText(BaseActivity.this, "document does not exist 112", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-                dismissProgressBar();
-                Toast.makeText(BaseActivity.this, "couldn't get the documents ", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-    }
 
     public void setGamersHubRedeemCoinsList(OnFirestoreDataCompleteListener onFirestoreDataCompleteListener) {
 
@@ -280,115 +243,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         public void OnComplete(DocumentSnapshot documentSnapshot);
     }
 
-    public void getUserProfileGlobal(GetUserProfileDataListener getUserDataListener) {
 
 
-        showProgressBar();
-        // if intent not available then return
-        if (!showNoInternetDialog())
-            return;
-
-        getFirebaseUser().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                dismissProgressBar();
-
-                if (task.isSuccessful()) {
-                    DocumentSnapshot documentSnapshot = task.getResult();
-
-
-                    if (documentSnapshot.exists()) {
-
-                        if (progressDialog.isShowing())
-                            dismissProgressBar();
-
-
-                        UserProfile userProfile = null;
-                        try {
-                            JSONObject jsonObject = new JSONObject(documentSnapshot.getData());
-                            userProfile = new Gson().fromJson(jsonObject.toString(), UserProfile.class);
-
-//                             userProfile =   documentSnapshot.toObject(UserProfile.class);
-                            Log.d("pResponse", "userProfile jsonobject : " + jsonObject);
-
-                            if (userProfile.getProfileData() != null)
-                                Log.d("pResponse", "user profile class data " + userProfile.getProfileData().getGameCoins() + " " + userProfile.getProfileData().getDeviceInfo());
-                            Log.d("pResponse", "userProfile class object : " + DataPassingHelper.ConvertObjectToString(userProfile));
-
-
-                        } catch (Exception e) {
-
-                            Log.d("pError", "Error in converting data into objects  : " + e);
-
-//                            JSONObject jsonObject =  new JSONObject(documentSnapshot.getData());
-//                            userProfile = new Gson().fromJson(jsonObject.toString(),UserProfile.class);
-//                            Log.d("pResponse","userProfile : "+userProfile);
-                        }
-
-
-                        saveUserProfileGlobal(userProfile);
-                        getUserDataListener.onTaskSuccessful(userProfile);
-
-
-                    } else {
-                        Log.d("pError", "document does not exist 113  : ");
-
-                    }
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-                dismissProgressBar();
-                Toast.makeText(BaseActivity.this, "couldn't get the documents ", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-    }
-
-    public interface GetUserProfileDataListener {
-        public void onTaskSuccessful(UserProfile userProfile);
-    }
-
-    public interface GetGamersHubDataListener {
-        public void onTaskSuccessful(GamersHubData gamersHubData);
-    }
-
-    public UserProfile updateUserWaller2(int amount, SetUserDataOnCompleteListener setUserDataOnCompleteListener) {
-
-        UserProfile userProfile = getUserProfileGlobalData();
-        UserProfile.ProfileData profileData = userProfile.getProfileData();
-        int gameCoins = profileData.getGameCoins();
-        int totalCoins = gameCoins + amount;
-        profileData.setGameCoins(totalCoins);
-        userProfile.setProfileData(profileData);
-
-
-        showProgressBar();
-        setUserProfile(userProfile, setUserDataOnCompleteListener);
-
-        return userProfile;
-    }
-
-    public UserProfile updateUserWalletForTransaction(int amount, SetUserDataOnCompleteListener setUserDataOnCompleteListener, UserTransactions userTransactions) {
-
-        UserProfile userProfile = getUserProfileGlobalData();
-        UserProfile.ProfileData profileData = userProfile.getProfileData();
-        int gameCoins = profileData.getGameCoins();
-        int totalCoins = gameCoins + amount;
-        profileData.setGameCoins(totalCoins);
-        userProfile.setProfileData(profileData);
-
-        userProfile.setUserTransactions(userTransactions);
-
-
-        showProgressBar();
-        setUserProfile(userProfile, setUserDataOnCompleteListener);
-
-        return userProfile;
-    }
 
     public void setUserProfile(UserProfile userProfile, SetUserDataOnCompleteListener setUserDataOnCompleteListener) {
         if (!showNoInternetDialog())
@@ -442,9 +298,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         return FirebaseFirestore.getInstance().collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail) + "");
     }
 
-    public DocumentReference getFirebaseGamersHubData() {
-        return FirebaseFirestore.getInstance().collection(GamersHub_DATA).document("gamersHubData");
-    }
 
     public DocumentReference setGamersHubRedeemCoinsList() {
         return FirebaseFirestore.getInstance().collection(GamersHub_DATA).document("redeemCoinsList");
@@ -480,100 +333,29 @@ public abstract class BaseActivity extends AppCompatActivity {
             return true;
     }
 
-    public void showRewardDialog(String message) {
-        GameRewardDialogBinding gameRewardDialogBinding;
-        LayoutInflater factory = LayoutInflater.from(BaseActivity.this);
 
-        gameRewardDialogBinding = DataBindingUtil.inflate(factory, R.layout.game_reward_dialog, null, false);
+    public void showRewardDialog(String message, DialogListener dialogListener)
+    {
+        DialogItems dialogItems = new DialogItems();
+        dialogItems.setMessage(message);
 
-        final AlertDialog addRewardDialog = new AlertDialog.Builder(BaseActivity.this).create();
+        DialogGamerReward dialogGamerReward = DialogGamerReward.newInstance(dialogItems, dialogListener);
 
-
-        addRewardDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        addRewardDialog.setView(gameRewardDialogBinding.getRoot());
-
-        addRewardDialog.show();
-
-        gameRewardDialogBinding.earnedCoinsTextview.setText(message);
-
-        gameRewardDialogBinding.gameCoinsImage.setAnimation(R.raw.redeem_pocket_money);
-
-        gameRewardDialogBinding.cancelImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addRewardDialog.dismiss();
-            }
-        });
-
-
-    }
-
-    public void showRewardDialog(int amount, int rawAnimation) {
-        GameRewardDialogBinding gameRewardDialogBinding;
-        LayoutInflater factory = LayoutInflater.from(BaseActivity.this);
-
-        gameRewardDialogBinding = DataBindingUtil.inflate(factory, R.layout.game_reward_dialog, null, false);
-
-        final AlertDialog addRewardDialog = new AlertDialog.Builder(BaseActivity.this).create();
-
-
-        addRewardDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        addRewardDialog.setView(gameRewardDialogBinding.getRoot());
-
-
-        gameRewardDialogBinding.earnedCoinsTextview.setText(getString(R.string.earned_reward_message) + " " + amount + " coins");
-
-        gameRewardDialogBinding.gameCoinsImage.setAnimation(rawAnimation);
-
-        gameRewardDialogBinding.gameCoinsImage.setAnimation(R.raw.redeem_pocket_money);
-
-        gameRewardDialogBinding.cancelImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addRewardDialog.dismiss();
-            }
-        });
-
-        if (!isFinishing()) {
-            addRewardDialog.show();
+        if (!BaseActivity.this.isFinishing())
+        {
+            dialogGamerReward.show(getSupportFragmentManager(),null);
         }
 
     }
-
-    public void logOutDialog2() {
-        LayoutInflater factory = LayoutInflater.from(BaseActivity.this);
-
-        View logOutView = factory.inflate(R.layout.activity_fav, null);
-        logOutDialog = new AlertDialog.Builder(BaseActivity.this).create();
-
-        logOutDialog.setView(logOutView);
-
-    }
-
-    public void showWebviewDialog() {
-        ShowWebviewDialogBinding showWebviewDialogBinding;
-        LayoutInflater factory = LayoutInflater.from(BaseActivity.this);
-
-        showWebviewDialogBinding = DataBindingUtil.inflate(factory, R.layout.show_webview_dialog, null, false);
-
-        final AlertDialog showWebviewDialog = new AlertDialog.Builder(BaseActivity.this).create();
+    public void showRewardDialog(DialogItems dialogItems, DialogListener dialogListener){
 
 
-        showWebviewDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        showWebviewDialog.setView(showWebviewDialogBinding.getRoot());
+        DialogGamerReward dialogGamerReward = DialogGamerReward.newInstance(dialogItems, dialogListener);
 
-        showWebviewDialog.show();
-
-        showWebviewDialogBinding.webView.loadUrl("file:///android_asset/policy.html");
-
-
-        showWebviewDialogBinding.okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showWebviewDialog.dismiss();
-            }
-        });
-
+        if (!BaseActivity.this.isFinishing())
+        {
+            dialogGamerReward.show(getSupportFragmentManager(),null);
+        }
 
     }
 
@@ -609,6 +391,36 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
     }
+
+
+
+    public void showWebviewDialog() {
+        ShowWebviewDialogBinding showWebviewDialogBinding;
+        LayoutInflater factory = LayoutInflater.from(BaseActivity.this);
+
+        showWebviewDialogBinding = DataBindingUtil.inflate(factory, R.layout.show_webview_dialog, null, false);
+
+        final AlertDialog showWebviewDialog = new AlertDialog.Builder(BaseActivity.this).create();
+
+
+        showWebviewDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
+        showWebviewDialog.setView(showWebviewDialogBinding.getRoot());
+
+        showWebviewDialog.show();
+
+        showWebviewDialogBinding.webView.loadUrl("file:///android_asset/policy.html");
+
+
+        showWebviewDialogBinding.okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showWebviewDialog.dismiss();
+            }
+        });
+
+
+    }
+
 
     public void showSuspendDialog(String message) {
         BlockUserDialogBinding blockUserDialogBinding;
@@ -1074,10 +886,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-    public interface PaytmUpiDialogListener {
-        public void redeemClick();
-    }
-
 
     public ProgressDialog showProgressBar() {
         try {
@@ -1210,12 +1018,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public boolean isInternetAvailable() {
         String connectivityStatus = Connectivity.getConnectionStatus(BaseActivity.this);
-
-        if (connectivityStatus.equals(AppConstants.ConnectionSignalStatus.NO_CONNECTIVITY + "") ||
-                connectivityStatus.equals(AppConstants.ConnectionSignalStatus.POOR_STRENGTH + "")) {
-            return false;
-        } else
-            return true;
+//
+//        if (connectivityStatus.equals(AppConstants.ConnectionSignalStatus.NO_CONNECTIVITY + "") ||
+//                connectivityStatus.equals(AppConstants.ConnectionSignalStatus.POOR_STRENGTH + ""))
+        return !connectivityStatus.equals(AppConstants.ConnectionSignalStatus.NO_CONNECTIVITY + "");
     }
 
 
@@ -1250,16 +1056,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-
-    public void hideBottomSheet() {
-        if (bottomSheetDialog != null)
-            bottomSheetDialog.dismiss();
-        bottomSheetDialogShown = false;
-    }
-
-    public BottomSheetDialog getBottomSheetDialog() {
-        return bottomSheetDialog;
-    }
 
     // will check if the ad view is changed
     public boolean adStatsChanged() {

@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.android.volley.Request;
 import com.google.firebase.firestore.SetOptions;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.model.firebase.FirebaseDataPassingHelper;
 import com.nitish.gamershub.model.firebase.GamersHubData;
 import com.nitish.gamershub.model.firebase.UserProfile;
 import com.nitish.gamershub.model.local.NetWorkTimerResult;
@@ -22,9 +23,9 @@ public class LoginSignupRepository extends BaseRepository {
     public LiveData<NetworkResponse<UserProfile>> getLoginUserLD = getLoginUserMLD;
 
 
-    public void callLoginUser() {
+    public void callGetUserProfile() {
 
-        getFireBaseDocumentReference(FireBaseService.getFirebaseUser(), getLoginUserMLD,UserProfile.class);
+        getFireBaseDocumentReference(FireBaseService.getFirebaseUser(), getLoginUserMLD, UserProfile.class);
 
     }
 
@@ -34,16 +35,30 @@ public class LoginSignupRepository extends BaseRepository {
 
     public void callRegisterUserProfile(UserProfile userProfile) {
 
-        setFirebaseDocumentReference(FireBaseService.getFirebaseUser(), registerUserProfileMLD,userProfile, SetOptions.merge());
+        FirebaseDataPassingHelper<Object> firebaseDataPassing = new FirebaseDataPassingHelper<>();
+        firebaseDataPassing.setMutableLiveData(registerUserProfileMLD);
+        firebaseDataPassing.setDocumentReference(FireBaseService.getFirebaseUser());
+        firebaseDataPassing.setDataObject(userProfile);
+        firebaseDataPassing.setSetOptions(SetOptions.merge());
+
+        setFirebaseDocumentReference(firebaseDataPassing);
 
     }
+
     private MutableLiveData<NetworkResponse<Object>> updateUserProfileMLD = new MutableLiveData<>();
     public LiveData<NetworkResponse<Object>> updateUserProfileLD = updateUserProfileMLD;
 
 
-    public void callUpdateUserProfile(UserProfile userProfile) {
+    public void callUpdateUserProfile(UserProfile userProfile, String message) {
 
-        setFirebaseDocumentReference(FireBaseService.getFirebaseUser(), updateUserProfileMLD,userProfile, null);
+        FirebaseDataPassingHelper<Object> firebaseDataPassing = new FirebaseDataPassingHelper<>();
+        firebaseDataPassing.setMutableLiveData(updateUserProfileMLD);
+        firebaseDataPassing.setDocumentReference(FireBaseService.getFirebaseUser());
+        firebaseDataPassing.setDataObject(userProfile);
+        firebaseDataPassing.setMessage(message);
+        firebaseDataPassing.setSetOptions(null);
+
+        setFirebaseDocumentReference(firebaseDataPassing);
 
     }
 
@@ -52,7 +67,7 @@ public class LoginSignupRepository extends BaseRepository {
 
     public void callGetGamersHubData() {
 
-        getFireBaseDocumentReference(FireBaseService.getFirebaseUser(), getGamersHubDataMLD, GamersHubData.class);
+        getFireBaseDocumentReference(FireBaseService.getFirebaseGamersHubData(), getGamersHubDataMLD, GamersHubData.class);
 
     }
 
@@ -62,7 +77,7 @@ public class LoginSignupRepository extends BaseRepository {
     public void callGetNetworkTime(Context context) {
 
 
-        callVolleyRequest( Request.Method.GET,getNetworkTimeMLD,context.getString(R.string.getCurrentTimeAsiaKolkata),NetWorkTimerResult.class);
+        callVolleyRequest(Request.Method.GET, getNetworkTimeMLD, context.getString(R.string.getCurrentTimeAsiaKolkata), NetWorkTimerResult.class);
 
     }
 

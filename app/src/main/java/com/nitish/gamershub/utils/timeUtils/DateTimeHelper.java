@@ -44,7 +44,6 @@ public  class DateTimeHelper extends Application {
         try {
 
 
-
             if(TrueTime.isInitialized()) {
                 datePojo.setGetCurrentDateString(getSimpleDateFormat().format(TrueTime.now()));
                 datePojo.setGetCurrentDate(TrueTime.now());
@@ -78,6 +77,10 @@ public  class DateTimeHelper extends Application {
                                 Tempo.initialize(((Activity) context).getApplication());
                             } catch (Exception e) {
                                 Log.d("pError","error in time112 "+e);
+
+                                datePojo.setGetCurrentDateString(getSimpleDateFormat().format(new Date()));
+                                datePojo.setGetCurrentDate(new Date());
+
                                 e.printStackTrace();
                             }
                         }
@@ -86,7 +89,8 @@ public  class DateTimeHelper extends Application {
             }
         }catch (Exception e)
         {
-
+            datePojo.setGetCurrentDateString(getSimpleDateFormat().format(new Date()));
+            datePojo.setGetCurrentDate(new Date());
 
             Log.d("pError","error in time113 "+e);
         }

@@ -1,6 +1,8 @@
 package com.nitish.gamershub.view.base;
 
 
+import static com.nitish.gamershub.utils.AppConstants.GamersHubDataGlobal;
+import static com.nitish.gamershub.utils.AppConstants.GamersHub_DATA;
 import static com.nitish.gamershub.utils.AppConstants.UserInfo;
 
 import android.content.Context;
@@ -23,6 +25,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.gson.Gson;
+import com.nitish.gamershub.model.firebase.FirebaseDataPassingHelper;
+import com.nitish.gamershub.model.firebase.GamersHubData;
 import com.nitish.gamershub.model.firebase.UserProfile;
 import com.nitish.gamershub.model.local.NetWorkTimerResult;
 import com.nitish.gamershub.utils.AppConstants;
@@ -35,8 +39,7 @@ import org.json.JSONObject;
 import io.paperdb.Paper;
 
 abstract public class BaseRepository {
-
-    Context context = new AppClass().getInstance().getApplicationContext();
+    Context context = AppClass.getInstance();
     PreferenceHelper preferenceHelper = new PreferenceHelper(context);
 
 
@@ -51,26 +54,16 @@ abstract public class BaseRepository {
             @Override
             public void documentExists(Boolean documentExists, DocumentSnapshot documentSnapshot) {
                 if (documentExists) {
-                    try {
-                        JSONObject jsonObject = new JSONObject(documentSnapshot.getData());
+
+                    JSONObject jsonObject = new JSONObject(documentSnapshot.getData());
 
 
-                        Object obj = new Gson().fromJson(jsonObject.toString(), responseType);
+                    Object obj = new Gson().fromJson(jsonObject.toString(), responseType);
 
-                        if (obj.getClass().getSimpleName().equals(UserProfile.class.getSimpleName())) {
+                    saveData(obj);
 
-                            saveUserProfile((UserProfile) obj);
-                        }
 
-                        mutableLiveData.postValue(new NetworkResponse.Success<>((K) obj));
-
-                    } catch (Exception e) {
-
-                        Log.d("pError", "Error in converting data into objects  : " + e);
-
-                        mutableLiveData.postValue(new NetworkResponse.Error<>(e.toString()));
-
-                    }
+                    mutableLiveData.postValue(new NetworkResponse.Success<>((K) obj));
 
 
                 } else {
@@ -145,7 +138,15 @@ abstract public class BaseRepository {
 
     }
 
-    public <K> void setFirebaseDocumentReference(DocumentReference documentReference, MutableLiveData<NetworkResponse<K>> mutableLiveData, Object dataObject, SetOptions setOptions) {
+    public <K> void setFirebaseDocumentReference(FirebaseDataPassingHelper<K> firebaseDocumentReference) {
+
+        SetOptions setOptions = firebaseDocumentReference.getSetOptions();
+        DocumentReference documentReference = firebaseDocumentReference.getDocumentReference();
+        Object dataObject = firebaseDocumentReference.getDataObject();
+        MutableLiveData<NetworkResponse<K>> mutableLiveData = firebaseDocumentReference.getMutableLiveData();
+        String message = firebaseDocumentReference.getMessage();
+        message = message == null ? "" : message;
+
 
         Task<Void> task = null;
         if (setOptions == null)
@@ -157,6 +158,7 @@ abstract public class BaseRepository {
 
         mutableLiveData.postValue(new NetworkResponse.Loading<>());
 
+        String finalMessage = message;
         task.addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -164,12 +166,10 @@ abstract public class BaseRepository {
                 if (task.isSuccessful()) {
 
 
-                    mutableLiveData.postValue(new NetworkResponse.Success<>((K) dataObject));
+                    mutableLiveData.postValue(new NetworkResponse.Success<>((K) dataObject, finalMessage));
 
-                    if (dataObject.getClass().getSimpleName().equals(UserProfile.class.getSimpleName())) {
+                    saveData(dataObject);
 
-                        saveUserProfile((UserProfile) dataObject);
-                    }
 
                 } else {
                     mutableLiveData.postValue(new NetworkResponse.Error<>("Task Filed"));
@@ -262,15 +262,39 @@ abstract public class BaseRepository {
             }
         });
 
-        Volley.newRequestQueue(new AppClass().getInstance()).add(jsonObjectRequest);
+        Volley.newRequestQueue(AppClass.getInstance()).add(jsonObjectRequest);
 
 
     }
 
+
+    public void saveData(Object object) {
+
+        String objectClassSimpleName = object.getClass().getSimpleName();
+
+
+        if (objectClassSimpleName.equals(UserProfile.class.getSimpleName())) {
+
+            saveUserProfile((UserProfile) object);
+
+        } else if (objectClassSimpleName.equals(GamersHubData.class.getSimpleName())) {
+
+            saveGamersHubDataProfile((GamersHubData) object);
+        }
+    }
+
     public void saveUserProfile(UserProfile userProfile) {
+//        Context context = AppClass.getInstance();
+//        PreferenceHelper preferenceHelper = new PreferenceHelper(context);
 
         preferenceHelper.saveUserProfile(userProfile);
         Paper.book().write(UserInfo, userProfile);
+    }
+
+    public void saveGamersHubDataProfile(GamersHubData gamersHubData) {
+
+        preferenceHelper.saveGamersHubData(gamersHubData);
+        Paper.book().write(GamersHubDataGlobal, gamersHubData);
     }
 
 

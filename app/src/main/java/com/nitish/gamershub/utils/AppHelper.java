@@ -5,6 +5,7 @@ import static com.nitish.gamershub.utils.AppConstants.FirebaseFCMToken;
 import static com.nitish.gamershub.utils.AppConstants.GamersHubDataGlobal;
 import static com.nitish.gamershub.utils.AppConstants.GoogleSignInAccountUser;
 import static com.nitish.gamershub.utils.AppConstants.GoogleSignInUserProfile;
+import static com.nitish.gamershub.utils.AppConstants.UserInfo;
 import static com.nitish.gamershub.utils.AppConstants.UserProfileGlobal;
 import static com.nitish.gamershub.utils.timeUtils.DateTimeHelper.TimeStampPattern;
 
@@ -30,6 +31,7 @@ import com.nitish.gamershub.model.firebase.GamersHubData;
 import com.nitish.gamershub.model.firebase.UserProfile;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.utils.timeUtils.DateTimeHelper;
+import com.nitish.gamershub.view.base.AppClass;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -39,6 +41,8 @@ import java.util.Random;
 import io.paperdb.Paper;
 
 public class AppHelper {
+
+
 
 
 
@@ -97,14 +101,16 @@ public class AppHelper {
 
     public static void saveUserProfileGlobal(UserProfile userProfile)
     {
-        Paper.book().write(UserProfileGlobal,userProfile);
+        Paper.book().write(UserInfo,userProfile);
 
 
     }
     public static UserProfile getUserProfileGlobalData()
     {
 
-        return (UserProfile)Paper.book().read(UserProfileGlobal);
+        Paper.init(AppClass.getInstance());
+
+        return (UserProfile)Paper.book().read(UserInfo);
     }
     public static void destroyAllPaperData()
     {
