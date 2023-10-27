@@ -13,9 +13,8 @@ import static com.nitish.gamershub.utils.AppConstants.GoogleSignInAccountUser;
 import static com.nitish.gamershub.utils.AppConstants.UserMail;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,6 +29,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.ads.AdError;
@@ -55,36 +55,32 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.SetOptions;
-import com.google.gson.Gson;
 import com.nitish.gamershub.model.local.DialogItems;
 import com.nitish.gamershub.utils.PreferenceHelper;
+import com.nitish.gamershub.view.dialogs.ConfirmationDialog;
 import com.nitish.gamershub.view.dialogs.DialogGamerReward;
 import com.nitish.gamershub.view.dialogs.DialogListener;
+import com.nitish.gamershub.view.dialogs.SuspensionDialog;
 import com.nitish.gamershub.view.homePage.activity.HomeActivity;
 import com.nitish.gamershub.view.dialogs.BottomSheetDialog;
 import com.nitish.gamershub.utils.interfaces.AdmobInterstitialAdListener;
 import com.nitish.gamershub.utils.interfaces.ConfirmationDialogListener2;
 import com.nitish.gamershub.databinding.BlockUserDialogBinding;
 import com.nitish.gamershub.databinding.ConfirmationDialogLayoutBinding;
-import com.nitish.gamershub.databinding.GameRewardDialogBinding;
 import com.nitish.gamershub.databinding.ShowWebviewDialogBinding;
 import com.nitish.gamershub.model.local.DialogHelperPojo;
 import com.nitish.gamershub.model.firebase.AdViewedStats;
 import com.nitish.gamershub.model.firebase.GamersHubData;
 import com.nitish.gamershub.model.firebase.TimerStatus;
 import com.nitish.gamershub.model.firebase.UserProfile;
-import com.nitish.gamershub.model.firebase.UserTransactions;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.utils.AppHelper;
 import com.nitish.gamershub.utils.Connectivity;
 import com.nitish.gamershub.utils.AppConstants;
-import com.nitish.gamershub.utils.DataPassingHelper;
 import com.nitish.gamershub.utils.ProgressBarHelper;
 import com.nitish.gamershub.utils.firebaseUtils.UserOperations;
 import com.nitish.gamershub.view.loginSingup.activity.LoginActivity;
 import com.nitish.gamershub.view.loginSingup.activity.SplashScreen;
-
-import org.json.JSONObject;
 
 import java.util.List;
 
@@ -107,7 +103,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     AlertDialog confirmationDialog;
     private UserProfile userProfileGlobal;
     private GamersHubData gamersHubDataGlobal;
-    TimeChangedReceiver2 timeChangedReceiver2;
     PreferenceHelper preferenceHelper;
     static boolean bottomSheetDialogShown = false;
 
@@ -126,7 +121,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         Paper.init(this);
         progressDialog = ProgressBarHelper.setProgressBarDialog(BaseActivity.this);
         preferenceHelper = new PreferenceHelper(this);
-        timeChangedReceiver2 = new TimeChangedReceiver2();
 
         loadInterstitialAdNew();
         loadRewardedAd2();
@@ -168,8 +162,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .build();
     }
 
-    public PreferenceHelper getPreferencesMain()
-    {
+    public PreferenceHelper getPreferencesMain() {
         return preferenceHelper;
     }
 
@@ -206,49 +199,17 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-    public void getGamersHubRedeemCoinsList(OnFirestoreDataCompleteListener onFirestoreDataCompleteListener) {
-
-
-        setGamersHubRedeemCoinsList().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                dismissProgressBar();
-
-                if (task.isSuccessful()) {
-                    DocumentSnapshot documentSnapshot = task.getResult();
-
-                    if (documentSnapshot.exists()) {
-
-                        onFirestoreDataCompleteListener.OnComplete(documentSnapshot);
-
-
-                    } else {
-                        Toast.makeText(BaseActivity.this, "document does not exist 112", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-                dismissProgressBar();
-                Toast.makeText(BaseActivity.this, "couldn't get the documents ", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-    }
 
     public interface OnFirestoreDataCompleteListener {
         public void OnComplete(DocumentSnapshot documentSnapshot);
     }
 
 
-
-
     public void setUserProfile(UserProfile userProfile, SetUserDataOnCompleteListener setUserDataOnCompleteListener) {
         if (!showNoInternetDialog())
             return;
+
+
 
         getFirebaseUser().set(userProfile, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -269,11 +230,13 @@ public abstract class BaseActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception e) {
                 dismissProgressBar();
-                DialogHelperPojo dialogHelperPojo = new DialogHelperPojo();
-                Log.d("pError", "error1123 in the update profile " + e);
-                dialogHelperPojo.setMessage("A server error occurred");
 
-                getConfirmationDialog(dialogHelperPojo, new ConfirmationDialogListener2() {
+                DialogItems dialogItems = new DialogItems();
+                Log.d("pError", "error1123 in the update profile " + e);
+                dialogItems.setMessage("A server error occurred");
+
+
+                showConfirmationDialog2(dialogItems, new DialogListener() {
                     @Override
                     public void onYesClick() {
 
@@ -308,25 +271,17 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
     public Boolean showNoInternetDialog() {
+
+
         if (!isInternetAvailable()) {
-            dismissProgressBar();
-            DialogHelperPojo dialogHelperPojo = new DialogHelperPojo();
-            dialogHelperPojo.setTitle("");
-            dialogHelperPojo.setDialogIcon(R.drawable.no_internet_icon);
-            dialogHelperPojo.setMessage("Connection problem, please check your internet connection and try again");
 
-            getConfirmationDialogSingleButton(dialogHelperPojo, new ConfirmationDialogListener2() {
-                @Override
-                public void onYesClick() {
+            DialogItems dialogItems = new DialogItems();
+            dialogItems.setTitle("");
+            dialogItems.setSingleButton(true);
+            dialogItems.setDialogIcon(R.drawable.no_internet_icon);
+            dialogItems.setMessage("Connection problem, please check your internet connection and try again");
+            showConfirmationDialog2(dialogItems, null);
 
-
-                }
-
-                @Override
-                public void onNoClick() {
-
-                }
-            });
 
             return false;
         } else
@@ -334,64 +289,28 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-    public void showRewardDialog(String message, DialogListener dialogListener)
-    {
+    public void showRewardDialog(String message, DialogListener dialogListener) {
         DialogItems dialogItems = new DialogItems();
         dialogItems.setMessage(message);
 
         DialogGamerReward dialogGamerReward = DialogGamerReward.newInstance(dialogItems, dialogListener);
 
-        if (!BaseActivity.this.isFinishing())
-        {
-            dialogGamerReward.show(getSupportFragmentManager(),null);
-        }
+
+        showDialogfragment(dialogGamerReward, null);
+
 
     }
-    public void showRewardDialog(DialogItems dialogItems, DialogListener dialogListener){
+
+    public void showRewardDialog(DialogItems dialogItems, DialogListener dialogListener) {
 
 
         DialogGamerReward dialogGamerReward = DialogGamerReward.newInstance(dialogItems, dialogListener);
 
-        if (!BaseActivity.this.isFinishing())
-        {
-            dialogGamerReward.show(getSupportFragmentManager(),null);
+        if (!BaseActivity.this.isFinishing()) {
+            dialogGamerReward.show(getSupportFragmentManager(), null);
         }
 
     }
-
-    public void showRewardDialog(String message, int rawAnimation, OnDialogLister onDialogLister) {
-        GameRewardDialogBinding gameRewardDialogBinding;
-        LayoutInflater factory = LayoutInflater.from(BaseActivity.this);
-
-        gameRewardDialogBinding = DataBindingUtil.inflate(factory, R.layout.game_reward_dialog, null, false);
-
-        final AlertDialog addRewardDialog = new AlertDialog.Builder(BaseActivity.this).create();
-
-        addRewardDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        addRewardDialog.setView(gameRewardDialogBinding.getRoot());
-
-
-        if (!BaseActivity.this.isFinishing())
-            addRewardDialog.show();
-
-        addRewardDialog.setCancelable(false);
-        gameRewardDialogBinding.earnedCoinsTextview.setText(message);
-
-
-        gameRewardDialogBinding.gameCoinsImage.setAnimation(rawAnimation);
-
-
-        gameRewardDialogBinding.cancelImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addRewardDialog.dismiss();
-                onDialogLister.onDialogDismissLister();
-            }
-        });
-
-
-    }
-
 
 
     public void showWebviewDialog() {
@@ -422,204 +341,36 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-    public void showSuspendDialog(String message) {
-        BlockUserDialogBinding blockUserDialogBinding;
-        LayoutInflater factory = LayoutInflater.from(BaseActivity.this);
+    public void showSuspendDialog(DialogItems dialogItems, DialogListener dialogListener) {
 
-        blockUserDialogBinding = DataBindingUtil.inflate(factory, R.layout.block_user_dialog, null, false);
+        SuspensionDialog suspensionDialog = SuspensionDialog.newInstance(dialogItems, dialogListener);
 
-        final AlertDialog addRewardDialog = new AlertDialog.Builder(BaseActivity.this).create();
+        suspensionDialog.show(getSupportFragmentManager(), null);
+    }
 
-        addRewardDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        addRewardDialog.setView(blockUserDialogBinding.getRoot());
 
-        addRewardDialog.show();
 
-        addRewardDialog.setMessage(message);
-        blockUserDialogBinding.understandButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
-        addRewardDialog.setCancelable(false);
+    public void showConfirmationDialogSingleButton2(DialogItems dialogItems, DialogListener dialogListener) {
+        dialogItems.setSingleButton(true);
+
+        showConfirmationDialog2(dialogItems, dialogListener);
 
 
     }
 
-    public void showConfirmationDialog(String title, String message, ConfirmationDialogListener confirmationDialogListener) {
 
-        setConfirmationDialog(title, message, confirmationDialogListener);
 
-        confirmationDialog.show();
 
+
+
+    public void showConfirmationDialog2(DialogItems dialogItems, DialogListener dialogListener) {
+
+
+        ConfirmationDialog confirmationDialog1 = ConfirmationDialog.newInstance(dialogItems, dialogListener);
+
+        confirmationDialog1.show(getSupportFragmentManager(), null);
     }
 
-    public void showConfirmationDialogSingleButton(String buttonTitle, String title, String message, ConfirmationDialogListener confirmationDialogListener) {
-
-        ConfirmationDialogLayoutBinding confirmationDialogLayoutBinding = setConfirmationDialog(title, message, confirmationDialogListener);
-
-        confirmationDialogLayoutBinding.NoButton.setVisibility(View.GONE);
-
-
-        confirmationDialogLayoutBinding.yesButton.setText(buttonTitle);
-        // for update disable the dismiss
-        if (buttonTitle.toLowerCase().contains("update")) {
-            confirmationDialogLayoutBinding.yesButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    confirmationDialogListener.onYesClick();
-                }
-            });
-        }
-        confirmationDialog.show();
-
-    }
-
-    public void showConfirmationDialogSingleButtonDismissable(String buttonTitle, String title, String message, ConfirmationDialogListener confirmationDialogListener) {
-
-        ConfirmationDialogLayoutBinding confirmationDialogLayoutBinding = setConfirmationDialog(title, message, confirmationDialogListener);
-
-        confirmationDialogLayoutBinding.NoButton.setVisibility(View.GONE);
-
-
-        confirmationDialogLayoutBinding.yesButton.setText(buttonTitle);
-        confirmationDialogLayoutBinding.yesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                confirmationDialog.dismiss();
-                confirmationDialogListener.onYesClick();
-            }
-        });
-        confirmationDialog.show();
-
-    }
-
-
-    public ConfirmationDialogLayoutBinding setConfirmationDialog(String title, String message, ConfirmationDialogListener confirmationDialogListener) {
-        ConfirmationDialogLayoutBinding confirmationDialogLayoutBinding;
-        LayoutInflater factory = LayoutInflater.from(BaseActivity.this);
-
-        confirmationDialogLayoutBinding = DataBindingUtil.inflate(factory, R.layout.confirmation_dialog_layout, null, false);
-
-        confirmationDialog = new AlertDialog.Builder(BaseActivity.this).create();
-
-        confirmationDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        confirmationDialog.setView(confirmationDialogLayoutBinding.getRoot());
-        confirmationDialog.setCancelable(false);
-        confirmationDialog.show();
-        confirmationDialogLayoutBinding.titleTextview.setText(title);
-        confirmationDialogLayoutBinding.messageTextview.setText(message);
-
-
-        confirmationDialogLayoutBinding.yesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                confirmationDialog.dismiss();
-                confirmationDialogListener.onYesClick();
-            }
-        });
-        confirmationDialogLayoutBinding.NoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                confirmationDialog.dismiss();
-                confirmationDialogListener.onNoClick();
-            }
-        });
-
-        return confirmationDialogLayoutBinding;
-
-
-    }
-
-    public ConfirmationDialogLayoutBinding getConfirmationDialogSingleButton(DialogHelperPojo dialogHelperPojo, ConfirmationDialogListener2 confirmationDialogListener2) {
-        ConfirmationDialogLayoutBinding confirmationDialogLayoutBinding;
-        LayoutInflater factory = LayoutInflater.from(BaseActivity.this);
-
-        confirmationDialogLayoutBinding = DataBindingUtil.inflate(factory, R.layout.confirmation_dialog_layout, null, false);
-
-        confirmationDialog = new AlertDialog.Builder(BaseActivity.this).create();
-
-        confirmationDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        confirmationDialog.setView(confirmationDialogLayoutBinding.getRoot());
-        confirmationDialog.setCancelable(false);
-        confirmationDialog.show();
-        confirmationDialogLayoutBinding.titleTextview.setText(dialogHelperPojo.getTitle());
-        confirmationDialogLayoutBinding.messageTextview.setText(Html.fromHtml(dialogHelperPojo.getMessage()));
-        confirmationDialogLayoutBinding.dialogIcon.setImageResource(dialogHelperPojo.getDialogIcon());
-        // by default set yes when the
-
-
-        if (dialogHelperPojo.getYesButton().equals(new DialogHelperPojo().getYesButton()))
-            confirmationDialogLayoutBinding.yesButton.setText("Ok");
-
-
-        confirmationDialogLayoutBinding.NoButton.setVisibility(View.GONE);
-
-        confirmationDialogLayoutBinding.yesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                confirmationDialog.dismiss();
-                confirmationDialogListener2.onYesClick();
-
-
-            }
-        });
-        confirmationDialogLayoutBinding.NoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                confirmationDialog.dismiss();
-                confirmationDialogListener2.onNoClick();
-
-            }
-        });
-
-        return confirmationDialogLayoutBinding;
-
-
-    }
-
-    public ConfirmationDialogLayoutBinding getConfirmationDialog(DialogHelperPojo dialogHelperPojo, ConfirmationDialogListener2 confirmationDialogListener2) {
-        ConfirmationDialogLayoutBinding confirmationDialogLayoutBinding;
-        LayoutInflater factory = LayoutInflater.from(BaseActivity.this);
-
-        confirmationDialogLayoutBinding = DataBindingUtil.inflate(factory, R.layout.confirmation_dialog_layout, null, false);
-
-        confirmationDialog = new AlertDialog.Builder(BaseActivity.this).create();
-
-        confirmationDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        confirmationDialog.setView(confirmationDialogLayoutBinding.getRoot());
-        confirmationDialog.setCancelable(false);
-        confirmationDialog.show();
-        confirmationDialogLayoutBinding.titleTextview.setText(dialogHelperPojo.getTitle());
-        confirmationDialogLayoutBinding.messageTextview.setText(Html.fromHtml(dialogHelperPojo.getMessage()));
-        confirmationDialogLayoutBinding.yesButton.setText(dialogHelperPojo.getYesButton());
-        confirmationDialogLayoutBinding.NoButton.setText(dialogHelperPojo.getNoButton());
-
-        confirmationDialogLayoutBinding.yesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                confirmationDialog.dismiss();
-                confirmationDialogListener2.onYesClick();
-
-
-            }
-        });
-        confirmationDialogLayoutBinding.NoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                confirmationDialog.dismiss();
-                confirmationDialogListener2.onNoClick();
-
-            }
-        });
-
-        return confirmationDialogLayoutBinding;
-
-
-    }
 
     public static interface ConfirmationDialogListener {
         public void onDismissListener();
@@ -635,12 +386,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
     //------------------------- dialog boxes -------------------------------//
-
-
-    public abstract class OnDialogLister {
-
-        public abstract void onDialogDismissLister();
-    }
 
 
     public TimerStatus.DailyBonus getDailyBonusFromProfile(UserProfile userProfile) {
@@ -993,20 +738,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-    public static class TimeChangedReceiver2 extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //   Toast.makeText(context,"time changed",Toast.LENGTH_LONG).show();
-            StringBuilder sb = new StringBuilder();
-            sb.append("Action: " + intent.getAction() + "\n");
-            sb.append("URI: " + intent.toUri(Intent.URI_INTENT_SCHEME).toString() + "\n");
-            String log = sb.toString();
-            Log.d("pResponse", "time changed broadcast " + log);
-            Toast.makeText(context, log, Toast.LENGTH_LONG).show();
-        }
-
-    }
 
     public void saveGamersHubDataGlobal(GamersHubData gamersHubData) {
 
@@ -1025,7 +756,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-    public void showBottomSheet() {
+    public void showBonusBottomSheet() {
 
         // will show the bottom sheet only once the app is started
 
@@ -1046,7 +777,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                     bottomSheetDialog.dismiss();
             }
 
-            bottomSheetDialog.show(getSupportFragmentManager(), "");
+            showDialogfragment(bottomSheetDialog, "");
+//            bottomSheetDialog.show(getSupportFragmentManager(), "");
 
             bottomSheetDialogShown = true;
         } catch (Exception e) {
@@ -1054,6 +786,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    void showDialogfragment(DialogFragment dialog, String tag) {
+        if (!this.isFinishing()) {
+            dialog.show(getSupportFragmentManager(), tag);
+        }
     }
 
 

@@ -84,7 +84,8 @@ public class RedeemActivity extends BaseActivity {
         getCoins();
         setUpBannerAd();
         totalGameCoins = getUserProfileGlobalData().getProfileData().getGameCoins();
-        getRedeemListData();
+//        getRedeemListData();
+        getRedeemCoinsData();
         setonClickListener();
         setViews();
         bindObservers();
@@ -128,7 +129,7 @@ public class RedeemActivity extends BaseActivity {
                 if (response instanceof NetworkResponse.Success) {
 
                     String message = "Congratulations , Redeem request generated for ₹" + redeemListItem.getMoney();
-                    showRewardDialog(message,null);
+                    showRewardDialog(message, null);
                     Toast.makeText(RedeemActivity.this, "Request Raised successfully", Toast.LENGTH_SHORT).show();
 
 
@@ -145,6 +146,27 @@ public class RedeemActivity extends BaseActivity {
                 }
             }
         });
+
+        viewModel.getRedeemCoinsLD.observe(this, new Observer<NetworkResponse<RedeemCoins>>() {
+            @Override
+            public void onChanged(NetworkResponse<RedeemCoins> response) {
+                if (response instanceof NetworkResponse.Success) {
+                    dismissProgressBar();
+
+                    RedeemCoins redeemCoins = ((NetworkResponse.Success<RedeemCoins>) response).getData();
+
+                    redeemListItemArrayList = redeemCoins.getRedeemListItemList();
+                    setRedeemRecyclerView();
+                } else if (response instanceof NetworkResponse.Error) {
+
+                    dismissProgressBar();
+                } else if (response instanceof NetworkResponse.Loading) {
+
+                    showProgressBar();
+                }
+            }
+        });
+
 
     }
 
@@ -174,21 +196,6 @@ public class RedeemActivity extends BaseActivity {
         redeemRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
 
 
-    }
-
-    private void getRedeemListData() {
-        showProgressBar();
-        getGamersHubRedeemCoinsList(new OnFirestoreDataCompleteListener() {
-            @Override
-            public void OnComplete(DocumentSnapshot documentSnapshot) {
-
-
-                JSONObject jsonObject = new JSONObject(documentSnapshot.getData());
-                RedeemCoins redeemCoins = new Gson().fromJson(jsonObject.toString(), RedeemCoins.class);
-                redeemListItemArrayList = redeemCoins.getRedeemListItemList();
-                setRedeemRecyclerView();
-            }
-        });
     }
 
     private void setRedeemListData() {
@@ -334,7 +341,7 @@ public class RedeemActivity extends BaseActivity {
     public void getCoins() {
         progressDialog.show();
 
-        callLoginUser();
+        getUserProfile();
 //        getUserProfileGlobal(new GetUserProfileDataListener() {
 //            @Override
 //            public void onTaskSuccessful(UserProfile userProfile) {
@@ -410,9 +417,9 @@ public class RedeemActivity extends BaseActivity {
             public void onTaskSuccessful() {
 
 
-                String message = "Congratulations , Redeem request generated for ₹" + redeemListItem.getMoney();
-                showRewardDialog(message,null);
-                Toast.makeText(RedeemActivity.this, "Request Raised successfully", Toast.LENGTH_SHORT).show();
+                String message = getString(R.string.congratulations_redeem_request_generated_for) + redeemListItem.getMoney();
+                showRewardDialog(message, null);
+                Toast.makeText(RedeemActivity.this, R.string.request_raised_successfully, Toast.LENGTH_SHORT).show();
 
 
                 getCoins();
@@ -422,13 +429,13 @@ public class RedeemActivity extends BaseActivity {
     }
 
 
-    public void performUpdateUserTransaction()
-    {
+    public void performUpdateUserTransaction() {
         UserTransactions userTransactions = setUserTransactions(getUserProfileGlobalData().getUserTransactions(), redeemListItem);
 
         updateUserWalletForTransaction(-redeemListItem.getCoins(), setUserDataLister(redeemListItem), userTransactions);
 
     }
+
     public UserProfile updateUserWalletForTransaction(int amount, SetUserDataOnCompleteListener setUserDataOnCompleteListener, UserTransactions userTransactions) {
 
         UserProfile userProfile = getUserProfileGlobalData();
@@ -442,7 +449,7 @@ public class RedeemActivity extends BaseActivity {
 
 
         showProgressBar();
-        callUpdateUserProfile(userProfile,"");
+        callUpdateUserProfile(userProfile, "");
 //        setUserProfile(userProfile, setUserDataOnCompleteListener);
 
         return userProfile;
@@ -461,7 +468,6 @@ public class RedeemActivity extends BaseActivity {
 
 
     }
-
 
 
     @Override
@@ -488,11 +494,15 @@ public class RedeemActivity extends BaseActivity {
 
     }
 
-    private void callLoginUser() {
+    private void getRedeemCoinsData() {
+        viewModel.callGetRedeemCoins();
+    }
+
+    private void getUserProfile() {
         viewModel.callGetUserProfile();
     }
 
-    private void callUpdateUserProfile(UserProfile userProfile,String usage) {
+    private void callUpdateUserProfile(UserProfile userProfile, String usage) {
 
         viewModel.callUpdateUserProfile(userProfile);
     }

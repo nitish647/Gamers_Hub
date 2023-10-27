@@ -224,7 +224,7 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
 
                 Paper.book().write(UserMail, googleSignInAccountUser.getEmail());
 
-                callLoginUser();
+                getUserProfile();
 //
 //                getUserProfileGlobal(new GetUserProfileDataListener() {
 //                    @Override
@@ -391,7 +391,7 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
     }
 
 
-    private void callLoginUser() {
+    private void getUserProfile() {
         viewModel.callGetUserProfile();
     }
 

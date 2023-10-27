@@ -24,11 +24,13 @@ import com.nitish.gamershub.model.local.AllGamesItems;
 import com.nitish.gamershub.model.firebase.GamePlayedStatus;
 import com.nitish.gamershub.model.firebase.UserProfile;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.model.local.DialogItems;
 import com.nitish.gamershub.utils.NetworkResponse;
 import com.nitish.gamershub.utils.timeUtils.DateTimeHelper;
 import com.nitish.gamershub.utils.firebaseUtils.UserOperations;
 import com.nitish.gamershub.utils.interfaces.AdmobInterstitialAdListener;
 import com.nitish.gamershub.view.base.BaseActivity;
+import com.nitish.gamershub.view.dialogs.DialogListener;
 import com.nitish.gamershub.view.homePage.activity.HomeActivity;
 import com.nitish.gamershub.view.loginSingup.activity.LoginActivity;
 import com.nitish.gamershub.view.loginSingup.viewmodelRepo.LoginSignUpViewModel;
@@ -163,12 +165,11 @@ public class GameDetailActivity2 extends BaseActivity {
 
     public void exitGameDialog() {
 
-        showConfirmationDialog("Confirmation", "Do you want to exit the game?", new ConfirmationDialogListener() {
-            @Override
-            public void onDismissListener() {
 
-            }
-
+        DialogItems dialogItems = new DialogItems();
+        dialogItems.setMessage("Do you want to exit the game?");
+        dialogItems.setTitle("Confirmation");
+        showConfirmationDialog2(dialogItems, new DialogListener() {
             @Override
             public void onYesClick() {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -179,12 +180,8 @@ public class GameDetailActivity2 extends BaseActivity {
             public void onNoClick() {
 
             }
-
-            @Override
-            public void onRewardGrantedListener() {
-
-            }
         });
+
 
 
     }

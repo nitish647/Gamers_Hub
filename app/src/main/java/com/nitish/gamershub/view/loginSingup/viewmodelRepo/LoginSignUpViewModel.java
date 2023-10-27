@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.nitish.gamershub.model.firebase.GamersHubData;
+import com.nitish.gamershub.model.firebase.RedeemCoins;
 import com.nitish.gamershub.model.firebase.UserProfile;
 import com.nitish.gamershub.model.local.NetWorkTimerResult;
 import com.nitish.gamershub.utils.NetworkResponse;
@@ -13,8 +14,6 @@ import com.nitish.gamershub.utils.NetworkResponse;
 public class LoginSignUpViewModel extends ViewModel {
 
     LoginSignupRepository loginSignupRepository = new LoginSignupRepository();
-
-
 
 
     public LiveData<NetworkResponse<UserProfile>> loginUserLD = loginSignupRepository.getLoginUserLD;
@@ -46,6 +45,7 @@ public class LoginSignUpViewModel extends ViewModel {
 
     }
 
+
     public LiveData<NetworkResponse<GamersHubData>> getGamersHubDataLD = loginSignupRepository.getGamersHubDataLD;
 
     public void callGetGamersHub() {
@@ -53,6 +53,15 @@ public class LoginSignUpViewModel extends ViewModel {
         loginSignupRepository.callGetGamersHubData();
 
     }
+    public LiveData<NetworkResponse<RedeemCoins>> getRedeemCoinsLD = loginSignupRepository.getRedeemCoinsLD;
+
+
+    public void callGetRedeemCoins() {
+
+        loginSignupRepository.getGamersHubRedeemCoinsList();
+
+    }
+
 
     public LiveData<NetworkResponse<NetWorkTimerResult>> getNetworkTime = loginSignupRepository.getNetworkTimeLD;
 
@@ -61,6 +70,8 @@ public class LoginSignUpViewModel extends ViewModel {
         loginSignupRepository.callGetNetworkTime(context);
 
     }
+
+
 
 
 

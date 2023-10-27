@@ -31,6 +31,7 @@ public class BottomSheetDialog extends BottomSheetDialogFragment {
     TimerStatus timerStatus;
 
     public static BottomSheetDialog newInstance(String param1) {
+
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);

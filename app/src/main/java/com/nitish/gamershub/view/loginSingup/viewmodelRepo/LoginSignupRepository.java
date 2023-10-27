@@ -10,6 +10,7 @@ import com.google.firebase.firestore.SetOptions;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.model.firebase.FirebaseDataPassingHelper;
 import com.nitish.gamershub.model.firebase.GamersHubData;
+import com.nitish.gamershub.model.firebase.RedeemCoins;
 import com.nitish.gamershub.model.firebase.UserProfile;
 import com.nitish.gamershub.model.local.NetWorkTimerResult;
 import com.nitish.gamershub.utils.NetworkResponse;
@@ -68,6 +69,15 @@ public class LoginSignupRepository extends BaseRepository {
     public void callGetGamersHubData() {
 
         getFireBaseDocumentReference(FireBaseService.getFirebaseGamersHubData(), getGamersHubDataMLD, GamersHubData.class);
+
+    }
+
+    public MutableLiveData<NetworkResponse<RedeemCoins>> getRedeemCoinsMLD = new MutableLiveData<>();
+    public LiveData<NetworkResponse<RedeemCoins>> getRedeemCoinsLD = getRedeemCoinsMLD;
+
+    public void getGamersHubRedeemCoinsList() {
+
+        getFireBaseDocumentReference(FireBaseService.getGamersHubRedeemCoinsList(), getRedeemCoinsMLD, RedeemCoins.class);
 
     }
 

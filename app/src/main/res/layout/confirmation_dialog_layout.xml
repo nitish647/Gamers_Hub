@@ -64,6 +64,7 @@
                 <Button
 
 
+                    android:padding="@dimen/_5sdp"
                     android:id="@+id/yesButton"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
@@ -71,7 +72,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/round_corners"
-
+                    android:layout_margin="@dimen/_10sdp"
                     android:backgroundTint="@color/material_dark_blue"
                     android:elevation="@dimen/cardview_default_elevation"
                     android:text="Yes"
@@ -80,13 +81,14 @@
                 </Button>
 
                 <Button
-                    android:id="@+id/NoButton"
+                    android:id="@+id/noButton"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:layout_margin="@dimen/_10sdp"
                     android:layout_marginHorizontal="5dp"
                     android:layout_marginTop="10dp"
                     android:layout_weight="1"
-
+                    android:padding="@dimen/_5sdp"
                     android:background="@drawable/round_corners"
                     android:elevation="@dimen/cardview_default_elevation"
                     android:text="No"

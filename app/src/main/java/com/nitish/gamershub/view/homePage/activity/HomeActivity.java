@@ -41,6 +41,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.nitish.gamershub.databinding.ActivityHomeBinding;
+import com.nitish.gamershub.model.local.DialogItems;
 import com.nitish.gamershub.utils.NetworkResponse;
 import com.nitish.gamershub.utils.interfaces.AdmobInterstitialAdListener;
 import com.nitish.gamershub.model.local.AllGamesItems;
@@ -61,6 +62,7 @@ import com.nitish.gamershub.utils.DeviceHelper;
 import com.nitish.gamershub.utils.NotificationHelper;
 import com.nitish.gamershub.utils.ProgressBarHelper;
 import com.nitish.gamershub.view.base.BaseActivity;
+import com.nitish.gamershub.view.dialogs.DialogListener;
 import com.nitish.gamershub.view.gamePlay.GameDetailActivity2;
 import com.nitish.gamershub.view.homePage.fragment.CategoryGamesFragment;
 import com.nitish.gamershub.view.homePage.fragment.HomeFragment;
@@ -259,12 +261,12 @@ public class HomeActivity extends BaseActivity {
     }
 
     public void showLogOutDialog() {
-        showConfirmationDialog("Confirmation", "Do you want to log out?", new ConfirmationDialogListener() {
-            @Override
-            public void onDismissListener() {
 
-            }
 
+        DialogItems dialogItems = new DialogItems();
+        dialogItems.setTitle("Confirmation");
+        dialogItems.setMessage("Do you want to log out?");
+        showConfirmationDialog2(dialogItems, new DialogListener() {
             @Override
             public void onYesClick() {
                 googleSignOut();
@@ -272,11 +274,6 @@ public class HomeActivity extends BaseActivity {
 
             @Override
             public void onNoClick() {
-
-            }
-
-            @Override
-            public void onRewardGrantedListener() {
 
             }
         });
@@ -513,14 +510,11 @@ public class HomeActivity extends BaseActivity {
         if (dailyBonus != null) {
 
             // when the daily bonus is claimed then check for the time
-            if (dailyBonus.getClaimed())
-
-            {
+            if (dailyBonus.getClaimed()) {
                 callNetworkTime(dailyBonus);
 //                getTimeApi(dailyBonus);
-            }
-            else {
-                showBottomSheet();
+            } else {
+                showBonusBottomSheet();
             }
 
 
@@ -541,7 +535,7 @@ public class HomeActivity extends BaseActivity {
             WatchViewReward watchViewReward = userProfile.getTimerStatus().getWatchViewReward();
 
             if (!watchViewReward.isClaimed()) {
-                showBottomSheet();
+                showBonusBottomSheet();
             }
         }
     }
@@ -631,7 +625,7 @@ public class HomeActivity extends BaseActivity {
             // reset the time to 8 pm when the time difference is 24 hours
             // enable the daily bonus
             if (hours >= 24) {
-                showBottomSheet();
+                showBonusBottomSheet();
                 dailyBonus.setClaimed(false);
                 dailyBonus.setClaimedDate(DateTimeHelper.getDatePojo().getSimpleDateFormat().format(date1CurrentDate1) + "");
                 dailyBonus.setLastResetDateTime(DateTimeHelper.resetDateToATime(date1CurrentDate1, DateTimeHelper.time_7_am));
@@ -730,7 +724,11 @@ public class HomeActivity extends BaseActivity {
         UserAccountStatus userAccountStatus = userProfile.getUserAccountStatus();
 
         if (userAccountStatus.getAccountStatus() != AppConstants.AccountActive) {
-            showSuspendDialog(userAccountStatus.getSuspensionMessage());
+
+            DialogItems dialogItems = new DialogItems();
+            dialogItems.setMessage(userAccountStatus.getSuspensionMessage());
+            showSuspendDialog(dialogItems, null);
+//            showSuspendDialog(userAccountStatus.getSuspensionMessage());
         }
 
         // updating the user transaction
@@ -760,16 +758,33 @@ public class HomeActivity extends BaseActivity {
 
             }
         };
-
+        DialogItems dialogItems = new DialogItems();
+        dialogItems.setTitle("Pending Update");
+        dialogItems.setYesTitle("Update");
+        dialogItems.setMessage("A new update of the app has been released , please update ");
         if (gamersHubData.getGamesData().isForceUpdate()) {
-            showConfirmationDialogSingleButton("Update", "Pending Update", "A new update of the app has been released , please update ", confirmationDialogListener);
+
+
+            showConfirmationDialogSingleButton2(dialogItems, dialogListener);
 
         } else {
-            showConfirmationDialog("Pending Update", "A new update of the app has been released , please update ", confirmationDialogListener
-            );
+
+            showConfirmationDialog2(dialogItems, dialogListener);
+
         }
     }
 
+    private DialogListener dialogListener = new DialogListener() {
+        @Override
+        public void onYesClick() {
+            openPlayStore();
+        }
+
+        @Override
+        public void onNoClick() {
+
+        }
+    };
 
     private void callGetGamersHubData() {
         viewModel.callGetGamersHub();
@@ -780,7 +795,7 @@ public class HomeActivity extends BaseActivity {
         viewModel.callUpdateUserProfile(userProfile);
     }
 
-    private void callNetworkTime(TimerStatus.DailyBonus dailyBonus){
+    private void callNetworkTime(TimerStatus.DailyBonus dailyBonus) {
         dailyBonusToUpdate = dailyBonus;
 
         viewModel.callNetworkTime(HomeActivity.this);

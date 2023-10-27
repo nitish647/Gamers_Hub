@@ -19,6 +19,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.palette.graphics.Palette;
 
 import com.nitish.gamershub.databinding.FragmentGameDetailsBinding;
+import com.nitish.gamershub.model.local.DialogItems;
 import com.nitish.gamershub.utils.interfaces.ConfirmationDialogListener2;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.model.firebase.GamePlayedStatus;
@@ -27,6 +28,7 @@ import com.nitish.gamershub.model.local.AllGamesItems;
 import com.nitish.gamershub.model.local.DialogHelperPojo;
 import com.nitish.gamershub.utils.AppHelper;
 import com.nitish.gamershub.view.base.BaseFragment;
+import com.nitish.gamershub.view.dialogs.DialogListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -236,7 +238,13 @@ public class GameDetailsFragment extends BaseFragment {
         dialogHelperPojo.setYesButton("Send");
         dialogHelperPojo.setTitle("Confirmation");
         dialogHelperPojo.setMessage("Do you want to report this game? ");
-        parentActivity.getConfirmationDialog(dialogHelperPojo, new ConfirmationDialogListener2() {
+
+        DialogItems dialogItems = new DialogItems();
+       dialogItems.setYesTitle("Send");
+       dialogItems.setTitle("Confirmation");
+       dialogItems.setMessage("Do you want to report this game? ");
+
+        parentActivity.showConfirmationDialog2(dialogItems, new DialogListener() {
             @Override
             public void onYesClick() {
                 String subject = "Issue in the game : " + allGamesItems.getName();

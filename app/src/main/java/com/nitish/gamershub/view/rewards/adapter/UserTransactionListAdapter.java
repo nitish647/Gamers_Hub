@@ -18,6 +18,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.nitish.gamershub.databinding.UserTransactionListLayoutBinding;
+import com.nitish.gamershub.model.local.DialogItems;
 import com.nitish.gamershub.view.rewards.activity.TransactionHistoryActivity;
 import com.nitish.gamershub.model.firebase.UserTransactions;
 import com.nitish.gamershub.R;
@@ -143,28 +144,12 @@ public class UserTransactionListAdapter extends RecyclerView.Adapter<UserTransac
 
 
     private void showDialogMessage(String message) {
-        TransactionHistoryActivity.ConfirmationDialogListener confirmationDialogListener = new TransactionHistoryActivity.ConfirmationDialogListener() {
-            @Override
-            public void onDismissListener() {
+        DialogItems dialogItems = new DialogItems();
+        dialogItems.setYesTitle("Ok");
+        dialogItems.setTitle("Transaction Failed");
+        dialogItems.setMessage(message);
 
-            }
-
-            @Override
-            public void onYesClick() {
-
-            }
-
-            @Override
-            public void onNoClick() {
-
-            }
-
-            @Override
-            public void onRewardGrantedListener() {
-
-            }
-        };
-        ((TransactionHistoryActivity) context).showConfirmationDialogSingleButtonDismissable("Ok", "Transaction Failed", message, confirmationDialogListener);
+        ((TransactionHistoryActivity) context).showConfirmationDialogSingleButton2(dialogItems,null);
     }
 }
 

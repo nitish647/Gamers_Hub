@@ -10,6 +10,7 @@ import static com.nitish.gamershub.utils.AppConstants.UserProfileGlobal;
 import static com.nitish.gamershub.utils.timeUtils.DateTimeHelper.TimeStampPattern;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -134,6 +135,15 @@ public class AppHelper {
     }
 
 
+    ////-----------------Dialog Helper --------------------//
+    public static void setDialogBackgroundTransparent(Dialog dialog)
+    {
+        if (dialog != null || dialog.getWindow() != null) {
+
+            dialog.getWindow().getDecorView().setBackgroundColor(dialog.getContext().getResources().getColor(android.R.color.transparent));
+
+        }
+    }
 
     ////------------------------time helper-----------------------///
 
@@ -188,6 +198,7 @@ public class AppHelper {
     }
 
                      /////---------------- Messages string --------------------////
+
 
 
     public static Uri getMailMessageUri(Context context ,String subject , String body)

@@ -21,6 +21,8 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.auth.FirebaseAuth;
 
+import com.nitish.gamershub.model.local.DialogItems;
+import com.nitish.gamershub.view.dialogs.DialogListener;
 import com.nitish.gamershub.view.homePage.activity.HomeActivity;
 import com.nitish.gamershub.utils.interfaces.ConfirmationDialogListener2;
 import com.nitish.gamershub.databinding.ActivitySplashScreenBinding;
@@ -40,12 +42,13 @@ public class SplashScreen extends BaseActivity {
     SharedPreferences sh;
     SharedPreferences.Editor editor;
     String data;
-    String    gameData;
+    String gameData;
     RequestQueue requestQueue;
 
     static Context context;
     public static String MaterData = "MasterData";
     private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -58,10 +61,7 @@ public class SplashScreen extends BaseActivity {
         Paper.init(this);
 
 
-
         handlerFunctions();
-
-
 
 
     }
@@ -72,9 +72,7 @@ public class SplashScreen extends BaseActivity {
     }
 
 
-
-    private void handlerFunctions()
-    {
+    private void handlerFunctions() {
 
         new Handler().postDelayed(new Runnable() {
 
@@ -99,12 +97,12 @@ public class SplashScreen extends BaseActivity {
             }
         }, 11000);
     }
-    public void getMaterData()
-    {
 
-        String url = getString(R.string.dbGitUrl)+"gamers_hub_data/masterData.json";
+    public void getMaterData() {
 
-        Log.d("url",url);
+        String url = getString(R.string.dbGitUrl) + "gamers_hub_data/masterData.json";
+
+        Log.d("url", url);
 
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
 
@@ -112,51 +110,49 @@ public class SplashScreen extends BaseActivity {
             @Override
             public void onResponse(JSONArray response) {
 
-                Log.d("gResponse","response json array of mater data "+response);
+                Log.d("gResponse", "response json array of mater data " + response);
 
-            //    Toast.makeText(Splash_Screen.this, response+"", Toast.LENGTH_SHORT).show();
+                //    Toast.makeText(Splash_Screen.this, response+"", Toast.LENGTH_SHORT).show();
                 try {
-                    JSONObject jsonObject =  response.getJSONObject(0);
-                    Log.d("gResponse","response jsonObject of mater data "+jsonObject);
-                    Paper.book().write(SplashScreen.MaterData,jsonObject+"");
+                    JSONObject jsonObject = response.getJSONObject(0);
+                    Log.d("gResponse", "response jsonObject of mater data " + jsonObject);
+                    Paper.book().write(SplashScreen.MaterData, jsonObject + "");
 
 
-
-              //      FirebaseUser currentUser = mAuth.getCurrentUser();
+                    //      FirebaseUser currentUser = mAuth.getCurrentUser();
 
 
                     // when not singed in
                     Intent intent;
-                    if( getGoogleSignInAccount()==null) {
+                    if (getGoogleSignInAccount() == null) {
                         intent = new Intent(SplashScreen.this, LoginActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);;
-                    }
-                    else
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        ;
+                    } else
                     // when already  singed in
                     {
-                        Toast.makeText(SplashScreen.this, "hello "+ getGoogleSignInAccount().getEmail(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SplashScreen.this, "hello " + getGoogleSignInAccount().getEmail(), Toast.LENGTH_SHORT).show();
 
                         Bundle bundle = getIntent().getExtras();
-                        if(bundle!=null && bundle.containsKey("type"))
-                        {
-                            intent = NotificationHelper.createNotificationIntent(bundle.getString("type"),context);
-                            intent.putExtra(IntentData,bundle);
+                        if (bundle != null && bundle.containsKey("type")) {
+                            intent = NotificationHelper.createNotificationIntent(bundle.getString("type"), context);
+                            intent.putExtra(IntentData, bundle);
 
-                        }
-                        else {
+                        } else {
                             intent = new Intent(getApplicationContext(), HomeActivity.class);
                         }
                     }
-                   startIntentWithFlags(intent, SplashScreen.this);
+                    startIntentWithFlags(intent, SplashScreen.this);
                     finish();
 
                 } catch (Exception e) {
-                    if(e.toString().toLowerCase().contains("connection"))
-                    {
-                        DialogHelperPojo dialogHelper = new DialogHelperPojo();
-                        dialogHelper.setMessage("Change in default time detected , please set the time to default network time");
+                    if (e.toString().toLowerCase().contains("connection")) {
 
-                        getConfirmationDialogSingleButton(dialogHelper, new ConfirmationDialogListener2() {
+                        DialogItems dialogItems = new DialogItems();
+                        dialogItems.setMessage("Change in default time detected , please set the time to default network time");
+
+
+                        showConfirmationDialog2(dialogItems, new DialogListener() {
                             @Override
                             public void onYesClick() {
                                 finish();
@@ -169,22 +165,16 @@ public class SplashScreen extends BaseActivity {
                         });
 
                     }
-                    Log.d("gError","error in  mater data "+e.toString());
+                    Log.d("gError", "error in  mater data " + e.toString());
                     e.printStackTrace();
                 }
 
 
-
-
-
-
-
-
-        }
+            }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("gError","error in mater data "+error);
+                Log.d("gError", "error in mater data " + error);
 
             }
         });

@@ -98,10 +98,8 @@
 
 
 
-
-
-
-
+    <string name="request_raised_successfully">Request Raised successfully</string>
+    <string name="congratulations_redeem_request_generated_for">Congratulations , Redeem request generated for ₹</string>
 
 
 </resources>

@@ -16,7 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.nitish.gamershub.model.local.DialogItems;
 import com.nitish.gamershub.view.base.BaseFragment;
+import com.nitish.gamershub.view.dialogs.DialogListener;
 import com.nitish.gamershub.view.homePage.activity.HomeActivity;
 import com.nitish.gamershub.view.rewards.activity.FaqActivity;
 import com.nitish.gamershub.view.rewards.activity.RewardsActivity;
@@ -196,7 +198,14 @@ public class ProfileFragment extends BaseFragment {
         dialogHelperPojo.setYesButton("Send");
         dialogHelperPojo.setTitle("Confirmation");
         dialogHelperPojo.setMessage("You can contact us on or email <b>"+getString(R.string.contact_mail)+ "</b> in case of any doubt or issue. We will try to reach you out as soon as we can.");
-        parentHomeActivity.getConfirmationDialog(dialogHelperPojo, new ConfirmationDialogListener2() {
+
+        DialogItems dialogItems = new DialogItems();
+        dialogItems.setYesTitle("Send");
+        dialogItems.setTitle("Confirmation");
+        dialogItems.setMessage("You can contact us on or email <b>"+getString(R.string.contact_mail)+ "</b> in case of any doubt or issue. We will try to reach you out as soon as we can.");
+
+
+        parentHomeActivity.showConfirmationDialog2(dialogItems,new DialogListener() {
             @Override
             public void onYesClick() {
                 UserProfile.ProfileData profileData = getUserProfileGlobalData().getProfileData();
@@ -214,6 +223,24 @@ public class ProfileFragment extends BaseFragment {
 
             }
         });
+//        parentHomeActivity.getConfirmationDialog(dialogHelperPojo, new ConfirmationDialogListener2() {
+//            @Override
+//            public void onYesClick() {
+//                UserProfile.ProfileData profileData = getUserProfileGlobalData().getProfileData();
+//
+//                String body = "Hi I am  "+profileData.getName()+", my user id is "+profileData.getEmail()+" \n I have a doubt regarding ...";
+//
+//                Uri uri =  AppHelper.getMailMessageUri(parentHomeActivity,"",body);
+//                Intent intent = new Intent(Intent.ACTION_SENDTO,uri);
+//
+//                startActivity(Intent.createChooser(intent,"Send us email "));
+//            }
+//
+//            @Override
+//            public void onNoClick() {
+//
+//            }
+//        });
     }
 
 

@@ -1,13 +1,16 @@
 package com.nitish.gamershub.model.local;
 
+import com.nitish.gamershub.R;
+
 public class DialogItems {
     private String message;
     private String title;
-    private String yesTitle;
-    private String noTitle;
+    private String yesTitle="Yes";
+    private String noTitle="No";
 
+    private Boolean isSingleButton=false;
     private Integer rawAnimation;
-
+    int dialogIcon= R.drawable.gamers_hub_icon15;
     public DialogItems() {
     }
 
@@ -47,7 +50,25 @@ public class DialogItems {
         return rawAnimation;
     }
 
+
     public void setRawAnimation(Integer rawAnimation) {
         this.rawAnimation = rawAnimation;
+    }
+
+    public Boolean getSingleButton() {
+
+        return isSingleButton;
+    }
+
+    public void setSingleButton(Boolean singleButton) {
+        isSingleButton = singleButton;
+    }
+
+    public int getDialogIcon() {
+        return dialogIcon;
+    }
+
+    public void setDialogIcon(int dialogIcon) {
+        this.dialogIcon = dialogIcon;
     }
 }
