@@ -46,6 +46,7 @@ public class LoginSignUpViewModel extends ViewModel {
     }
 
 
+
     public LiveData<NetworkResponse<GamersHubData>> getGamersHubDataLD = loginSignupRepository.getGamersHubDataLD;
 
     public void callGetGamersHub() {
@@ -53,6 +54,7 @@ public class LoginSignUpViewModel extends ViewModel {
         loginSignupRepository.callGetGamersHubData();
 
     }
+
     public LiveData<NetworkResponse<RedeemCoins>> getRedeemCoinsLD = loginSignupRepository.getRedeemCoinsLD;
 
 
@@ -62,6 +64,13 @@ public class LoginSignUpViewModel extends ViewModel {
 
     }
 
+    public LiveData<NetworkResponse<Object>> setRedeemCoinsLD = loginSignupRepository.setRedeemCoinsMLD;
+
+    public void callSetRedeemCoinsLD(RedeemCoins redeemCoins) {
+
+        loginSignupRepository.callSetGamersHubRedeemCoinsList(redeemCoins);
+
+    }
 
     public LiveData<NetworkResponse<NetWorkTimerResult>> getNetworkTime = loginSignupRepository.getNetworkTimeLD;
 

@@ -22,7 +22,6 @@ import com.nitish.gamershub.view.dialogs.DialogListener;
 import com.nitish.gamershub.view.homePage.activity.HomeActivity;
 import com.nitish.gamershub.view.rewards.activity.FaqActivity;
 import com.nitish.gamershub.view.rewards.activity.RewardsActivity;
-import com.nitish.gamershub.utils.interfaces.ConfirmationDialogListener2;
 import com.nitish.gamershub.model.local.DialogHelperPojo;
 import com.nitish.gamershub.model.firebase.UserProfile;
 import com.nitish.gamershub.R;
@@ -175,7 +174,7 @@ public class ProfileFragment extends BaseFragment {
         binding.privacyPolicy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                parentHomeActivity.showWebviewDialog();
+                parentHomeActivity.showWebViewDialog();
             }
         });
 

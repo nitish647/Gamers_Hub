@@ -234,10 +234,6 @@ public class GameDetailsFragment extends BaseFragment {
     }
 
     public void showGameReportDialog() {
-        DialogHelperPojo dialogHelperPojo = new DialogHelperPojo();
-        dialogHelperPojo.setYesButton("Send");
-        dialogHelperPojo.setTitle("Confirmation");
-        dialogHelperPojo.setMessage("Do you want to report this game? ");
 
         DialogItems dialogItems = new DialogItems();
        dialogItems.setYesTitle("Send");

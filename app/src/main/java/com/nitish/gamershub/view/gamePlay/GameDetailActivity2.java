@@ -1,8 +1,6 @@
 package com.nitish.gamershub.view.gamePlay;
 
 
-import static com.nitish.gamershub.utils.AppConstants.UserInfo;
-import static com.nitish.gamershub.utils.AppConstants.UserMail;
 import static com.nitish.gamershub.utils.AppHelper.getGamersHubDataGlobal;
 import static com.nitish.gamershub.utils.AppHelper.getUserProfileGlobalData;
 import static com.nitish.gamershub.utils.AppHelper.setStatusBarColor;
@@ -14,7 +12,6 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,11 +25,9 @@ import com.nitish.gamershub.model.local.DialogItems;
 import com.nitish.gamershub.utils.NetworkResponse;
 import com.nitish.gamershub.utils.timeUtils.DateTimeHelper;
 import com.nitish.gamershub.utils.firebaseUtils.UserOperations;
-import com.nitish.gamershub.utils.interfaces.AdmobInterstitialAdListener;
+import com.nitish.gamershub.utils.adsUtils.AdmobInterstitialAdListener;
 import com.nitish.gamershub.view.base.BaseActivity;
 import com.nitish.gamershub.view.dialogs.DialogListener;
-import com.nitish.gamershub.view.homePage.activity.HomeActivity;
-import com.nitish.gamershub.view.loginSingup.activity.LoginActivity;
 import com.nitish.gamershub.view.loginSingup.viewmodelRepo.LoginSignUpViewModel;
 
 import java.time.LocalTime;
@@ -56,6 +51,12 @@ public class GameDetailActivity2 extends BaseActivity {
     private LoginSignUpViewModel viewModel;
 
 
+    String USAGE_UPDATE_TIMER_STATUS="USAGE_UPDATE_TIMER_STATUS";
+    String USAGE_UPDATE_GamePlayed_Status="USAGE_UPDATE_GamePlayed_Status";
+
+    String USAGE_UPDATE_UserWallet="USAGE_UPDATE_UserWallet";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +73,7 @@ public class GameDetailActivity2 extends BaseActivity {
         userProfile = getUserProfileGlobalData();
         gamePlayedStatus = getUserProfileGlobalData().getGamePlayedStatus();
 
+        showSnackBar("Sample snackbar");
 
         if (gameDetailsFragment == null) {
             gameDetailsFragment = GameDetailsFragment.newInstance();
@@ -279,18 +281,8 @@ public class GameDetailActivity2 extends BaseActivity {
     public void updateGamePlayedStatus(GamePlayedStatus gamePlayedStatus) {
         userProfile.setGamePlayedStatus(gamePlayedStatus);
 
-        callUpdateUser(userProfile);
-//        setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
-//            @Override
-//            public void onTaskSuccessful() {
-//
-//                if (gameDetailsFragment != null) {
-//                    gameDetailsFragment.onResume();
-//                }
-//
-//            }
-//
-//        });
+        callUpdateUser(userProfile,USAGE_UPDATE_GamePlayed_Status);
+
     }
 
     public void updateUserWallet(int amount) {
@@ -298,17 +290,8 @@ public class GameDetailActivity2 extends BaseActivity {
         userProfile.setProfileData(UserOperations.addCoinsToWallet(userProfile, amount));
         userProfile.setGamePlayedStatus(gamePlayedStatus);
 
-        callUpdateUser(userProfile);
+        callUpdateUser(userProfile,USAGE_UPDATE_UserWallet);
 
-//        setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
-//            @Override
-//            public void onTaskSuccessful() {
-//                showRewardDialog(amount, R.raw.rupee_reward_box);
-//                if (gameDetailsFragment != null) {
-//                    gameDetailsFragment.onResume();
-//                }
-//            }
-//        });
 
 
     }
@@ -322,6 +305,7 @@ public class GameDetailActivity2 extends BaseActivity {
             public void onAdDismissed() {
 
                 super.onAdDismissed();
+
                 if (fragmentTag_ToShow.equals(GameDetailsFragment.class.getSimpleName()))
                     showGameDetailsFrag();
                 else {
@@ -359,8 +343,8 @@ public class GameDetailActivity2 extends BaseActivity {
 
     }
 
-    private void callUpdateUser(UserProfile userProfile) {
+    private void callUpdateUser(UserProfile userProfile,String usage) {
 
-        viewModel.callUpdateUserProfile(userProfile);
+        viewModel.callUpdateUserProfile(userProfile,usage);
     }
 }

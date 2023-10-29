@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -42,7 +43,7 @@ public class UserTransactionListAdapter extends RecyclerView.Adapter<UserTransac
     @Override
     public UserTransactionListAdapter.TransactionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        UserTransactionListLayoutBinding binding = DataBindingUtil.inflate( LayoutInflater.from(context),R.layout.user_transaction_list_layout,parent,false);
+        UserTransactionListLayoutBinding binding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.user_transaction_list_layout, parent, false);
 
         return new UserTransactionListAdapter.TransactionViewHolder(binding);
     }
@@ -54,16 +55,14 @@ public class UserTransactionListAdapter extends RecyclerView.Adapter<UserTransac
         UserTransactions.TransactionRequest userTransactionRequest = transactionRequestList.get(position);
 
 
-        if(userTransactionRequest.getRedeemType().toLowerCase().contains("upi"))
-        {
+        if (userTransactionRequest.getRedeemType().toLowerCase().contains("upi")) {
             holder.binding.transactionImage.setImageResource(R.drawable.upi_icon_1);
             holder.binding.transactionTypeText.setText("UPI");
 //            holder.binding.transactionTypeText.setTextColor(context.getColor(R.color.upiGreen));
             holder.binding.transactionNumber.setText(userTransactionRequest.getUpiId());
 
 
-        }
-        else {
+        } else {
             holder.binding.transactionImage.setImageResource(R.drawable.paytm_logo);
 
             holder.binding.transactionTypeText.setText("Paytm");
@@ -71,20 +70,18 @@ public class UserTransactionListAdapter extends RecyclerView.Adapter<UserTransac
 //            holder.binding.transactionTypeText.setTextColor(context.getColor(R.color.paytmBlue));
         }
 
-        if (!userTransactionRequest.isTransactionComplete() || userTransactionRequest.getTransactionStatus().contains(TransactionStatusPending))
-        {
+        if (!userTransactionRequest.isTransactionComplete() || (userTransactionRequest.getTransactionStatus() != null && userTransactionRequest.getTransactionStatus().contains(TransactionStatusPending))) {
             holder.binding.statusTextview.setText("pending");
-            holder.binding.statusTextview.setTextColor(Color.parseColor("#fd1b1b"));
+            holder.binding.statusTextview.setTextColor(ContextCompat.getColor(context,R.color.darkRed));
             holder.binding.infoTransactionButton.setVisibility(View.GONE);
-        }
-        else if(userTransactionRequest.getTransactionStatus().contains(TransactionStatusFailed)) {
+        } else if (userTransactionRequest.getTransactionStatus() != null && userTransactionRequest.getTransactionStatus().contains(TransactionStatusFailed)) {
             holder.binding.statusTextview.setText("failed");
-            holder.binding.statusTextview.setTextColor(Color.parseColor("#fd1b1b"));
+            holder.binding.statusTextview.setTextColor(ContextCompat.getColor(context,R.color.darkRed));
             holder.binding.infoTransactionButton.setVisibility(View.VISIBLE);
             holder.binding.infoTransactionStatus.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(userTransactionRequest.getTransactionMessage() != null) {
+                    if (userTransactionRequest.getTransactionMessage() != null) {
                         showDialogMessage(userTransactionRequest.getTransactionMessage());
                     } else {
                         showDialogMessage(TransactionMessage);
@@ -92,53 +89,48 @@ public class UserTransactionListAdapter extends RecyclerView.Adapter<UserTransac
                 }
             });
 
-        }
-        else {
+        } else {
             holder.binding.statusTextview.setText("success");
             holder.binding.statusTextview.setTextColor(Color.parseColor("#1fc648"));
             holder.binding.infoTransactionButton.setVisibility(View.GONE);
         }
 
 
+        holder.binding.transactionAmount.setText("₹ " + userTransactionRequest.getAmount());
+        holder.binding.transactionCoins.setText("" + userTransactionRequest.getCoins());
 
-        holder.binding.transactionAmount.setText("₹ "+userTransactionRequest.getAmount());
-        holder.binding.transactionCoins.setText(""+userTransactionRequest.getCoins());
-
-        holder.binding.transactionIdTextView.setText("Id: "+userTransactionRequest.getTransactionId());
+        holder.binding.transactionIdTextView.setText("Id: " + userTransactionRequest.getTransactionId());
 // //        holder.binding.transactionDate.setText(""+ DateTimeHelper.convertIntoAnotherTimeFormat(userTransactionRequest.getRequestDate(),DateTimeHelper.simpleDateFormatPattern));
-        holder.binding.transactionDate.setText(""+ DateTimeHelper.getTimeStringInAnotherFormat(userTransactionRequest.getRequestDate(),DateTimeHelper.simpleDateFormatPattern_MMMddYYYY));
+        holder.binding.transactionDate.setText("" + DateTimeHelper.getTimeStringInAnotherFormat(userTransactionRequest.getRequestDate(), DateTimeHelper.simpleDateFormatPattern_MMMddYYYY));
 
         holder.binding.clipboardText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AppHelper.copyToClipboard(context,userTransactionRequest.getTransactionId()+"");
+                AppHelper.copyToClipboard(context, userTransactionRequest.getTransactionId() + "");
                 Toast.makeText(context, "Id copied to clipboard", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
 
-
-
     @Override
     public int getItemCount() {
-        return transactionRequestList.size();
+
+
+        return transactionRequestList == null ? 0 : transactionRequestList.size();
     }
 
 
-
-    public static class TransactionViewHolder extends RecyclerView.ViewHolder
-    {
+    public static class TransactionViewHolder extends RecyclerView.ViewHolder {
         UserTransactionListLayoutBinding binding;
 
 
-
-        public TransactionViewHolder(@NonNull  UserTransactionListLayoutBinding userTransactionListLayoutBinding) {
+        public TransactionViewHolder(@NonNull UserTransactionListLayoutBinding userTransactionListLayoutBinding) {
 
             super(userTransactionListLayoutBinding.getRoot());
 
 
-          this.binding =  userTransactionListLayoutBinding;
+            this.binding = userTransactionListLayoutBinding;
         }
     }
 
@@ -149,7 +141,7 @@ public class UserTransactionListAdapter extends RecyclerView.Adapter<UserTransac
         dialogItems.setTitle("Transaction Failed");
         dialogItems.setMessage(message);
 
-        ((TransactionHistoryActivity) context).showConfirmationDialogSingleButton2(dialogItems,null);
+        ((TransactionHistoryActivity) context).showConfirmationDialogSingleButton2(dialogItems, null);
     }
 }
 

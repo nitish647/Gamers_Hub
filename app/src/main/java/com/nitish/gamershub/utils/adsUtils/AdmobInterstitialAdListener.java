@@ -1,4 +1,4 @@
-package com.nitish.gamershub.utils.interfaces;
+package com.nitish.gamershub.utils.adsUtils;
 
 public  abstract class AdmobInterstitialAdListener {
     public  void  onAdDismissed(){};

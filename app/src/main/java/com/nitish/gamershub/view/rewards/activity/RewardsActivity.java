@@ -1,7 +1,5 @@
 package com.nitish.gamershub.view.rewards.activity;
 
-import static com.nitish.gamershub.utils.AppConstants.UserInfo;
-import static com.nitish.gamershub.utils.AppConstants.UserMail;
 import static com.nitish.gamershub.utils.AppHelper.getGamersHubDataGlobal;
 import static com.nitish.gamershub.utils.AppHelper.getUserProfileGlobalData;
 import static com.nitish.gamershub.utils.AppConstants.timerHourMinuteSecond;
@@ -19,26 +17,22 @@ import android.widget.Toast;
 
 import com.nitish.gamershub.model.local.DialogItems;
 import com.nitish.gamershub.utils.NetworkResponse;
-import com.nitish.gamershub.utils.ToastHelper;
-import com.nitish.gamershub.utils.interfaces.AdmobInterstitialAdListener;
+import com.nitish.gamershub.utils.adsUtils.AdmobInterstitialAdListener;
 import com.nitish.gamershub.model.firebase.TimerStatus;
 import com.nitish.gamershub.model.firebase.UserProfile;
 import com.nitish.gamershub.model.firebase.WatchViewReward;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.utils.timeUtils.DateTimeHelper;
 import com.nitish.gamershub.databinding.ActivityRewardsBinding;
+import com.nitish.gamershub.utils.adsUtils.AdmobAdsListener;
 import com.nitish.gamershub.view.base.BaseActivity;
 import com.nitish.gamershub.view.dialogs.DialogListener;
-import com.nitish.gamershub.view.homePage.activity.HomeActivity;
-import com.nitish.gamershub.view.loginSingup.activity.LoginActivity;
 import com.nitish.gamershub.view.loginSingup.viewmodelRepo.LoginSignUpViewModel;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-
-import io.paperdb.Paper;
 
 public class RewardsActivity extends BaseActivity {
 
@@ -63,7 +57,10 @@ public class RewardsActivity extends BaseActivity {
         viewModel = ViewModelProviders.of(this).get(LoginSignUpViewModel.class);
 
         setOnclickListeners();
+
         loadInterstitialAdNew();
+        loadRewardedVideoAd();
+
         getProfileData();
         bindObservers();
     }
@@ -79,7 +76,7 @@ public class RewardsActivity extends BaseActivity {
 
                 if (!watchViewReward.isClaimed()) {
 
-                    showRewardedVideo2(setRewardedAdListener());
+                    showRewardedVideo3(setRewardedAdListener);
                     // show Video Ad
                 } else {
                     Toast.makeText(RewardsActivity.this, "already claimed", Toast.LENGTH_SHORT).show();
@@ -137,7 +134,7 @@ public class RewardsActivity extends BaseActivity {
 
                     if (usage.equals(Usage_Update_Daily_Reward)) {
 
-                        mShowRewardDialog(successDailyCheckRewardBonusMessage,usage);
+                        mShowRewardDialog(successDailyCheckRewardBonusMessage, usage);
 //                        showRewardDialog(successDailyCheckRewardBonusMessage, R.raw.rupee_piggy_bank_award, new OnDialogLister() {
 //                            @Override
 //                            public void onDialogDismissLister() {
@@ -146,7 +143,7 @@ public class RewardsActivity extends BaseActivity {
 //                            }
 //                        });
                     } else if (usage.equals(Usage_Update_watchViewReward)) {
-                        mShowRewardDialog(successUpdateWatchViewRewardMessage,usage);
+                        mShowRewardDialog(successUpdateWatchViewRewardMessage, usage);
 
 //                        showRewardDialog(successUpdateWatchViewRewardMessage, R.raw.rupee_piggy_bank_award, new OnDialogLister() {
 //                            @Override
@@ -179,11 +176,6 @@ public class RewardsActivity extends BaseActivity {
     }
 
     public void getProfileData() {
-
-
-//        showProgressBar();
-        //        getUserProfileGlobal(getUserProfileDataListener());
-
 
         RewardsActivity.this.userProfile = getUserProfileGlobalData();
         updateViews(userProfile);
@@ -258,24 +250,23 @@ public class RewardsActivity extends BaseActivity {
     }
 
 
-    public RewardedAdListener setRewardedAdListener() {
-        return new RewardedAdListener() {
-            @Override
-            public void onDismissListener() {
+    public AdmobAdsListener.RewardedAdListener setRewardedAdListener =
+            new AdmobAdsListener.RewardedAdListener() {
+                @Override
+                public void onDismissListener() {
 
-            }
+                }
 
-            @Override
-            public void onRewardGrantedListener() {
+                @Override
+                public void onRewardGrantedListener() {
 
-                // start the timer
-                Toast.makeText(RewardsActivity.this, "reward is granted", Toast.LENGTH_SHORT).show();
-                setWatchVideoRewardAfterVideo();
+                    // start the timer
+                    Toast.makeText(RewardsActivity.this, "reward is granted", Toast.LENGTH_SHORT).show();
+                    setWatchVideoRewardAfterVideo();
 
-            }
+                }
 
-        };
-    }
+            };
 
 
     public AdmobInterstitialAdListener setInterstitialAdListener() {
@@ -338,9 +329,9 @@ public class RewardsActivity extends BaseActivity {
 //        });
 
     }
-    private DialogListener rewardDialogListener(String usage)
-    {
-        return  new DialogListener() {
+
+    private DialogListener rewardDialogListener(String usage) {
+        return new DialogListener() {
             @Override
             public void onYesClick() {
 
@@ -353,21 +344,20 @@ public class RewardsActivity extends BaseActivity {
 
             @Override
             public void onDialogDismissed() {
-               if(usage.equals(Usage_Update_Daily_Reward))
-               {
-                   showInterstitialAdNew(setInterstitialAdListener());
-               }
+                if (usage.equals(Usage_Update_Daily_Reward)) {
+                    showInterstitialAdNew(setInterstitialAdListener());
+                }
 
             }
         };
     }
-    public void mShowRewardDialog(String message,String usage)
-    {
+
+    public void mShowRewardDialog(String message, String usage) {
         DialogItems dialogItems = new DialogItems();
         dialogItems.setRawAnimation(R.raw.rupee_piggy_bank_award);
         dialogItems.setMessage(message);
 
-        showRewardDialog(dialogItems,rewardDialogListener(usage));
+        showRewardDialog(dialogItems, rewardDialogListener(usage));
 
     }
 

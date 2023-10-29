@@ -7,18 +7,15 @@ import static com.nitish.gamershub.utils.AppHelper.saveUserProfileGlobal;
 import static com.nitish.gamershub.utils.AppHelper.setStatusBarColor;
 import static com.nitish.gamershub.utils.AppConstants.From;
 import static com.nitish.gamershub.utils.AppConstants.GamersHubDataGlobal;
-import static com.nitish.gamershub.utils.AppConstants.GamersHub_DATA;
 import static com.nitish.gamershub.utils.AppConstants.GamersHub_ParentCollection;
 import static com.nitish.gamershub.utils.AppConstants.GoogleSignInAccountUser;
 import static com.nitish.gamershub.utils.AppConstants.UserMail;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,16 +29,8 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.OnUserEarnedRewardListener;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
-import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewarded.RewardedAd;
-import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -57,18 +46,18 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.SetOptions;
 import com.nitish.gamershub.model.local.DialogItems;
 import com.nitish.gamershub.utils.PreferenceHelper;
+import com.nitish.gamershub.utils.adsUtils.AdmobAdsListener;
+import com.nitish.gamershub.utils.adsUtils.InterstitialUtilsAdmobAdUtil;
+import com.nitish.gamershub.utils.adsUtils.RewardedAdAdmobUtilUtils;
 import com.nitish.gamershub.view.dialogs.ConfirmationDialog;
 import com.nitish.gamershub.view.dialogs.DialogGamerReward;
 import com.nitish.gamershub.view.dialogs.DialogListener;
+import com.nitish.gamershub.view.dialogs.SnackBarCustom;
 import com.nitish.gamershub.view.dialogs.SuspensionDialog;
 import com.nitish.gamershub.view.homePage.activity.HomeActivity;
 import com.nitish.gamershub.view.dialogs.BottomSheetDialog;
-import com.nitish.gamershub.utils.interfaces.AdmobInterstitialAdListener;
-import com.nitish.gamershub.utils.interfaces.ConfirmationDialogListener2;
-import com.nitish.gamershub.databinding.BlockUserDialogBinding;
-import com.nitish.gamershub.databinding.ConfirmationDialogLayoutBinding;
+import com.nitish.gamershub.utils.adsUtils.AdmobInterstitialAdListener;
 import com.nitish.gamershub.databinding.ShowWebviewDialogBinding;
-import com.nitish.gamershub.model.local.DialogHelperPojo;
 import com.nitish.gamershub.model.firebase.AdViewedStats;
 import com.nitish.gamershub.model.firebase.GamersHubData;
 import com.nitish.gamershub.model.firebase.TimerStatus;
@@ -91,7 +80,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     // google ads
     private InterstitialAd interstitialAd;
+    private InterstitialUtilsAdmobAdUtil interstitialAdmobAdUtil;
     private RewardedAd rewardedAd;
+    private RewardedAdAdmobUtilUtils rewardedAdAdmobUtil;
     static boolean isLoading;
 
 
@@ -122,8 +113,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         progressDialog = ProgressBarHelper.setProgressBarDialog(BaseActivity.this);
         preferenceHelper = new PreferenceHelper(this);
 
-        loadInterstitialAdNew();
-        loadRewardedAd2();
+        initialiseAds();
         getGoogleSignInOptions();
 
     }
@@ -167,48 +157,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-    public void setGamersHubRedeemCoinsList(OnFirestoreDataCompleteListener onFirestoreDataCompleteListener) {
-
-
-        setGamersHubRedeemCoinsList().get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                dismissProgressBar();
-
-                if (task.isSuccessful()) {
-                    DocumentSnapshot documentSnapshot = task.getResult();
-
-                    if (documentSnapshot.exists()) {
-                        onFirestoreDataCompleteListener.OnComplete(documentSnapshot);
-
-
-                    } else {
-                        Toast.makeText(BaseActivity.this, "document does not exist 112", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-                dismissProgressBar();
-                Toast.makeText(BaseActivity.this, "couldn't get the documents ", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-    }
-
-
-    public interface OnFirestoreDataCompleteListener {
-        public void OnComplete(DocumentSnapshot documentSnapshot);
-    }
-
-
     public void setUserProfile(UserProfile userProfile, SetUserDataOnCompleteListener setUserDataOnCompleteListener) {
         if (!showNoInternetDialog())
             return;
-
 
 
         getFirebaseUser().set(userProfile, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -262,11 +213,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-    public DocumentReference setGamersHubRedeemCoinsList() {
-        return FirebaseFirestore.getInstance().collection(GamersHub_DATA).document("redeemCoinsList");
-    }
-
-
     //------------------------- dialog boxes -------------------------------//
 
 
@@ -313,7 +259,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-    public void showWebviewDialog() {
+    public void showWebViewDialog() {
         ShowWebviewDialogBinding showWebviewDialogBinding;
         LayoutInflater factory = LayoutInflater.from(BaseActivity.this);
 
@@ -349,7 +295,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-
     public void showConfirmationDialogSingleButton2(DialogItems dialogItems, DialogListener dialogListener) {
         dialogItems.setSingleButton(true);
 
@@ -357,10 +302,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
     }
-
-
-
-
 
 
     public void showConfirmationDialog2(DialogItems dialogItems, DialogListener dialogListener) {
@@ -371,18 +312,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         confirmationDialog1.show(getSupportFragmentManager(), null);
     }
 
-
-    public static interface ConfirmationDialogListener {
-        public void onDismissListener();
-
-        public void onYesClick();
-
-        public void onNoClick();
-
-        public void onRewardGrantedListener();
-
-
-    }
 
 
     //------------------------- dialog boxes -------------------------------//
@@ -408,85 +337,31 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
+    public void initialiseAds() {
+        interstitialAdmobAdUtil = new InterstitialUtilsAdmobAdUtil(BaseActivity.this, interstitialAd);
+//        interstitialAdmobAdUtil.loadInterstitialAd();
+
+        rewardedAdAdmobUtil = new RewardedAdAdmobUtilUtils(rewardedAd, BaseActivity.this);
+//        rewardedAdAdmobUtil.loadRewardedAdmobAd();
+
+    }
+
+
     public void showInterstitialAdNew(AdmobInterstitialAdListener interstitialAdListener) {
 
-        if (interstitialAd != null) {
-            interstitialAd.setFullScreenContentCallback(
-                    new FullScreenContentCallback() {
-                        @Override
-                        public void onAdDismissedFullScreenContent() {
-                            // Called when fullscreen content is dismissed.
-                            // Make sure to set your reference to null so you don't
-                            // show it a second time.
-                            BaseActivity.this.interstitialAd = null;
-                            interstitialAdListener.onAdDismissed();
+        interstitialAdmobAdUtil.showInterstitialAdNew(interstitialAdListener);
 
-
-                        }
-
-                        @Override
-                        public void onAdFailedToShowFullScreenContent(AdError adError) {
-                            // Called when fullscreen content failed to show.
-                            // Make sure to set your reference to null so you don't
-                            // show it a second time.
-                            BaseActivity.this.interstitialAd = null;
-
-                            interstitialAdListener.onAdFailed();
-                            Log.d("gInterstitialAd", "The ad failed to show.");
-
-                        }
-
-                        @Override
-                        public void onAdShowedFullScreenContent() {
-                            // Called when fullscreen content is shown.
-                            Log.d("gInterstitialAd", "The ad was shown.");
-                            incrementInterstitialAdAdCount();
-                            interstitialAdListener.onAdShown();
-                        }
-                    });
-
-            interstitialAd.show(BaseActivity.this);
-
-        } else {
-            interstitialAdListener.onAdLoading();
-        }
     }
 
     public InterstitialAd loadInterstitialAdNew() {
 
 
-        AdRequest adRequest = new AdRequest.Builder().build();
-        InterstitialAd.load(
-                this,
-                getString(R.string.admob_inter),
-                adRequest,
-                new InterstitialAdLoadCallback() {
-                    @Override
-                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                        // The mInterstitialAd reference will be null until
-                        // an ad is loaded.
-                        BaseActivity.this.interstitialAd = interstitialAd;
-                        Log.i("gInterstitialAd", "onAdLoaded");
+     return  interstitialAdmobAdUtil.loadInterstitialAd();
 
-
-                    }
-
-
-                    @Override
-                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        // Handle the error
-                        Log.i("gInterstitialAd", "ad loading failed : " + loadAdError.getMessage());
-                        interstitialAd = null;
-
-                        String error = String.format(
-                                "domain: %s, code: %d, message: %s",
-                                loadAdError.getDomain(), loadAdError.getCode(), loadAdError.getMessage());
-
-                        Log.d("gInterstitialAd", "Ad loading failed : " + error);
-                    }
-                });
-
-        return interstitialAd;
+    }
+    public void loadRewardedVideoAd()
+    {
+        rewardedAdAdmobUtil.loadRewardedAdmobAd();
     }
 
     public void incrementInterstitialAdAdCount() {
@@ -516,101 +391,15 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-    public void loadRewardedAd2() {
-        if (rewardedAd == null) {
-            isLoading = true;
-            AdRequest adRequest = new AdRequest.Builder().build();
-            RewardedAd.load(
-                    this,
-                    getString(R.string.admob_reward),
-                    adRequest,
-                    new RewardedAdLoadCallback() {
-                        @Override
-                        public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                            // Handle the error.
-                            Log.d("rewardedAd", "onAdFailedToLoad " + loadAdError.getMessage());
-                            rewardedAd = null;
-                            BaseActivity.this.isLoading = false;
-                        }
 
-                        @Override
-                        public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
-                            BaseActivity.this.rewardedAd = rewardedAd;
-                            Log.d("rewardedAd", "onAdLoaded");
-                            BaseActivity.this.isLoading = false;
-                        }
-                    });
-        }
+
+    public void showRewardedVideo3(AdmobAdsListener.RewardedAdListener rewardedAdListener) {
+
+        rewardedAdAdmobUtil.showRewardedAd(rewardedAdListener);
     }
 
 
-    public void showRewardedVideo2(RewardedAdListener rewardedAdListener) {
 
-        if (rewardedAd == null) {
-            Toast.makeText(this, "The ad is not loaded yet , try again", Toast.LENGTH_SHORT).show();
-            Log.d("TAG", "The rewarded ad wasn't ready yet.");
-            return;
-        }
-
-        rewardedAd.setFullScreenContentCallback(
-                new FullScreenContentCallback() {
-                    @Override
-                    public void onAdShowedFullScreenContent() {
-                        // Called when ad is shown.
-
-                        Log.d("rewardedAd", "onAdShowedFullScreenContent");
-
-
-                    }
-
-
-                    @Override
-                    public void onAdFailedToShowFullScreenContent(AdError adError) {
-                        // Called when ad fails to show.
-                        Log.d("rewardedAd", "onAdFailedToShowFullScreenContent");
-                        // Don't forget to set the ad reference to null so you
-                        // don't show the ad a second time.
-                        rewardedAd = null;
-                        Toast.makeText(BaseActivity.this, "Ad loading failed please try again", Toast.LENGTH_SHORT)
-                                .show();
-                    }
-
-                    @Override
-                    public void onAdDismissedFullScreenContent() {
-                        // Called when ad is dismissed.
-                        // Don't forget to set the ad reference to null so you
-                        // don't show the ad a second time.
-                        rewardedAdListener.onDismissListener();
-                        rewardedAd = null;
-
-
-                    }
-                });
-        Activity activityContext = BaseActivity.this;
-        rewardedAd.show(
-                activityContext,
-                new OnUserEarnedRewardListener() {
-                    @Override
-                    public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
-                        // Handle the reward.
-                        incrementRewardAdCount();
-                        rewardedAdListener.onRewardGrantedListener();
-
-
-                        AppConstants.ShowAds = false;
-                        int rewardAmount = rewardItem.getAmount();
-                        String rewardType = rewardItem.getType();
-                    }
-                });
-    }
-
-    public interface RewardedAdListener {
-        public void onDismissListener();
-
-        public void onRewardGrantedListener();
-
-
-    }
 
     public void incrementRewardAdCount() {
 
@@ -788,6 +577,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
+    public void showSnackBar(String message)
+    {
+        SnackBarCustom.showCustomSnackBar(this,message,3000);
+    }
     void showDialogfragment(DialogFragment dialog, String tag) {
         if (!this.isFinishing()) {
             dialog.show(getSupportFragmentManager(), tag);
@@ -818,19 +611,19 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         if (this.getClass().getSimpleName().equals(HomeActivity.class.getSimpleName())) {
             isHomeActivityDestroyed = true;
-            UserProfile userProfile = getUserProfileGlobalData();
-            // upload the ad viewed status when exiting from the app
-            if (adStatsChanged()) {
-
-                userProfile.setAdViewedStats(getAdViewedStatsGlobal());
-                setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
-                    @Override
-                    public void onTaskSuccessful() {
-                        saveAdViewedStatsGlobal(getAdViewedStatsGlobal());
-                    }
-                });
-
-            }
+//            UserProfile userProfile = getUserProfileGlobalData();
+//            // upload the ad viewed status when exiting from the app
+//            if (adStatsChanged()) {
+//
+//                userProfile.setAdViewedStats(getAdViewedStatsGlobal());
+//                setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
+//                    @Override
+//                    public void onTaskSuccessful() {
+//                        saveAdViewedStatsGlobal(getAdViewedStatsGlobal());
+//                    }
+//                });
+//
+//            }
 
         }
         super.onDestroy();

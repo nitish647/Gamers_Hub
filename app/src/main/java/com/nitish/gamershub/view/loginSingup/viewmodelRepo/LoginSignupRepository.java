@@ -72,6 +72,7 @@ public class LoginSignupRepository extends BaseRepository {
 
     }
 
+
     public MutableLiveData<NetworkResponse<RedeemCoins>> getRedeemCoinsMLD = new MutableLiveData<>();
     public LiveData<NetworkResponse<RedeemCoins>> getRedeemCoinsLD = getRedeemCoinsMLD;
 
@@ -79,6 +80,20 @@ public class LoginSignupRepository extends BaseRepository {
 
         getFireBaseDocumentReference(FireBaseService.getGamersHubRedeemCoinsList(), getRedeemCoinsMLD, RedeemCoins.class);
 
+    }
+
+    public MutableLiveData<NetworkResponse<Object>> setRedeemCoinsMLD = new MutableLiveData<>();
+    public LiveData<NetworkResponse<Object>> setRedeemCoinsLD = setRedeemCoinsMLD;
+
+    public void callSetGamersHubRedeemCoinsList(RedeemCoins redeemCoins) {
+
+
+        FirebaseDataPassingHelper<Object> firebaseDataPassing = new FirebaseDataPassingHelper<>();
+        firebaseDataPassing.setMutableLiveData(setRedeemCoinsMLD);
+        firebaseDataPassing.setDocumentReference(FireBaseService.getGamersHubRedeemCoinsList());
+        firebaseDataPassing.setDataObject(redeemCoins);
+        firebaseDataPassing.setSetOptions(null);
+        setFirebaseDocumentReference(firebaseDataPassing);
     }
 
     private MutableLiveData<NetworkResponse<NetWorkTimerResult>> getNetworkTimeMLD = new MutableLiveData<>();

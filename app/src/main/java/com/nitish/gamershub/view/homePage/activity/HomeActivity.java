@@ -7,6 +7,9 @@ import static com.nitish.gamershub.utils.AppConstants.GamersHub_ParentCollection
 import static com.nitish.gamershub.utils.AppConstants.GoogleSignInAccountUser;
 import static com.nitish.gamershub.utils.AppConstants.IntentData;
 import static com.nitish.gamershub.utils.AppConstants.UserMail;
+import static com.nitish.gamershub.utils.AppHelper.getAdViewedStatsGlobal;
+import static com.nitish.gamershub.utils.AppHelper.getUserProfileGlobalData;
+import static com.nitish.gamershub.utils.AppHelper.saveAdViewedStatsGlobal;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -43,7 +46,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.nitish.gamershub.databinding.ActivityHomeBinding;
 import com.nitish.gamershub.model.local.DialogItems;
 import com.nitish.gamershub.utils.NetworkResponse;
-import com.nitish.gamershub.utils.interfaces.AdmobInterstitialAdListener;
+import com.nitish.gamershub.utils.adsUtils.AdmobInterstitialAdListener;
 import com.nitish.gamershub.model.local.AllGamesItems;
 import com.nitish.gamershub.model.firebase.AdViewedStats;
 import com.nitish.gamershub.model.firebase.GamePlayedStatus;
@@ -111,6 +114,8 @@ public class HomeActivity extends BaseActivity {
     UserProfile updatedUserProfile;
 
     AllGamesItems mAllGamesItems;
+    String USAGE_UPDATE_TIMER_STATUS = "USAGE_UPDATE_TIMER_STATUS";
+    String USAGE_UPDATE_USER_PROFILE = "USAGE_UPDATE_USER_PROFILE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -189,9 +194,13 @@ public class HomeActivity extends BaseActivity {
                     dismissProgressBar();
 
 
-                    Paper.book().write(UserInfo, updatedUserProfile);
+//                    Paper.book().write(UserInfo, updatedUserProfile);
 
-                    callGetGamersHubData();
+                    String usage = ((NetworkResponse.Success<Object>) response).getMessage();
+                    if (usage.equals(USAGE_UPDATE_USER_PROFILE)) {
+                        callGetGamersHubData();
+
+                    }
 
 
                 } else if (response instanceof NetworkResponse.Error) {
@@ -428,7 +437,7 @@ public class HomeActivity extends BaseActivity {
             userProfile.setProfileData(profileData1);
         }
 
-        callUpdateUser(userProfile);
+        callUpdateUser(userProfile, USAGE_UPDATE_USER_PROFILE);
     }
 
 
@@ -461,45 +470,12 @@ public class HomeActivity extends BaseActivity {
 
     public void updateTimerStatus(TimerStatus.DailyBonus dailyBonus) {
 
-        firestoreDb.collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail) + "").get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot documentSnapshot = task.getResult();
+        UserProfile userProfile = getPreferencesMain().getUserProfile();
+        TimerStatus timerStatus = userProfile.getTimerStatus();
+        userProfile.getTimerStatus().setDailyBonus(dailyBonus);
+        userProfile.setTimerStatus(timerStatus);
 
-                    if (documentSnapshot.exists()) {
-
-                        UserProfile userProfile = documentSnapshot.toObject(UserProfile.class);
-                        TimerStatus timerStatus = userProfile.getTimerStatus();
-
-                        userProfile.getTimerStatus().setDailyBonus(dailyBonus);
-                        userProfile.setTimerStatus(timerStatus);
-
-                        firestoreDb.collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail) + "").set(userProfile, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-
-
-                                    //     Toast.makeText(HomeActivity.this, "daily earn enabled", Toast.LENGTH_LONG).show();
-
-
-                                }
-                            }
-                        });
-
-                    } else {
-                        Toast.makeText(HomeActivity.this, "document does not exist11221", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(HomeActivity.this, "couldn't get the documents ", Toast.LENGTH_SHORT).show();
-            }
-        });
-
+        callUpdateUser(userProfile, USAGE_UPDATE_TIMER_STATUS);
 
     }
 
@@ -678,11 +654,23 @@ public class HomeActivity extends BaseActivity {
      */
     @Override
     public void onDestroy() {
-        if (homeBinding.googleBannerAdView != null) {
-            homeBinding.googleBannerAdView.destroy();
+        super.onDestroy();
+        UserProfile userProfile = getPreferencesMain().getUserProfile();
+        // upload the ad viewed status when exiting from the app
+        if (adStatsChanged()) {
+
+
+            userProfile.setAdViewedStats(getAdViewedStatsGlobal());
+            callUpdateUser(userProfile,"");
+//            setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
+//                @Override
+//                public void onTaskSuccessful() {
+//                    saveAdViewedStatsGlobal(getAdViewedStatsGlobal());
+//                }
+//            });
+
         }
 
-        super.onDestroy();
     }
 
 
@@ -737,27 +725,7 @@ public class HomeActivity extends BaseActivity {
 
 
     public void showUpdate(GamersHubData gamersHubData) {
-        ConfirmationDialogListener confirmationDialogListener = new ConfirmationDialogListener() {
-            @Override
-            public void onDismissListener() {
 
-            }
-
-            @Override
-            public void onYesClick() {
-                openPlayStore();
-            }
-
-            @Override
-            public void onNoClick() {
-
-            }
-
-            @Override
-            public void onRewardGrantedListener() {
-
-            }
-        };
         DialogItems dialogItems = new DialogItems();
         dialogItems.setTitle("Pending Update");
         dialogItems.setYesTitle("Update");
@@ -790,9 +758,9 @@ public class HomeActivity extends BaseActivity {
         viewModel.callGetGamersHub();
     }
 
-    private void callUpdateUser(UserProfile userProfile) {
+    private void callUpdateUser(UserProfile userProfile, String usage) {
         updatedUserProfile = userProfile;
-        viewModel.callUpdateUserProfile(userProfile);
+        viewModel.callUpdateUserProfile(userProfile, usage);
     }
 
     private void callNetworkTime(TimerStatus.DailyBonus dailyBonus) {

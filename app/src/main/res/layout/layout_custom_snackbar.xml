@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_5sdp"
+        android:layout_marginVertical="@dimen/_10sdp"
+        android:background="@drawable/round_corner_10dp"
+        android:backgroundTint="@color/light_green_material"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/_5sdp"
+        android:paddingVertical="@dimen/_10sdp"
+        android:weightSum="10">
+
+
+        <TextView
+            style="@style/regular_textview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="9"
+            android:text="@string/this_is_a_test_snackBar"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textHeadingLarge">
+
+        </TextView>
+
+        <ImageView
+            android:id="@+id/crossButton"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:layout_weight="1"
+            android:src="@drawable/cross_dismiss2"
+            app:tint="@color/text_shadow_white">
+
+        </ImageView>
+    </LinearLayout>
+
+
+</layout>

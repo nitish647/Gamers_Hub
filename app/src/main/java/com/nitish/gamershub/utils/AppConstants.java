@@ -34,6 +34,7 @@ public class AppConstants {
     public static  String IntentData = "IntentData";
 
 
+
     public static String WithdrawalDone ="WithdrawalSuccess";
 
     public static  int AccountActive =0;
@@ -65,6 +66,9 @@ public class AppConstants {
 
     }
 
+
+    public static String upiImageLink = "https://i.ibb.co/JB3b9fc/upi-icon-1.png";
+    public static String paytmImageLink = "https://i.ibb.co/C9VzmMx/paytm-icom.png";
 
     public static String PrefGamersHubMain="PrefGamersHubMain";
     public static String PrefUserProfile="PrefUserProfile";

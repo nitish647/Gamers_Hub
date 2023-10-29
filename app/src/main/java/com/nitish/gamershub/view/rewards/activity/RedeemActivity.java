@@ -1,5 +1,7 @@
 package com.nitish.gamershub.view.rewards.activity;
 
+import static com.nitish.gamershub.utils.AppConstants.paytmImageLink;
+import static com.nitish.gamershub.utils.AppConstants.upiImageLink;
 import static com.nitish.gamershub.utils.AppHelper.getUserProfileGlobalData;
 import static com.nitish.gamershub.utils.AppConstants.TransactionStatusPending;
 import static com.nitish.gamershub.utils.AppConstants.TransactionMessage;
@@ -53,8 +55,7 @@ public class RedeemActivity extends BaseActivity {
 
     ActivityReddeemBinding binding;
 
-    String upiImageLink = "https://i.ibb.co/JB3b9fc/upi-icon-1.png";
-    String paytmImageLink = "https://i.ibb.co/C9VzmMx/paytm-icom.png";
+
     //  TextView walletCoinsTextview;
     FirebaseFirestore firebaseFirestore;
 
@@ -166,6 +167,22 @@ public class RedeemActivity extends BaseActivity {
                 }
             }
         });
+        viewModel.setRedeemCoinsLD.observe(this, new Observer<NetworkResponse<Object>>() {
+            @Override
+            public void onChanged(NetworkResponse<Object> response) {
+                if (response instanceof NetworkResponse.Success) {
+                    dismissProgressBar();
+                    Toast.makeText(RedeemActivity.this, "Added the data", Toast.LENGTH_SHORT).show();
+
+                } else if (response instanceof NetworkResponse.Error) {
+
+                    dismissProgressBar();
+                } else if (response instanceof NetworkResponse.Loading) {
+
+                    showProgressBar();
+                }
+            }
+        });
 
 
     }
@@ -202,8 +219,8 @@ public class RedeemActivity extends BaseActivity {
 
 
         redeemListItemArrayList = new ArrayList<>();
-        redeemListItemArrayList.add(new RedeemListItem("Upi10 ", 1000, 10, upiImageLink));
-        redeemListItemArrayList.add(new RedeemListItem("Paytm10 ", 1000, 10, paytmImageLink));
+//        redeemListItemArrayList.add(new RedeemListItem("Upi10 ", 1000, 10, upiImageLink));
+//        redeemListItemArrayList.add(new RedeemListItem("Paytm10 ", 1000, 10, paytmImageLink));
         redeemListItemArrayList.add(new RedeemListItem("Upi25 ", 2500, 25, upiImageLink));
         redeemListItemArrayList.add(new RedeemListItem("Paytm25 ", 2500, 25, paytmImageLink));
         redeemListItemArrayList.add(new RedeemListItem("Upi50 ", 5000, 50, upiImageLink));
@@ -217,26 +234,9 @@ public class RedeemActivity extends BaseActivity {
 
 
         showProgressBar();
-        setGamersHubRedeemCoinsList(new OnFirestoreDataCompleteListener() {
 
-            @Override
-            public void OnComplete(DocumentSnapshot documentSnapshot) {
-                dismissProgressBar();
-                setGamersHubRedeemCoinsList().set(redeemCoins).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(RedeemActivity.this, "Added the data", Toast.LENGTH_SHORT).show();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(RedeemActivity.this, "FAILED  the data " + e, Toast.LENGTH_SHORT).show();
 
-                    }
-                });
-
-            }
-        });
+        calSetRedeemCoinsData(redeemCoins);
 
     }
 
@@ -411,32 +411,16 @@ public class RedeemActivity extends BaseActivity {
 
     }
 
-    public SetUserDataOnCompleteListener setUserDataLister(RedeemListItem redeemListItem) {
-        return new SetUserDataOnCompleteListener() {
-            @Override
-            public void onTaskSuccessful() {
-
-
-                String message = getString(R.string.congratulations_redeem_request_generated_for) + redeemListItem.getMoney();
-                showRewardDialog(message, null);
-                Toast.makeText(RedeemActivity.this, R.string.request_raised_successfully, Toast.LENGTH_SHORT).show();
-
-
-                getCoins();
-            }
-        };
-
-    }
 
 
     public void performUpdateUserTransaction() {
         UserTransactions userTransactions = setUserTransactions(getUserProfileGlobalData().getUserTransactions(), redeemListItem);
 
-        updateUserWalletForTransaction(-redeemListItem.getCoins(), setUserDataLister(redeemListItem), userTransactions);
+        updateUserWalletForTransaction(-redeemListItem.getCoins(), userTransactions);
 
     }
 
-    public UserProfile updateUserWalletForTransaction(int amount, SetUserDataOnCompleteListener setUserDataOnCompleteListener, UserTransactions userTransactions) {
+    public UserProfile updateUserWalletForTransaction(int amount,  UserTransactions userTransactions) {
 
         UserProfile userProfile = getUserProfileGlobalData();
         UserProfile.ProfileData profileData = userProfile.getProfileData();
@@ -497,7 +481,10 @@ public class RedeemActivity extends BaseActivity {
     private void getRedeemCoinsData() {
         viewModel.callGetRedeemCoins();
     }
+    private void calSetRedeemCoinsData(RedeemCoins redeemCoins) {
 
+        viewModel.callSetRedeemCoinsLD(redeemCoins);
+    }
     private void getUserProfile() {
         viewModel.callGetUserProfile();
     }

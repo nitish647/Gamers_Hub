@@ -17,7 +17,7 @@ import android.view.View;
 import com.google.android.gms.ads.AdRequest;
 import com.nitish.gamershub.view.gamePlay.GameDetailActivity2;
 import com.nitish.gamershub.view.homePage.adapter.NewAndPopularGamesAdapter;
-import com.nitish.gamershub.utils.interfaces.AdmobInterstitialAdListener;
+import com.nitish.gamershub.utils.adsUtils.AdmobInterstitialAdListener;
 import com.nitish.gamershub.model.local.AllGamesItems;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.databinding.ActivityCategoryBinding;
