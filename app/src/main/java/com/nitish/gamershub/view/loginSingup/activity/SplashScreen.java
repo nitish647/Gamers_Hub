@@ -45,7 +45,7 @@ public class SplashScreen extends BaseActivity {
     String gameData;
     RequestQueue requestQueue;
 
-    static Context context;
+    private Context context;
     public static String MaterData = "MasterData";
     private FirebaseAuth mAuth;
 
@@ -87,13 +87,13 @@ public class SplashScreen extends BaseActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                activitySplashScreenBinding.warning.setText("Internet is slow...");
+                activitySplashScreenBinding.warning.setText(R.string.internet_is_slow);
             }
         }, 7000);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                activitySplashScreenBinding.warning.setText("PLease check your internet connection and try again");
+                activitySplashScreenBinding.warning.setText(R.string.please_check_your_internet_connection_and_try_again);
             }
         }, 11000);
     }
@@ -149,7 +149,7 @@ public class SplashScreen extends BaseActivity {
                     if (e.toString().toLowerCase().contains("connection")) {
 
                         DialogItems dialogItems = new DialogItems();
-                        dialogItems.setMessage("Change in default time detected , please set the time to default network time");
+                        dialogItems.setMessage(getString(R.string.change_in_default_time_detected_please_set_the_time_to_default_network_time));
 
 
                         showConfirmationDialog2(dialogItems, new DialogListener() {

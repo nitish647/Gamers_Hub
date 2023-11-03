@@ -18,6 +18,8 @@ public class BaseFragment extends Fragment {
         // Required empty public constructor
     }
 
+    BaseActivity baseActivity;
+
     public static BaseFragment newInstance(String param1, String param2) {
         BaseFragment fragment = new BaseFragment();
         Bundle args = new Bundle();
@@ -32,6 +34,7 @@ public class BaseFragment extends Fragment {
         if (getArguments() != null) {
 
         }
+        baseActivity = (BaseActivity) getActivity();
     }
 
     @Override
@@ -39,5 +42,17 @@ public class BaseFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_base, container, false);
+    }
+
+    public void hideLoader() {
+        if (baseActivity != null) {
+            baseActivity.hideLoader();
+        }
+    }
+
+    public void showLoader() {
+        if (baseActivity != null) {
+            baseActivity.showLoader();
+        }
     }
 }

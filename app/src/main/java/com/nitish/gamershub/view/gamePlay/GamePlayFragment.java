@@ -149,7 +149,7 @@ public  String timerMinuteSecond="00:00";
             if (view.getUrl().equals(failingUrl)) {
                 view.setLayoutParams(layoutParams);
                 fragmentGamePlayBinding.fragNoInternet.setVisibility(View.VISIBLE);
-                ToastHelper.customToast(view.getContext(),"something went wrong ");
+                ToastHelper.customToast(view.getContext(),getString(R.string.something_went_wrong));
             }
             super.onReceivedError(view, errorCode, description, failingUrl);
         }

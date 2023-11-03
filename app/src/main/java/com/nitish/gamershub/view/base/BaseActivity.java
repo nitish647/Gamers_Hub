@@ -45,13 +45,17 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.SetOptions;
 import com.nitish.gamershub.model.local.DialogItems;
+import com.nitish.gamershub.model.local.DialogLoadingItems;
 import com.nitish.gamershub.utils.PreferenceHelper;
 import com.nitish.gamershub.utils.adsUtils.AdmobAdsListener;
 import com.nitish.gamershub.utils.adsUtils.InterstitialUtilsAdmobAdUtil;
 import com.nitish.gamershub.utils.adsUtils.RewardedAdAdmobUtilUtils;
 import com.nitish.gamershub.view.dialogs.ConfirmationDialog;
+import com.nitish.gamershub.view.dialogs.CustomLoadingBar2;
 import com.nitish.gamershub.view.dialogs.DialogGamerReward;
 import com.nitish.gamershub.view.dialogs.DialogListener;
+import com.nitish.gamershub.view.dialogs.Loader;
+import com.nitish.gamershub.view.dialogs.LoadingBarDialog;
 import com.nitish.gamershub.view.dialogs.SnackBarCustom;
 import com.nitish.gamershub.view.dialogs.SuspensionDialog;
 import com.nitish.gamershub.view.homePage.activity.HomeActivity;
@@ -165,7 +169,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         getFirebaseUser().set(userProfile, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                dismissProgressBar();
+                hideLoader();
                 if (task.isSuccessful() && task.isComplete()) {
 
 
@@ -180,7 +184,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                dismissProgressBar();
+                hideLoader();
 
                 DialogItems dialogItems = new DialogItems();
                 Log.d("pError", "error1123 in the update profile " + e);
@@ -313,7 +317,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-
     //------------------------- dialog boxes -------------------------------//
 
 
@@ -356,11 +359,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     public InterstitialAd loadInterstitialAdNew() {
 
 
-     return  interstitialAdmobAdUtil.loadInterstitialAd();
+        return interstitialAdmobAdUtil.loadInterstitialAd();
 
     }
-    public void loadRewardedVideoAd()
-    {
+
+    public void loadRewardedVideoAd() {
         rewardedAdAdmobUtil.loadRewardedAdmobAd();
     }
 
@@ -380,25 +383,14 @@ public abstract class BaseActivity extends AppCompatActivity {
         adViewedStats.setAdMobInterstitialAdViewed(interstitialAdCount);
         saveAdViewedStatsGlobal(adViewedStats);
 
-//        userProfile.setAdViewedStats(adViewedStats);
-//
-//        setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
-//            @Override
-//            public void onTaskSuccessful() {
-//
-//            }
-//        });
 
     }
-
 
 
     public void showRewardedVideo3(AdmobAdsListener.RewardedAdListener rewardedAdListener) {
 
         rewardedAdAdmobUtil.showRewardedAd(rewardedAdListener);
     }
-
-
 
 
     public void incrementRewardAdCount() {
@@ -421,23 +413,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-    public ProgressDialog showProgressBar() {
-        try {
-            if (!BaseActivity.this.isFinishing())
-                progressDialog.show();
-
-        } catch (Exception e) {
-
-        }
-
-        return progressDialog;
-    }
-
-    public void dismissProgressBar() {
-        progressDialog.dismiss();
-    }
-
-
     // google signin
 
     public GoogleSignInAccount getGoogleSignInAccount() {
@@ -455,12 +430,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (!showNoInternetDialog()) {
             return;
         }
-        showProgressBar();
+        hideLoader();
         getGoogleSignInClient().signOut()
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        dismissProgressBar();
+                        hideLoader();
                         AppHelper.destroyAllPaperData();
                         startActivity(new Intent(BaseActivity.this, LoginActivity.class));
                         finish();
@@ -577,10 +552,69 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-    public void showSnackBar(String message)
-    {
-        SnackBarCustom.showCustomSnackBar(this,message,3000);
+
+    public ProgressDialog showProgressBar() {
+        try {
+            if (!BaseActivity.this.isFinishing())
+                progressDialog.show();
+
+        } catch (Exception e) {
+
+        }
+
+        return progressDialog;
     }
+
+    public void dismissProgressBar() {
+        progressDialog.dismiss();
+    }
+
+    public void showLoader(DialogLoadingItems items) {
+        LoadingBarDialog.newInstance(this, items).showDialog();
+
+
+    }
+
+    public void showLoader() {
+
+        LoadingBarDialog.newInstance(this, new DialogLoadingItems()).showDialog();
+
+    }
+
+    public void hideLoader() {
+
+        long startTime = System.currentTimeMillis();
+
+        LoadingBarDialog loadingBarDialog = LoadingBarDialog.getInstance();
+
+
+//        Loader loadingBarDialog =  Loader.getInstance();
+        if (loadingBarDialog != null) {
+
+            long currentTime = System.currentTimeMillis() - startTime;
+
+            long maxTime = 3000;
+            if (currentTime < maxTime) {
+                try {
+                    Thread.sleep(maxTime - currentTime);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            loadingBarDialog.hideDialog();
+//            loadingBarDialog.cancelCustomDialog();
+        }
+
+    }
+
+    public void showSimpleToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
+    public void showSnackBar(String message, View rootLayout) {
+        SnackBarCustom.showCustomSnackBar(this, rootLayout, message, 3000);
+    }
+
     void showDialogfragment(DialogFragment dialog, String tag) {
         if (!this.isFinishing()) {
             dialog.show(getSupportFragmentManager(), tag);
@@ -611,19 +645,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         if (this.getClass().getSimpleName().equals(HomeActivity.class.getSimpleName())) {
             isHomeActivityDestroyed = true;
-//            UserProfile userProfile = getUserProfileGlobalData();
-//            // upload the ad viewed status when exiting from the app
-//            if (adStatsChanged()) {
-//
-//                userProfile.setAdViewedStats(getAdViewedStatsGlobal());
-//                setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
-//                    @Override
-//                    public void onTaskSuccessful() {
-//                        saveAdViewedStatsGlobal(getAdViewedStatsGlobal());
-//                    }
-//                });
-//
-//            }
 
         }
         super.onDestroy();

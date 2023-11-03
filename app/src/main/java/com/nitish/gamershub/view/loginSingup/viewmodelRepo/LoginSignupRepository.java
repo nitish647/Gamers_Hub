@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.android.volley.Request;
 import com.google.firebase.firestore.SetOptions;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.apiUtils.ApiService;
 import com.nitish.gamershub.model.firebase.FirebaseDataPassingHelper;
 import com.nitish.gamershub.model.firebase.GamersHubData;
 import com.nitish.gamershub.model.firebase.RedeemCoins;
@@ -16,6 +17,9 @@ import com.nitish.gamershub.model.local.NetWorkTimerResult;
 import com.nitish.gamershub.utils.NetworkResponse;
 import com.nitish.gamershub.utils.firebaseUtils.FireBaseService;
 import com.nitish.gamershub.view.base.BaseRepository;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class LoginSignupRepository extends BaseRepository {
 
@@ -103,6 +107,27 @@ public class LoginSignupRepository extends BaseRepository {
 
 
         callVolleyRequest(Request.Method.GET, getNetworkTimeMLD, context.getString(R.string.getCurrentTimeAsiaKolkata), NetWorkTimerResult.class);
+
+    }
+
+    private MutableLiveData<NetworkResponse<JSONArray>> getGamersHubMaterDataMLD = new MutableLiveData<>();
+    public LiveData<NetworkResponse<JSONArray>> getGamersHubMaterDataLD = getGamersHubMaterDataMLD;
+
+    public void callGetGamersHubMaterData() {
+
+
+        callVolleyRequest(Request.Method.GET, getGamersHubMaterDataMLD, ApiService.materJsonUrl, JSONArray.class);
+
+    }
+
+
+    private MutableLiveData<NetworkResponse<JSONObject>> getBannerDataMLD = new MutableLiveData<>();
+    public LiveData<NetworkResponse<JSONObject>> getBannerDataLD = getBannerDataMLD;
+
+    public void callGetBannerData() {
+
+
+        callVolleyRequest(Request.Method.GET, getBannerDataMLD, ApiService.bannerJsonUrl, JSONObject.class);
 
     }
 

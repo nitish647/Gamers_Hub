@@ -10,6 +10,8 @@ import android.os.Bundle;
 import androidx.appcompat.widget.SearchView;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,6 +38,8 @@ import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.nitish.gamershub.databinding.FragmentHomeBinding;
+import com.nitish.gamershub.model.firebase.TimerStatus;
+import com.nitish.gamershub.utils.NetworkResponse;
 import com.nitish.gamershub.view.base.BaseFragment;
 import com.nitish.gamershub.view.homePage.activity.HomeActivity;
 import com.nitish.gamershub.view.loginSingup.activity.SplashScreen;
@@ -44,6 +48,7 @@ import com.nitish.gamershub.model.local.AllGamesItems;
 import com.nitish.gamershub.model.local.Categories;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.utils.ProgressBarHelper;
+import com.nitish.gamershub.view.loginSingup.viewmodelRepo.LoginSignUpViewModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -61,11 +66,12 @@ import io.paperdb.Paper;
  */
 public class HomeFragment extends BaseFragment {
 
-    
+
     FragmentHomeBinding fragmentHomeBinding;
-    
-    
-    
+
+    private LoginSignUpViewModel viewModel;
+
+
     View view;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -91,14 +97,11 @@ public class HomeFragment extends BaseFragment {
     // TODO: Rename and change types and number of parameters
 
 
-
-
     // the whole game data
     JSONObject masterDataJsonObject;
 
 
-    int currentSelectedFragPosition=0;
-
+    int currentSelectedFragPosition = 0;
 
 
     HomeActivity parentHomeActivity;
@@ -116,7 +119,6 @@ public class HomeFragment extends BaseFragment {
     private InterstitialAd interstitialAd;
 
 
-
     private RewardedAd rewardedAd;
     boolean isLoading;
     ArrayList<AllGamesItems> mainGamesArrayList;
@@ -126,11 +128,7 @@ public class HomeFragment extends BaseFragment {
 
     BottomNavigationView bottomNavigationView;
 
-    
-    
-    
 
-    
     public static HomeFragment newInstance(String param1, String param2) {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
@@ -161,6 +159,7 @@ public class HomeFragment extends BaseFragment {
 
         requestQueue = Volley.newRequestQueue(view.getContext());
         // Initialize Firebase Auth
+        viewModel = ViewModelProviders.of(this).get(LoginSignUpViewModel.class);
 
         progressDialog = ProgressBarHelper.setProgressBarDialog(view.getContext());
 
@@ -171,67 +170,118 @@ public class HomeFragment extends BaseFragment {
         mainGamesArrayList = new ArrayList<>();
 
         setOnClickListens();
-
+        bindObservers();
         setSearchView();
-        bannerImagesApi();
-
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(view.getContext(),4);
+//        bannerImagesApi();
+        callGetBannerData();
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(view.getContext(), 4);
         fragmentHomeBinding.allGamesRecyclerView.setLayoutManager(gridLayoutManager);
 
 
-        if(Paper.book().read(SplashScreen.MaterData)==null|| !Paper.book().contains(SplashScreen.MaterData))
-            getMaterData();
-        else
+        if (Paper.book().read(SplashScreen.MaterData) == null || !Paper.book().contains(SplashScreen.MaterData)) {
+            callGetGamersHubMaterData();
+//            getMaterData();
+        } else
             saveGameData();
 
         return view;
-        
+
     }
-    public void saveGameData()
-    {
+
+    public void bindObservers() {
+
+        viewModel.getGamersHubMaterData.observe(getViewLifecycleOwner(), new Observer<NetworkResponse<JSONArray>>() {
+            @Override
+            public void onChanged(NetworkResponse<JSONArray> response) {
+                if (response instanceof NetworkResponse.Success) {
+
+
+                    hideLoader();
+                    try {
+                        JSONObject jsonObject = ((NetworkResponse.Success<JSONArray>) response).getData().getJSONObject(0);
+                        Log.d("gResponse", "response jsonObject of mater data " + jsonObject);
+                        Paper.book().write(SplashScreen.MaterData, jsonObject + "");
+
+                        saveGameData();
+
+                    } catch (Exception e) {
+
+                    }
+
+//                    Paper.book().write(UserInfo, updatedUserProfile);
+
+
+                } else if (response instanceof NetworkResponse.Error) {
+
+                    String message = ((NetworkResponse.Error<JSONArray>) response).getMessage();
+
+                    hideLoader();
+                } else if (response instanceof NetworkResponse.Loading) {
+
+                    showLoader();
+                }
+            }
+        });
+
+        viewModel.getBannerData.observe(getViewLifecycleOwner(), new Observer<NetworkResponse<JSONObject>>() {
+            @Override
+            public void onChanged(NetworkResponse<JSONObject> response) {
+                if (response instanceof NetworkResponse.Success) {
+
+
+                    hideLoader();
+
+                    try {
+                        JSONArray bannerImagesJsonArray = ((NetworkResponse.Success<JSONObject>) response).getData().getJSONArray("bannerImages");
+                        setImageSlider(bannerImagesJsonArray);
+
+                    } catch (Exception e) {
+                        Log.d("gError", "error in  banner_Images data " + e.toString());
+                        e.printStackTrace();
+                    }
+//                    Paper.book().write(UserInfo, updatedUserProfile);
+
+
+                } else if (response instanceof NetworkResponse.Error) {
+
+                    String message = ((NetworkResponse.Error<JSONObject>) response).getMessage();
+
+                    hideLoader();
+                } else if (response instanceof NetworkResponse.Loading) {
+
+                    showLoader();
+                }
+            }
+        });
+
+    }
+
+    public void saveGameData() {
         try {
-            masterDataJsonObject = new JSONObject(Paper.book().read(SplashScreen.MaterData)+"");
+            masterDataJsonObject = new JSONObject(Paper.book().read(SplashScreen.MaterData) + "");
             JSONArray mainGameJsonArray = masterDataJsonObject.getJSONArray("main");
             JSONArray popularGamesJsonArray = masterDataJsonObject.getJSONArray("best");
-            JSONArray newGamesJsonArray =  masterDataJsonObject.getJSONArray("new");
+            JSONArray newGamesJsonArray = masterDataJsonObject.getJSONArray("new");
 
             // will save the all games in paper in arraylist form
-            saveAllGamesData(mainGameJsonArray,popularGamesJsonArray,newGamesJsonArray);
+            saveAllGamesData(mainGameJsonArray, popularGamesJsonArray, newGamesJsonArray);
             //       setUpViewPager(allGamesJsonArrayString,popularGamesJsonArrayString,newGamesJsonArrayString);
 
 
         } catch (Exception e) {
-            Log.d("gError","exception in data 112 "+e);
+            Log.d("gError", "exception in data 112 " + e);
             Toast.makeText(view.getContext(), "Some error has occurred : gError223", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
 
     }
 
-    public void setOnClickListens()
-    {
-//        navigationButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-////                drawerLayout.openDrawer(Gravity.LEFT);
-//            }
-//        });
-//        navigationButton.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View view) {
-//                Toast.makeText(parentHomeActivity, "clicked", Toast.LENGTH_SHORT).show();
-//                AppHelper.saveCalenderData();
-//                return false;
-//            }
-//        });
+    public void setOnClickListens() {
+
     }
 
 
-
-
-
-    public void setSearchView()
-    {
+    public void setSearchView() {
         fragmentHomeBinding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -251,20 +301,19 @@ public class HomeFragment extends BaseFragment {
             }
         });
     }
+
     public void setImageSlider(JSONArray bannerImagesJsonArray) throws JSONException {
 
         ArrayList<String> imageUrlList = new ArrayList<>();
-        for(int i =0;i<bannerImagesJsonArray.length();i++)
-        {
+        for (int i = 0; i < bannerImagesJsonArray.length(); i++) {
             JSONObject jsonObject = bannerImagesJsonArray.getJSONObject(i);
 
             imageUrlList.add(jsonObject.getString("largeImageUrl"));
 
         }
         ArrayList<SlideModel> slideModelArrayList = new ArrayList<>();
-        for(String imageUri : imageUrlList)
-        {
-            SlideModel slideModel = new SlideModel(imageUri,null,null);
+        for (String imageUri : imageUrlList) {
+            SlideModel slideModel = new SlideModel(imageUri, null, null);
             slideModelArrayList.add(slideModel);
 
         }
@@ -272,17 +321,15 @@ public class HomeFragment extends BaseFragment {
     }
 
     // will set the main games data
-    public void saveAllGamesData(JSONArray mainGamesArray, JSONArray newGamesJsonArray, JSONArray popularGamesJsonArray)
-    {
+    public void saveAllGamesData(JSONArray mainGamesArray, JSONArray newGamesJsonArray, JSONArray popularGamesJsonArray) {
         ArrayList<AllGamesItems> mainItemsArrayList = new ArrayList<>();
         ArrayList<AllGamesItems> newGamesItemsArrayList = new ArrayList<>();
         ArrayList<AllGamesItems> popularItemsArrayList = new ArrayList<>();
         Gson gson = new Gson();
         try {
-            for(int i = 0; i< mainGamesArray.length(); i++)
-            {
+            for (int i = 0; i < mainGamesArray.length(); i++) {
                 JSONObject jsonObject = mainGamesArray.getJSONObject(i);
-                AllGamesItems allGamesItems = gson.fromJson(jsonObject.toString(),AllGamesItems.class);
+                AllGamesItems allGamesItems = gson.fromJson(jsonObject.toString(), AllGamesItems.class);
                 mainItemsArrayList.add(allGamesItems);
             }
 
@@ -295,80 +342,30 @@ public class HomeFragment extends BaseFragment {
 
             fragmentHomeBinding.allGamesRecyclerView.setAdapter(newAndPopularGamesAdapter);
 
-            Paper.book().write(MainGamesList,mainItemsArrayList);
+            Paper.book().write(MainGamesList, mainItemsArrayList);
 
-            for(int i = 0; i< newGamesJsonArray.length(); i++)
-            {
+            for (int i = 0; i < newGamesJsonArray.length(); i++) {
                 JSONObject jsonObject = newGamesJsonArray.getJSONObject(i);
-                AllGamesItems allGamesItems = gson.fromJson(jsonObject.toString(),AllGamesItems.class);
+                AllGamesItems allGamesItems = gson.fromJson(jsonObject.toString(), AllGamesItems.class);
                 newGamesItemsArrayList.add(allGamesItems);
             }
-            Paper.book().write(NewGamesList,newGamesItemsArrayList);
+            Paper.book().write(NewGamesList, newGamesItemsArrayList);
 
 
-            for(int i = 0; i< popularGamesJsonArray.length(); i++)
-            {
+            for (int i = 0; i < popularGamesJsonArray.length(); i++) {
                 JSONObject jsonObject = popularGamesJsonArray.getJSONObject(i);
-                AllGamesItems allGamesItems = gson.fromJson(jsonObject.toString(),AllGamesItems.class);
+                AllGamesItems allGamesItems = gson.fromJson(jsonObject.toString(), AllGamesItems.class);
                 popularItemsArrayList.add(allGamesItems);
             }
-            Paper.book().write(PopularGamesList,popularItemsArrayList);
+            Paper.book().write(PopularGamesList, popularItemsArrayList);
 
-            if(popularGamesJsonArray.length()>0)
-                Paper.book().read(PopularGamesList,popularItemsArrayList.get(0).getName());
+            if (popularGamesJsonArray.length() > 0)
+                Paper.book().read(PopularGamesList, popularItemsArrayList.get(0).getName());
         } catch (Exception e) {
-            Toast.makeText(view.getContext(), "something went wrong while showing this data : error334 "+e, Toast.LENGTH_SHORT).show();
-            Log.d("gError334",e.toString());
+            Toast.makeText(view.getContext(), "something went wrong while showing this data : error334 " + e, Toast.LENGTH_SHORT).show();
+            Log.d("gError334", e.toString());
             e.printStackTrace();
         }
-    }
-
-    public void bannerImagesApi()
-    {
-
-        String url = getString(R.string.dbGitUrl)+"gamers_hub_data/banner_Images.json";
-
-        Log.d("url",url);
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-
-
-            @Override
-            public void onResponse(JSONObject response) {
-
-                Log.d("gResponse","response banner_Images data "+response);
-
-                //    Toast.makeText(Splash_Screen.this, response+"", Toast.LENGTH_SHORT).show();
-                try {
-                    JSONArray bannerImagesJsonArray =  response.getJSONArray("bannerImages");
-                    setImageSlider(bannerImagesJsonArray);
-
-                } catch (Exception e) {
-                    Log.d("gError","error in  banner_Images data "+e.toString());
-                    e.printStackTrace();
-                }
-
-
-
-
-
-
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("gError","error in banner_Images data "+error);
-
-            }
-        });
-
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
-                6000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        requestQueue.add(jsonObjectRequest);
     }
 
 
@@ -382,7 +379,9 @@ public class HomeFragment extends BaseFragment {
     }
 
 
-    /** Called before the activity is destroyed */
+    /**
+     * Called before the activity is destroyed
+     */
     @Override
     public void onDestroy() {
         if (googleBannerAdView != null) {
@@ -392,61 +391,22 @@ public class HomeFragment extends BaseFragment {
     }
 
 
-    public void getMaterData()
-    {
 
-        String url = getString(R.string.dbGitUrl)+"gamers_hub_data/masterData.json";
-
-        Log.d("url",url);
-
-        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+    private void callGetGamersHubMaterData() {
 
 
-            @Override
-            public void onResponse(JSONArray response) {
+        viewModel.callGetGamersHubJson();
+    }
 
-                Log.d("gResponse","response json array of mater data "+response);
-
-                //    Toast.makeText(Splash_Screen.this, response+"", Toast.LENGTH_SHORT).show();
-                try {
-                    JSONObject jsonObject =  response.getJSONObject(0);
-                    Log.d("gResponse","response jsonObject of mater data "+jsonObject);
-                    Paper.book().write(SplashScreen.MaterData,jsonObject+"");
-
-                    saveGameData();
-
-                } catch (Exception e) {
-                    Log.d("gError","error in  mater data "+e.toString());
-                    e.printStackTrace();
-                }
+    private void callGetBannerData() {
 
 
-
-
-
-
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("gError","error in mater data "+error);
-
-            }
-        });
-
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
-                6000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        requestQueue.add(jsonObjectRequest);
+        viewModel.callGetBannerData();
     }
 
 
-    public void setViews()
-    {
-        bottomNavigationView= view.findViewById(R.id.bottomNavigationView);
+    public void setViews() {
+        bottomNavigationView = view.findViewById(R.id.bottomNavigationView);
         fragmentHomeBinding.imageSlider.setClipToOutline(true);
     }
 

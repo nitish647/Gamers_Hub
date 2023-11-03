@@ -3,6 +3,7 @@
     <string name="gamers_hub">Gamers Hub</string>
     <string name="navigation_drawer_open">Drawer Open</string>
     <string name="navigation_drawer_close">Drawer Closed</string>
+
     <string name="getCurrentTimeAsiaKolkata">https://timeapi.io/api/Time/current/zone?timeZone=Asia/Kolkata</string>
 
 
@@ -105,6 +106,44 @@
 
     <string name="request_raised_successfully">Request Raised successfully</string>
     <string name="congratulations_redeem_request_generated_for">Congratulations , Redeem request generated for ₹</string>
+
+                <!--    Home Page    -->
+
+
+    <string name="a_new_update_of_the_app_has_been_released_please_update">"A new update of the app has been released , please update "</string>
+    <string name="pending_update">Pending Update</string>
+    <string name="update">Update</string>
+
+    <string name="confirmation">Confirmation</string>
+    <string name="do_you_want_to_log_out">Do you want to log out?</string>
+
+    <!--    Redeem Page    -->
+    <string name="enter_a_valid_upi_id">Enter a Valid upi id</string>
+    <string name="enter_a_valid_number">Enter a Valid Number</string>
+    <string name="network_is_not_good">"Network is not good "</string>
+    <string name="not_enough_funds_to_redeem">"Not enough funds to redeem "</string>
+    <string name="added_the_data">Added the data</string>
+    <!--    Game Details Activity    -->
+    <string name="do_you_want_to_exit_the_game">Do you want to exit the game?</string>
+
+
+
+    <!--    Game Details Fragment    -->
+    <string name="your_have_reached_the_daily_reward_limit_of">"Your have reached the daily reward limit of "</string>
+    <string name="games_come_back_tomorrow_to_get_more_rewards">" games ,come back tomorrow to get more rewards"</string>
+    <string name="play_this_game_for">" Play this game for "</string>
+    <string name="minutes_to_get_rewarded">" Minutes to get rewarded "</string>
+    <string name="game_played_reward_left">"   \n(Game played reward left "</string>
+    <string name="send">Send</string>
+    <string name="do_you_want_to_report_this_game">"Do you want to report this game? "</string>
+    <string name="issue_in_the_game">"Issue in the game : "</string>
+    <string name="send_us_email">"Send us email "</string>
+    <string name="something_went_wrong">"something went wrong "</string>
+
+<!--    Splash Screen-->
+    <string name="internet_is_slow">Internet is slow…</string>
+    <string name="please_check_your_internet_connection_and_try_again">PLease check your internet connection and try again</string>
+    <string name="change_in_default_time_detected_please_set_the_time_to_default_network_time">Change in default time detected , please set the time to default network time</string>
 
 
 </resources>

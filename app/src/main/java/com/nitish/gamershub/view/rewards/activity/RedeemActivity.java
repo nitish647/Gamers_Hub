@@ -82,6 +82,7 @@ public class RedeemActivity extends BaseActivity {
         CommonMethods.backButton(RedeemActivity.this);
 
 
+//        hideLoader();
         getCoins();
         setUpBannerAd();
         totalGameCoins = getUserProfileGlobalData().getProfileData().getGameCoins();
@@ -108,7 +109,7 @@ public class RedeemActivity extends BaseActivity {
             @Override
             public void onChanged(NetworkResponse<UserProfile> response) {
                 if (response instanceof NetworkResponse.Success) {
-                    dismissProgressBar();
+                    hideLoader();
 
 
                     totalGameCoins = getUserProfileGlobalData().getProfileData().getGameCoins();
@@ -116,10 +117,10 @@ public class RedeemActivity extends BaseActivity {
 
                 } else if (response instanceof NetworkResponse.Error) {
 
-                    dismissProgressBar();
+                    hideLoader();
                 } else if (response instanceof NetworkResponse.Loading) {
 
-                    showProgressBar();
+                    showLoader();
                 }
             }
         });
@@ -129,21 +130,22 @@ public class RedeemActivity extends BaseActivity {
             public void onChanged(NetworkResponse<Object> response) {
                 if (response instanceof NetworkResponse.Success) {
 
-                    String message = "Congratulations , Redeem request generated for ₹" + redeemListItem.getMoney();
+                    String message = getString(R.string.congratulations_redeem_request_generated_for) + redeemListItem.getMoney();
                     showRewardDialog(message, null);
-                    Toast.makeText(RedeemActivity.this, "Request Raised successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RedeemActivity.this, getString(R.string.request_raised_successfully), Toast.LENGTH_SHORT).show();
 
 
                     getCoins();
+                    hideLoader();
 
                 } else if (response instanceof NetworkResponse.Error) {
 
                     String message = ((NetworkResponse.Error<Object>) response).getMessage();
 
-                    dismissProgressBar();
+                    hideLoader();
                 } else if (response instanceof NetworkResponse.Loading) {
 
-                    showProgressBar();
+                    showLoader();
                 }
             }
         });
@@ -152,7 +154,7 @@ public class RedeemActivity extends BaseActivity {
             @Override
             public void onChanged(NetworkResponse<RedeemCoins> response) {
                 if (response instanceof NetworkResponse.Success) {
-                    dismissProgressBar();
+                    hideLoader();
 
                     RedeemCoins redeemCoins = ((NetworkResponse.Success<RedeemCoins>) response).getData();
 
@@ -160,10 +162,10 @@ public class RedeemActivity extends BaseActivity {
                     setRedeemRecyclerView();
                 } else if (response instanceof NetworkResponse.Error) {
 
-                    dismissProgressBar();
+                    hideLoader();
                 } else if (response instanceof NetworkResponse.Loading) {
 
-                    showProgressBar();
+                    showLoader();
                 }
             }
         });
@@ -171,15 +173,15 @@ public class RedeemActivity extends BaseActivity {
             @Override
             public void onChanged(NetworkResponse<Object> response) {
                 if (response instanceof NetworkResponse.Success) {
-                    dismissProgressBar();
-                    Toast.makeText(RedeemActivity.this, "Added the data", Toast.LENGTH_SHORT).show();
+                    hideLoader();
+                    Toast.makeText(RedeemActivity.this, getString(R.string.added_the_data), Toast.LENGTH_SHORT).show();
 
                 } else if (response instanceof NetworkResponse.Error) {
 
-                    dismissProgressBar();
+                    hideLoader();
                 } else if (response instanceof NetworkResponse.Loading) {
 
-                    showProgressBar();
+                    showLoader();
                 }
             }
         });
@@ -233,7 +235,7 @@ public class RedeemActivity extends BaseActivity {
         redeemCoins.setRedeemListItemList(redeemListItemArrayList);
 
 
-        showProgressBar();
+        hideLoader();
 
 
         calSetRedeemCoinsData(redeemCoins);
@@ -246,11 +248,11 @@ public class RedeemActivity extends BaseActivity {
         String connectivityStatus = Connectivity.getConnectionStatus(RedeemActivity.this);
 
         if (!isInternetAvailable()) {
-            Toast.makeText(this, "Network is not good " + connectivityStatus, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.network_is_not_good) + connectivityStatus, Toast.LENGTH_SHORT).show();
             return;
         }
         if (totalGameCoins < this.redeemListItem.getCoins()) {
-            Toast.makeText(this, "Not enough funds to redeem ", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.not_enough_funds_to_redeem), Toast.LENGTH_LONG).show();
 
         } else {
             enterPaytmUpiAlertDialog();
@@ -292,7 +294,7 @@ public class RedeemActivity extends BaseActivity {
 
                     } else {
 
-                        ToastHelper.customToast(RedeemActivity.this, "Enter a Valid Number");
+                        ToastHelper.customToast(RedeemActivity.this, getString(R.string.enter_a_valid_number));
                     }
 
 
@@ -319,7 +321,7 @@ public class RedeemActivity extends BaseActivity {
                         paytmUpiDialog.dismiss();
                     } else {
 
-                        ToastHelper.customToast(RedeemActivity.this, "Enter a Valid upi id");
+                        ToastHelper.customToast(RedeemActivity.this, getString(R.string.enter_a_valid_upi_id));
                     }
 
 
@@ -339,17 +341,9 @@ public class RedeemActivity extends BaseActivity {
 
 
     public void getCoins() {
-        progressDialog.show();
+        totalGameCoins = getUserProfileGlobalData().getProfileData().getGameCoins();
+//        getUserProfile();
 
-        getUserProfile();
-//        getUserProfileGlobal(new GetUserProfileDataListener() {
-//            @Override
-//            public void onTaskSuccessful(UserProfile userProfile) {
-//                progressDialog.dismiss();
-//                totalGameCoins = getUserProfileGlobalData().getProfileData().getGameCoins();
-//
-//            }
-//        });
     }
 
     public UserTransactions setUserTransactions(UserTransactions userTransactions, RedeemListItem redeemListItem) {
@@ -412,7 +406,6 @@ public class RedeemActivity extends BaseActivity {
     }
 
 
-
     public void performUpdateUserTransaction() {
         UserTransactions userTransactions = setUserTransactions(getUserProfileGlobalData().getUserTransactions(), redeemListItem);
 
@@ -420,7 +413,7 @@ public class RedeemActivity extends BaseActivity {
 
     }
 
-    public UserProfile updateUserWalletForTransaction(int amount,  UserTransactions userTransactions) {
+    public UserProfile updateUserWalletForTransaction(int amount, UserTransactions userTransactions) {
 
         UserProfile userProfile = getUserProfileGlobalData();
         UserProfile.ProfileData profileData = userProfile.getProfileData();
@@ -432,7 +425,7 @@ public class RedeemActivity extends BaseActivity {
         userProfile.setUserTransactions(userTransactions);
 
 
-        showProgressBar();
+        hideLoader();
         callUpdateUserProfile(userProfile, "");
 //        setUserProfile(userProfile, setUserDataOnCompleteListener);
 
@@ -481,10 +474,12 @@ public class RedeemActivity extends BaseActivity {
     private void getRedeemCoinsData() {
         viewModel.callGetRedeemCoins();
     }
+
     private void calSetRedeemCoinsData(RedeemCoins redeemCoins) {
 
         viewModel.callSetRedeemCoinsLD(redeemCoins);
     }
+
     private void getUserProfile() {
         viewModel.callGetUserProfile();
     }

@@ -72,6 +72,7 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
 
     }
 
+
     @Override
     protected int getLayoutResourceId() {
         return R.layout.activity_login_page;
@@ -82,7 +83,7 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
             @Override
             public void onChanged(NetworkResponse<UserProfile> response) {
                 if (response instanceof NetworkResponse.Success) {
-                    dismissProgressBar();
+                    hideLoader();
 
 
                     UserProfile userProfile = ((NetworkResponse.Success<UserProfile>) response).getData();
@@ -112,10 +113,10 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
                         userProfile.setProfileData(profileData);
                         callRegisterUser(userProfile);
                     }
-                    dismissProgressBar();
+                    hideLoader();
                 } else if (response instanceof NetworkResponse.Loading) {
 
-                    showProgressBar();
+                    showLoader();
                 }
             }
         });
@@ -133,15 +134,15 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
                     startActivity(intent);
                     finish();
 
-                    dismissProgressBar();
+                    hideLoader();
                 } else if (response instanceof NetworkResponse.Error) {
 
                     String message = ((NetworkResponse.Error<Object>) response).getMessage();
 
-                    dismissProgressBar();
+                    hideLoader();
                 } else if (response instanceof NetworkResponse.Loading) {
 
-                    showProgressBar();
+                    showLoader();
                 }
             }
         });
@@ -152,10 +153,13 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
                 if (response instanceof NetworkResponse.Success) {
 
                     Toast.makeText(LoginActivity.this, "Welcome Back", Toast.LENGTH_SHORT).show();
-                    dismissProgressBar();
+                    hideLoader();
 
                     Paper.book().write(UserInfo, loginUserProfile);
-                    Paper.book().write(UserMail, googleSignInAccount.getEmail());
+
+                    if (googleSignInAccount != null && googleSignInAccount.getEmail() != null)
+                        Paper.book().write(UserMail, googleSignInAccount.getEmail());
+
                     Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                     startActivity(intent);
                     finish();
@@ -164,10 +168,10 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
 
                     String message = ((NetworkResponse.Error<Object>) response).getMessage();
 
-                    dismissProgressBar();
+                    hideLoader();
                 } else if (response instanceof NetworkResponse.Loading) {
 
-                    showProgressBar();
+                    showLoader();
                 }
             }
         });
@@ -184,6 +188,16 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
 
             }
         });
+
+        binding.moreSignupButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Paper.book().write(UserMail, "nitish.kumar647@gmail.com");
+                getUserProfile();
+                return false;
+            }
+        });
+
 
     }
 
@@ -346,7 +360,7 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
         @Override
         protected void onPostExecute(Object o) {
 
-            dismissProgressBar();
+            hideLoader();
             setonClickListeners();
             super.onPostExecute(o);
         }

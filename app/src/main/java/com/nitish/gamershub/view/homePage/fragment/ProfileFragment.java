@@ -114,7 +114,11 @@ public class ProfileFragment extends BaseFragment {
     {
 
 
+        if(AppHelper.getGoogleSignInAccountUser()!=null)
+        {
             binding.profileName.setText(AppHelper.getGoogleSignInAccountUser().getDisplayName());
+
+        }
             if(AppHelper.getGoogleSignInUserProfile()!=null)
                 if(!(AppHelper.getGoogleSignInUserProfile()+"").equals("null"))
                     Picasso.get().load(AppHelper.getGoogleSignInUserProfile()).placeholder(R.drawable.gamers_hub_icon15).into(binding.profileIcon);

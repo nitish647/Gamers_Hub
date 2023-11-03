@@ -95,15 +95,12 @@ public class HomeActivity extends BaseActivity {
 
     CategoryGamesFragment categoryGamesFragment;
     Fragment previousFragment;
-    RequestQueue requestQueue;
-
     boolean interstitialAdDismissed = false;
     private LoginSignUpViewModel viewModel;
 
     private RewardedAd rewardedAd;
     boolean isLoading;
     ArrayList<AllGamesItems> mainGamesArrayList;
-    ProgressDialog progressDialog;
     TimerStatus.DailyBonus dailyBonusToUpdate;
 
 
@@ -124,22 +121,23 @@ public class HomeActivity extends BaseActivity {
 
         viewModel = ViewModelProviders.of(this).get(LoginSignUpViewModel.class);
         firestoreDb = FirebaseFirestore.getInstance();
-        requestQueue = Volley.newRequestQueue(HomeActivity.this);
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(HomeActivity.this);
-        Paper.book().write(GoogleSignInAccountUser, acct);
+
+        if (acct != null)
+            Paper.book().write(GoogleSignInAccountUser, acct);
         setViews();
+
         updateUserProfileData((UserProfile) Paper.book().read(UserInfo));
         bindObservers();
+
         String playStoreVersionCode = FirebaseRemoteConfig.getInstance().getString(
                 "appVersion");
 
         Log.d("pResponse", "playStoreVersionCode " + playStoreVersionCode);
-//        categoriesList = new ArrayList<>();
-//        navigationView.setVisibility(View.VISIBLE);
+
 
         NotificationHelper.generateFcmToken();
         setHeader();
-//        updateUserInfo();
 
         loadInterstitialAdNew();
         setUpBannerAd();
@@ -153,14 +151,6 @@ public class HomeActivity extends BaseActivity {
             public void onInitializationComplete(@NonNull InitializationStatus initializationStatus) {
             }
         });
-
-//        logoutButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                showLogOutDialog();
-//            }
-//        });
 
 
         // just writing an empty favourite list to avoid null pointer when reading the data
@@ -191,7 +181,7 @@ public class HomeActivity extends BaseActivity {
                 if (response instanceof NetworkResponse.Success) {
 
 
-                    dismissProgressBar();
+//                    hideLoader();
 
 
 //                    Paper.book().write(UserInfo, updatedUserProfile);
@@ -207,10 +197,10 @@ public class HomeActivity extends BaseActivity {
 
                     String message = ((NetworkResponse.Error<Object>) response).getMessage();
 
-                    dismissProgressBar();
+//                    hideLoader();
                 } else if (response instanceof NetworkResponse.Loading) {
 
-                    showProgressBar();
+//                    showLoader();
                 }
             }
         });
@@ -220,7 +210,7 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onChanged(NetworkResponse<GamersHubData> response) {
                 if (response instanceof NetworkResponse.Success) {
-                    dismissProgressBar();
+                    hideLoader();
 
                     GamersHubData gamersHubData = ((NetworkResponse.Success<GamersHubData>) response).getData();
 
@@ -234,10 +224,10 @@ public class HomeActivity extends BaseActivity {
 
                     String message = ((NetworkResponse.Error<GamersHubData>) response).getMessage();
 
-                    dismissProgressBar();
+                    hideLoader();
                 } else if (response instanceof NetworkResponse.Loading) {
 
-                    showProgressBar();
+                    showLoader();
                 }
             }
         });
@@ -247,7 +237,7 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onChanged(NetworkResponse<NetWorkTimerResult> response) {
                 if (response instanceof NetworkResponse.Success) {
-                    dismissProgressBar();
+//                    hideLoader();
 
                     NetWorkTimerResult netWorkTimerResult = ((NetworkResponse.Success<NetWorkTimerResult>) response).getData();
 
@@ -259,10 +249,10 @@ public class HomeActivity extends BaseActivity {
 
                     String message = ((NetworkResponse.Error<NetWorkTimerResult>) response).getMessage();
 
-                    dismissProgressBar();
+//                    hideLoader();
                 } else if (response instanceof NetworkResponse.Loading) {
 
-                    showProgressBar();
+//                    showLoader();
                 }
             }
         });
@@ -273,8 +263,8 @@ public class HomeActivity extends BaseActivity {
 
 
         DialogItems dialogItems = new DialogItems();
-        dialogItems.setTitle("Confirmation");
-        dialogItems.setMessage("Do you want to log out?");
+        dialogItems.setTitle(getString(R.string.confirmation));
+        dialogItems.setMessage(getString(R.string.do_you_want_to_log_out));
         showConfirmationDialog2(dialogItems, new DialogListener() {
             @Override
             public void onYesClick() {
@@ -627,9 +617,6 @@ public class HomeActivity extends BaseActivity {
     @Override
     public void onPause() {
 
-        if (homeBinding.googleBannerAdView != null) {
-            homeBinding.googleBannerAdView.pause();
-        }
         super.onPause();
     }
 
@@ -639,12 +626,6 @@ public class HomeActivity extends BaseActivity {
     @Override
     public void onResume() {
         super.onResume();
-
-
-        if (homeBinding.googleBannerAdView != null) {
-            homeBinding.googleBannerAdView.resume();
-
-        }
 
 
     }
@@ -661,13 +642,7 @@ public class HomeActivity extends BaseActivity {
 
 
             userProfile.setAdViewedStats(getAdViewedStatsGlobal());
-            callUpdateUser(userProfile,"");
-//            setUserProfile(userProfile, new SetUserDataOnCompleteListener() {
-//                @Override
-//                public void onTaskSuccessful() {
-//                    saveAdViewedStatsGlobal(getAdViewedStatsGlobal());
-//                }
-//            });
+            callUpdateUser(userProfile, "");
 
         }
 
@@ -727,9 +702,9 @@ public class HomeActivity extends BaseActivity {
     public void showUpdate(GamersHubData gamersHubData) {
 
         DialogItems dialogItems = new DialogItems();
-        dialogItems.setTitle("Pending Update");
-        dialogItems.setYesTitle("Update");
-        dialogItems.setMessage("A new update of the app has been released , please update ");
+        dialogItems.setTitle(getString(R.string.pending_update));
+        dialogItems.setYesTitle(getString(R.string.update));
+        dialogItems.setMessage(getString(R.string.a_new_update_of_the_app_has_been_released_please_update));
         if (gamersHubData.getGamesData().isForceUpdate()) {
 
 

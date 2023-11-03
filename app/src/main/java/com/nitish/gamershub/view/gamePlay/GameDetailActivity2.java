@@ -6,6 +6,7 @@ import static com.nitish.gamershub.utils.AppHelper.getUserProfileGlobalData;
 import static com.nitish.gamershub.utils.AppHelper.setStatusBarColor;
 import static com.nitish.gamershub.utils.AppConstants.IntentData;
 
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -17,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.nitish.gamershub.databinding.ActivityGameDetailBinding;
 import com.nitish.gamershub.model.local.AllGamesItems;
 import com.nitish.gamershub.model.firebase.GamePlayedStatus;
 import com.nitish.gamershub.model.firebase.UserProfile;
@@ -56,11 +58,12 @@ public class GameDetailActivity2 extends BaseActivity {
 
     String USAGE_UPDATE_UserWallet="USAGE_UPDATE_UserWallet";
 
+    ActivityGameDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game_detail);
+        binding = DataBindingUtil.setContentView(this,R.layout.activity_game_detail);
         Paper.init(GameDetailActivity2.this);
 
 //         allGamesItems = NewAndPopularGamesAdapter.SelectedGameObject;
@@ -73,7 +76,7 @@ public class GameDetailActivity2 extends BaseActivity {
         userProfile = getUserProfileGlobalData();
         gamePlayedStatus = getUserProfileGlobalData().getGamePlayedStatus();
 
-        showSnackBar("Sample snackbar");
+//        showSnackBar("Sample snackbar",binding.frameLayout);
 
         if (gameDetailsFragment == null) {
             gameDetailsFragment = GameDetailsFragment.newInstance();
@@ -97,10 +100,10 @@ public class GameDetailActivity2 extends BaseActivity {
 
                     String message = ((NetworkResponse.Error<Object>) response).getMessage();
 
-                    dismissProgressBar();
+                    hideLoader();
                 } else if (response instanceof NetworkResponse.Loading) {
 
-                    showProgressBar();
+                    hideLoader();
                 }
             }
         });
@@ -169,8 +172,8 @@ public class GameDetailActivity2 extends BaseActivity {
 
 
         DialogItems dialogItems = new DialogItems();
-        dialogItems.setMessage("Do you want to exit the game?");
-        dialogItems.setTitle("Confirmation");
+        dialogItems.setMessage(getString(R.string.do_you_want_to_exit_the_game));
+        dialogItems.setTitle(getString(R.string.confirmation));
         showConfirmationDialog2(dialogItems, new DialogListener() {
             @Override
             public void onYesClick() {

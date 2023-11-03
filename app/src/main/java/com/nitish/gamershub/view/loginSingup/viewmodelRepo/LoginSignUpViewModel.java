@@ -11,6 +11,9 @@ import com.nitish.gamershub.model.firebase.UserProfile;
 import com.nitish.gamershub.model.local.NetWorkTimerResult;
 import com.nitish.gamershub.utils.NetworkResponse;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 public class LoginSignUpViewModel extends ViewModel {
 
     LoginSignupRepository loginSignupRepository = new LoginSignupRepository();
@@ -32,19 +35,20 @@ public class LoginSignUpViewModel extends ViewModel {
         loginSignupRepository.callRegisterUserProfile(userProfile);
 
     }
+
     public LiveData<NetworkResponse<Object>> updateUserProfileLD = loginSignupRepository.updateUserProfileLD;
 
     public void callUpdateUserProfile(UserProfile userProfile) {
 
-        loginSignupRepository.callUpdateUserProfile(userProfile,"");
-
-    }
-    public void callUpdateUserProfile(UserProfile userProfile,String message) {
-
-        loginSignupRepository.callUpdateUserProfile(userProfile,message);
+        loginSignupRepository.callUpdateUserProfile(userProfile, "");
 
     }
 
+    public void callUpdateUserProfile(UserProfile userProfile, String message) {
+
+        loginSignupRepository.callUpdateUserProfile(userProfile, message);
+
+    }
 
 
     public LiveData<NetworkResponse<GamersHubData>> getGamersHubDataLD = loginSignupRepository.getGamersHubDataLD;
@@ -80,8 +84,21 @@ public class LoginSignUpViewModel extends ViewModel {
 
     }
 
+    public LiveData<NetworkResponse<JSONArray>> getGamersHubMaterData = loginSignupRepository.getGamersHubMaterDataLD;
 
+    public void callGetGamersHubJson() {
 
+        loginSignupRepository.callGetGamersHubMaterData();
+
+    }
+
+    public LiveData<NetworkResponse<JSONObject>> getBannerData = loginSignupRepository.getBannerDataLD;
+
+    public void callGetBannerData() {
+
+        loginSignupRepository.callGetBannerData();
+
+    }
 
 
 }

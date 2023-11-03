@@ -34,7 +34,7 @@ public class SnackBarHelper {
         Snackbar.SnackbarLayout snackbarLayout = (Snackbar.SnackbarLayout) snackbar.getView();
 
         // set padding of the all corners as 0
-        snackbarLayout.setPadding(0, 0, 0, 0);
+        snackbarLayout.setPadding(10, 0, 10, 10);
 
         snackbarLayout.addView(customSnackView,0);
 

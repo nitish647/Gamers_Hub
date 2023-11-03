@@ -40,12 +40,6 @@ public class GameDetailsFragment extends BaseFragment {
 
     GameDetailActivity2 parentActivity;
 
-    int vibrant;
-    int vibrantLight;
-    int vibrantDark;
-    int muted;
-    int mutedLight;
-    int mutedDark;
 
     AllGamesItems allGamesItems;
     ArrayList<AllGamesItems> favouriteArrayList;
@@ -182,20 +176,17 @@ public class GameDetailsFragment extends BaseFragment {
 
     }
 
-    public void setGamePlayInstructions()
-    {
-        if(gamePlayedStatus.getGamePlayedToday()>=getGamersHubDataGlobal().gamesData.getDailyGamePlayLimit())
-        {
-            String text = "Your have reached the daily reward limit of " +
-                    getGamersHubDataGlobal().getGamesData().getDailyGamePlayLimit() + " games ,come back tomorrow to get more rewards";
+    public void setGamePlayInstructions() {
+        if (gamePlayedStatus.getGamePlayedToday() >= getGamersHubDataGlobal().gamesData.getDailyGamePlayLimit()) {
+            String text = getString(R.string.your_have_reached_the_daily_reward_limit_of) +
+                    getGamersHubDataGlobal().getGamesData().getDailyGamePlayLimit() + getString(R.string.games_come_back_tomorrow_to_get_more_rewards);
             binding.gamePlayTimeTextview.setText(text);
 
-        }
-        else {
+        } else {
             int min = getGamersHubDataGlobal().gamesData.getGamePlaySecs() / 60;
-            String text = " Play this game for " +
-                    min + " Minutes to get rewarded "+
-                    "   \n(Game played reward left "+gamePlayedStatus.getGamePlayedToday()+"/"+getGamersHubDataGlobal().getGamesData().getDailyGamePlayLimit()+")";
+            String text = getString(R.string.play_this_game_for) +
+                    min + getString(R.string.minutes_to_get_rewarded) +
+                    getString(R.string.game_played_reward_left) + gamePlayedStatus.getGamePlayedToday() + "/" + getGamersHubDataGlobal().getGamesData().getDailyGamePlayLimit() + ")";
             binding.gamePlayTimeTextview.setText(text);
 
         }
@@ -236,18 +227,18 @@ public class GameDetailsFragment extends BaseFragment {
     public void showGameReportDialog() {
 
         DialogItems dialogItems = new DialogItems();
-       dialogItems.setYesTitle("Send");
-       dialogItems.setTitle("Confirmation");
-       dialogItems.setMessage("Do you want to report this game? ");
+        dialogItems.setYesTitle(getString(R.string.send));
+        dialogItems.setTitle(getString(R.string.confirmation));
+        dialogItems.setMessage(getString(R.string.do_you_want_to_report_this_game));
 
         parentActivity.showConfirmationDialog2(dialogItems, new DialogListener() {
             @Override
             public void onYesClick() {
-                String subject = "Issue in the game : " + allGamesItems.getName();
+                String subject = getString(R.string.issue_in_the_game) + allGamesItems.getName();
                 Uri uri = AppHelper.getMailMessageUri(parentActivity, subject, "");
                 Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
 
-                startActivity(Intent.createChooser(intent, "Send us email "));
+                startActivity(Intent.createChooser(intent, getString(R.string.send_us_email)));
             }
 
             @Override
@@ -257,19 +248,5 @@ public class GameDetailsFragment extends BaseFragment {
         });
     }
 
-    public void getDominantGradient(ImageView imageView) {
-        Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-
-        Palette.from(bitmap).generate(palette -> {
-            assert palette != null;
-            vibrant = palette.getVibrantColor(0x003001); // <=== color you want
-
-            vibrantLight = palette.getLightVibrantColor(0x00000);
-            vibrantDark = palette.getDarkVibrantColor(0x000000);
-            muted = palette.getMutedColor(0x000000);
-            mutedLight = palette.getLightMutedColor(0x000000);
-            mutedDark = palette.getDarkMutedColor(0x000000);
-        });
-    }
 
 }

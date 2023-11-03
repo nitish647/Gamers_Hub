@@ -36,25 +36,25 @@
     </style>
 
     <style name="regular_textview" parent="super_parent_textview">
-        <item name="android:fontFamily">@font/arima_madurai</item>
+        <item name="android:fontFamily">@font/crimson_text</item>
 
 
     </style>
 
     <style name="bold_arima_textview" parent="super_parent_textview">
-        <item name="android:fontFamily">@font/arima_madurai_bold</item>
+        <item name="android:fontFamily">@font/crimson_text_bold</item>
 
 
     </style>
 
-    <style name="extra_bold_arima_textview" parent="super_parent_textview">
-        <item name="android:fontFamily">@font/arima_madurai_extra_bold</item>
+    <style name="extra_bold_textview" parent="super_parent_textview">
+        <item name="android:fontFamily">@font/crimson_pro_extrabold</item>
 
 
     </style>
 
-    <style name="bold_arbutus_textview" parent="super_parent_textview">
-        <item name="android:fontFamily">@font/arbutus_bold</item>
+    <style name="semi_bold_textview" parent="super_parent_textview">
+        <item name="android:fontFamily">@font/crimson_text_semibold</item>
 
 
     </style>

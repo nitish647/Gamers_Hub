@@ -24,15 +24,15 @@ public class TransactionHistoryActivity extends BaseActivity {
 
     FirebaseFirestore firebaseFirestore;
     ActivityTransactionHistoryBinding binding;
-    ArrayList<UserTransactions.TransactionRequest> transactionRequestList= new ArrayList<>();
+    ArrayList<UserTransactions.TransactionRequest> transactionRequestList = new ArrayList<>();
     UserTransactionListAdapter userTransactionListAdapter;
     private LoginSignUpViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this,R.layout.activity_transaction_history);
-        firebaseFirestore= FirebaseFirestore.getInstance();
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_transaction_history);
+        firebaseFirestore = FirebaseFirestore.getInstance();
         viewModel = ViewModelProviders.of(this).get(LoginSignUpViewModel.class);
 
         binding.transactionRecycler.setLayoutManager(new LinearLayoutManager(this));
@@ -48,8 +48,7 @@ public class TransactionHistoryActivity extends BaseActivity {
     }
 
 
-    public void onClickListeners()
-    {
+    public void onClickListeners() {
         binding.backImageview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -57,20 +56,20 @@ public class TransactionHistoryActivity extends BaseActivity {
             }
         });
     }
+
     private void bindObservers() {
         viewModel.loginUserLD.observe(this, new Observer<NetworkResponse<UserProfile>>() {
             @Override
             public void onChanged(NetworkResponse<UserProfile> response) {
                 if (response instanceof NetworkResponse.Success) {
-                    dismissProgressBar();
+                    hideLoader();
 
                     UserProfile userProfile = ((NetworkResponse.Success<UserProfile>) response).getData();
-                    if(userProfile!=null && userProfile.getUserTransactions()!=null ) {
+                    if (userProfile != null && userProfile.getUserTransactions() != null) {
 
                         getUserTransactionList(userProfile.getUserTransactions().getTransactionRequestArrayList());
 
-                    }
-                    else {
+                    } else {
                         binding.noTransactionRelative.setVisibility(View.VISIBLE);
 
                     }
@@ -79,68 +78,47 @@ public class TransactionHistoryActivity extends BaseActivity {
 
                     String message = ((NetworkResponse.Error<UserProfile>) response).getMessage();
 
-                    dismissProgressBar();
+                    hideLoader();
                 } else if (response instanceof NetworkResponse.Loading) {
 
-                    showProgressBar();
+                    hideLoader();
                 }
             }
         });
 
 
-
     }
 
 
-    public void getTransactionHistory()
-    {
+    public void getTransactionHistory() {
 
-        showProgressBar().setMessage("Loading transaction");
-
+//        showProgressBar().setMessage("Loading transaction");
+        showLoader();
 
 
         callLoginUser();
-//        getUserProfileGlobal(new GetUserProfileDataListener() {
-//            @Override
-//            public void onTaskSuccessful(UserProfile userProfile) {
-//                if(userProfile!=null && userProfile.getUserTransactions()!=null ) {
-//
-//                    getUserTransactionList(userProfile.getUserTransactions().getTransactionRequestArrayList());
-//
-//                }
-//                else {
-//                    binding.noTransactionRelative.setVisibility(View.VISIBLE);
-//
-//                }
-//
-//            }
-//        });
-
 
 
     }
-    public void getUserTransactionList(ArrayList<UserTransactions.TransactionRequest> mTransactionRequestList )
-    {
+
+    public void getUserTransactionList(ArrayList<UserTransactions.TransactionRequest> mTransactionRequestList) {
 
 
         this.transactionRequestList = mTransactionRequestList;
 
 
-        if(transactionRequestList.size()==0)
-        {
+        if (transactionRequestList.size() == 0) {
             binding.noTransactionRelative.setVisibility(View.VISIBLE);
 
-        }
-        else {
+        } else {
             binding.noTransactionRelative.setVisibility(View.GONE);
-            userTransactionListAdapter = new UserTransactionListAdapter(TransactionHistoryActivity.this,transactionRequestList);
+            userTransactionListAdapter = new UserTransactionListAdapter(TransactionHistoryActivity.this, transactionRequestList);
             binding.transactionRecycler.setAdapter(userTransactionListAdapter);
 
         }
 
         // reverseArrayList(transactionRequestList);
         userTransactionListAdapter.notifyDataSetChanged();
-
 
 
     }
