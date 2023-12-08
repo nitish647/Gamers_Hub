@@ -2,11 +2,10 @@ package com.nitish.gamershub.view.rewards.activity;
 
 import static com.nitish.gamershub.utils.AppConstants.paytmImageLink;
 import static com.nitish.gamershub.utils.AppConstants.upiImageLink;
-import static com.nitish.gamershub.utils.AppHelper.getUserProfileGlobalData;
+
 import static com.nitish.gamershub.utils.AppConstants.TransactionStatusPending;
 import static com.nitish.gamershub.utils.AppConstants.TransactionMessage;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
@@ -22,12 +21,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.gson.Gson;
 import com.nitish.gamershub.databinding.ActivityReddeemBinding;
 import com.nitish.gamershub.databinding.PaytmUpiNumberLayoutBinding;
 import com.nitish.gamershub.utils.NetworkResponse;
@@ -42,12 +36,9 @@ import com.nitish.gamershub.utils.AppHelper;
 import com.nitish.gamershub.utils.CommonMethods;
 import com.nitish.gamershub.utils.Connectivity;
 import com.nitish.gamershub.utils.timeUtils.DateTimeHelper;
-import com.nitish.gamershub.utils.ProgressBarHelper;
 import com.nitish.gamershub.utils.ToastHelper;
 import com.nitish.gamershub.utils.ValidationHelper;
 import com.nitish.gamershub.view.base.BaseActivity;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -77,7 +68,6 @@ public class RedeemActivity extends BaseActivity {
         viewModel = ViewModelProviders.of(this).get(LoginSignUpViewModel.class);
 
         firebaseFirestore = FirebaseFirestore.getInstance();
-        progressDialog = ProgressBarHelper.setProgressBarDialog(this);
         transactionRequestList = new ArrayList<>();
         CommonMethods.backButton(RedeemActivity.this);
 
@@ -85,7 +75,7 @@ public class RedeemActivity extends BaseActivity {
 //        hideLoader();
         getCoins();
         setUpBannerAd();
-        totalGameCoins = getUserProfileGlobalData().getProfileData().getGameCoins();
+        totalGameCoins = getPreferencesMain().getUserProfile().getProfileData().getGameCoins();
 //        getRedeemListData();
         getRedeemCoinsData();
         setonClickListener();
@@ -96,7 +86,7 @@ public class RedeemActivity extends BaseActivity {
     }
 
     private void setViews() {
-        binding.redeemMessageText.setText(AppHelper.getGamersHubDataGlobal().getMessage().getPayoutMessage() + "");
+        binding.redeemMessageText.setText(getPreferencesMain().getGamersHubData().getMessage().getPayoutMessage() + "");
     }
 
     @Override
@@ -105,14 +95,14 @@ public class RedeemActivity extends BaseActivity {
     }
 
     private void bindObservers() {
-        viewModel.loginUserLD.observe(this, new Observer<NetworkResponse<UserProfile>>() {
+        viewModel.getUerProfileLD.observe(this, new Observer<NetworkResponse<UserProfile>>() {
             @Override
             public void onChanged(NetworkResponse<UserProfile> response) {
                 if (response instanceof NetworkResponse.Success) {
                     hideLoader();
 
 
-                    totalGameCoins = getUserProfileGlobalData().getProfileData().getGameCoins();
+                    totalGameCoins = getPreferencesMain().getUserProfile().getProfileData().getGameCoins();
 
 
                 } else if (response instanceof NetworkResponse.Error) {
@@ -288,7 +278,7 @@ public class RedeemActivity extends BaseActivity {
                         redeemListItem.setPaytmNumber(paytmNumber + "");
 
                         performUpdateUserTransaction();
-//                        UserTransactions userTransactions = setUserTransactions(getUserProfileGlobalData().getUserTransactions(), redeemListItem);
+//                        UserTransactions userTransactions = setUserTransactions(getPreferencesMain().getUserProfile().getUserTransactions(), redeemListItem);
 //                        updateUserWalletForTransaction(-redeemListItem.getCoins(), setUserDataLister(redeemListItem), userTransactions);
 
 
@@ -315,7 +305,7 @@ public class RedeemActivity extends BaseActivity {
                         redeemListItem.setUpiID(upiId + "");
 
                         performUpdateUserTransaction();
-//                        UserTransactions userTransactions = setUserTransactions(getUserProfileGlobalData().getUserTransactions(), redeemListItem);
+//                        UserTransactions userTransactions = setUserTransactions(getPreferencesMain().getUserProfile().getUserTransactions(), redeemListItem);
 //                        updateUserWalletForTransaction(-redeemListItem.getCoins(), setUserDataLister(redeemListItem), userTransactions);
 
                         paytmUpiDialog.dismiss();
@@ -341,7 +331,7 @@ public class RedeemActivity extends BaseActivity {
 
 
     public void getCoins() {
-        totalGameCoins = getUserProfileGlobalData().getProfileData().getGameCoins();
+        totalGameCoins = getPreferencesMain().getUserProfile().getProfileData().getGameCoins();
 //        getUserProfile();
 
     }
@@ -407,7 +397,7 @@ public class RedeemActivity extends BaseActivity {
 
 
     public void performUpdateUserTransaction() {
-        UserTransactions userTransactions = setUserTransactions(getUserProfileGlobalData().getUserTransactions(), redeemListItem);
+        UserTransactions userTransactions = setUserTransactions(getPreferencesMain().getUserProfile().getUserTransactions(), redeemListItem);
 
         updateUserWalletForTransaction(-redeemListItem.getCoins(), userTransactions);
 
@@ -415,7 +405,7 @@ public class RedeemActivity extends BaseActivity {
 
     public UserProfile updateUserWalletForTransaction(int amount, UserTransactions userTransactions) {
 
-        UserProfile userProfile = getUserProfileGlobalData();
+        UserProfile userProfile = getPreferencesMain().getUserProfile();
         UserProfile.ProfileData profileData = userProfile.getProfileData();
         int gameCoins = profileData.getGameCoins();
         int totalCoins = gameCoins + amount;

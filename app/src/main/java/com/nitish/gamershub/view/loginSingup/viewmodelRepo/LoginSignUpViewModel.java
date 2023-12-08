@@ -8,23 +8,26 @@ import androidx.lifecycle.ViewModel;
 import com.nitish.gamershub.model.firebase.GamersHubData;
 import com.nitish.gamershub.model.firebase.RedeemCoins;
 import com.nitish.gamershub.model.firebase.UserProfile;
+import com.nitish.gamershub.model.bannerImagesData.ResponseBannerImages;
+import com.nitish.gamershub.model.gamersHubMaterData.AllGamesResponseItem;
 import com.nitish.gamershub.model.local.NetWorkTimerResult;
+import com.nitish.gamershub.utils.AppHelper;
 import com.nitish.gamershub.utils.NetworkResponse;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 public class LoginSignUpViewModel extends ViewModel {
+
 
     LoginSignupRepository loginSignupRepository = new LoginSignupRepository();
 
 
-    public LiveData<NetworkResponse<UserProfile>> loginUserLD = loginSignupRepository.getLoginUserLD;
+    public LiveData<NetworkResponse<UserProfile>> getUerProfileLD = loginSignupRepository.getUserProfileLD;
 
 
     public void callGetUserProfile() {
 
-        loginSignupRepository.callGetUserProfile();
+        String userMail = AppHelper.getPreferenceHelperInstance().getUserMail();
+
+        loginSignupRepository.callGetUserProfile(userMail);
 
     }
 
@@ -84,19 +87,19 @@ public class LoginSignUpViewModel extends ViewModel {
 
     }
 
-    public LiveData<NetworkResponse<JSONArray>> getGamersHubMaterData = loginSignupRepository.getGamersHubMaterDataLD;
+    public LiveData<NetworkResponse<AllGamesResponseItem>> getGamersHubMaterData = loginSignupRepository.getGamersHubMaterDataLD;
 
-    public void callGetGamersHubJson() {
+    public void callGetGamersHubJson(Context context) {
 
-        loginSignupRepository.callGetGamersHubMaterData();
+        loginSignupRepository.callGetGamersHubMaterData(context);
 
     }
 
-    public LiveData<NetworkResponse<JSONObject>> getBannerData = loginSignupRepository.getBannerDataLD;
+    public LiveData<NetworkResponse<ResponseBannerImages>> getBannerData = loginSignupRepository.getBannerDataLD;
 
-    public void callGetBannerData() {
+    public void callGetBannerData(Context context) {
 
-        loginSignupRepository.callGetBannerData();
+        loginSignupRepository.callGetBannerData(context);
 
     }
 

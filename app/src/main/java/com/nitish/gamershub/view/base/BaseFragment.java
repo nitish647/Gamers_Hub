@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.utils.PreferenceHelper;
 
 
 public class BaseFragment extends Fragment {
@@ -50,9 +51,21 @@ public class BaseFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        baseActivity.printCurrentScreenName(false, this.getClass().getSimpleName());
+    }
+
     public void showLoader() {
         if (baseActivity != null) {
             baseActivity.showLoader();
         }
     }
+
+    public PreferenceHelper getPreferencesMain() {
+        return baseActivity.getPreferencesMain();
+    }
+
 }

@@ -1,6 +1,6 @@
 package com.nitish.gamershub.view.homePage.fragment;
 
-import static com.nitish.gamershub.utils.AppHelper.getUserProfileGlobalData;
+
 import static com.nitish.gamershub.utils.AppConstants.UserInfo;
 
 import android.content.Intent;
@@ -15,8 +15,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.auth.FirebaseAuth;
 import com.nitish.gamershub.model.local.DialogItems;
+import com.nitish.gamershub.model.local.GlideData;
+import com.nitish.gamershub.utils.GlideHelper;
 import com.nitish.gamershub.view.base.BaseFragment;
 import com.nitish.gamershub.view.dialogs.DialogListener;
 import com.nitish.gamershub.view.homePage.activity.HomeActivity;
@@ -27,7 +30,7 @@ import com.nitish.gamershub.model.firebase.UserProfile;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.utils.AppHelper;
 import com.nitish.gamershub.databinding.FragmentProfileBinding;
-import com.squareup.picasso.Picasso;
+
 
 import io.paperdb.Paper;
 
@@ -39,13 +42,10 @@ import io.paperdb.Paper;
 public class ProfileFragment extends BaseFragment {
 
 
-
-
-
     FragmentProfileBinding binding;
 
     FirebaseAuth firebaseAuth;
-    UserProfile userProfile ;
+    UserProfile userProfile;
     HomeActivity parentHomeActivity;
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -81,13 +81,13 @@ public class ProfileFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_profile,container,false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profile, container, false);
 
         parentHomeActivity = (HomeActivity) binding.getRoot().getContext();
 
         firebaseAuth = FirebaseAuth.getInstance();
         Paper.init(parentHomeActivity);
-        userProfile = Paper.book().read(UserInfo);
+        userProfile = getPreferencesMain().getUserProfile();
 
         setViews();
         setonClickListeners();
@@ -96,8 +96,7 @@ public class ProfileFragment extends BaseFragment {
     }
 
 
-    public FragmentProfileBinding getFragmentProfileBinding()
-    {
+    public FragmentProfileBinding getFragmentProfileBinding() {
         return binding;
     }
 
@@ -105,33 +104,33 @@ public class ProfileFragment extends BaseFragment {
     public void onResume() {
 
 
-        binding.redeemCoinsTextview.setText( getUserProfileGlobalData().profileData.getGameCoins() +" coins");
+        binding.redeemCoinsTextview.setText(getPreferencesMain().getUserProfile().getProfileData().getGameCoins() + " coins");
 
         super.onResume();
     }
 
-    public void setViews()
-    {
+    public void setViews() {
 
 
-        if(AppHelper.getGoogleSignInAccountUser()!=null)
-        {
-            binding.profileName.setText(AppHelper.getGoogleSignInAccountUser().getDisplayName());
+        GoogleSignInAccount googleSignInAccount = getPreferencesMain().getGoogleSignInAccountUser();
 
-        }
-            if(AppHelper.getGoogleSignInUserProfile()!=null)
-                if(!(AppHelper.getGoogleSignInUserProfile()+"").equals("null"))
-                    Picasso.get().load(AppHelper.getGoogleSignInUserProfile()).placeholder(R.drawable.gamers_hub_icon15).into(binding.profileIcon);
+        if (googleSignInAccount != null)
+            if (!(googleSignInAccount + "").equals("null")) {
+                binding.profileName.setText(googleSignInAccount.getDisplayName());
+
+                GlideData glideData = new GlideData();
+                glideData.setImageUrl(googleSignInAccount.getPhotoUrl().toString());
+                glideData.setPlaceHolder(R.drawable.gamers_hub_icon15);
+                GlideHelper.loadGlideImage(binding.profileIcon, glideData, null);
+
+            }
 
 
-            // TestCode: Anuraag
-            // UserProfile user= null;
-            // binding.redeemCoinsTextview.setText( user.getProfileData().getGameCoins() +" coins");
-        binding.redeemCoinsTextview.setText( getUserProfileGlobalData().getProfileData().getGameCoins() +" coins");
+        binding.redeemCoinsTextview.setText(getPreferencesMain().getUserProfile().getProfileData().getGameCoins() + " coins");
 
     }
-    public void setonClickListeners()
-    {
+
+    public void setonClickListeners() {
 
 
         binding.rewardsRelative.setOnClickListener(new View.OnClickListener() {
@@ -142,14 +141,6 @@ public class ProfileFragment extends BaseFragment {
             }
         });
 
-//        binding.rewardsRelative.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View view) {
-//                Toast.makeText(parentHomeActivity, "clicked", Toast.LENGTH_SHORT).show();
-//                AppHelper.readCalenderData();
-//                return false;
-//            }
-//        });
 
         binding.logOutRelative.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,33 +183,31 @@ public class ProfileFragment extends BaseFragment {
         });
 
 
-
-
     }
-    public void showContactConfirmDialog()
-    {
+
+    public void showContactConfirmDialog() {
         DialogHelperPojo dialogHelperPojo = new DialogHelperPojo();
         dialogHelperPojo.setYesButton("Send");
         dialogHelperPojo.setTitle("Confirmation");
-        dialogHelperPojo.setMessage("You can contact us on or email <b>"+getString(R.string.contact_mail)+ "</b> in case of any doubt or issue. We will try to reach you out as soon as we can.");
+        dialogHelperPojo.setMessage("You can contact us on or email <b>" + getString(R.string.contact_mail) + "</b> in case of any doubt or issue. We will try to reach you out as soon as we can.");
 
         DialogItems dialogItems = new DialogItems();
         dialogItems.setYesTitle("Send");
         dialogItems.setTitle("Confirmation");
-        dialogItems.setMessage("You can contact us on or email <b>"+getString(R.string.contact_mail)+ "</b> in case of any doubt or issue. We will try to reach you out as soon as we can.");
+        dialogItems.setMessage("You can contact us on or email <b>" + getString(R.string.contact_mail) + "</b> in case of any doubt or issue. We will try to reach you out as soon as we can.");
 
 
-        parentHomeActivity.showConfirmationDialog2(dialogItems,new DialogListener() {
+        parentHomeActivity.showConfirmationDialog2(dialogItems, new DialogListener() {
             @Override
             public void onYesClick() {
-                UserProfile.ProfileData profileData = getUserProfileGlobalData().getProfileData();
+                UserProfile.ProfileData profileData = getPreferencesMain().getUserProfile().getProfileData();
 
-                String body = "Hi I am  "+profileData.getName()+", my user id is "+profileData.getEmail()+" \n I have a doubt regarding ...";
+                String body = "Hi I am  " + profileData.getName() + ", my user id is " + profileData.getEmail() + " \n I have a doubt regarding ...";
 
-                Uri uri =  AppHelper.getMailMessageUri(parentHomeActivity,"",body);
-                Intent intent = new Intent(Intent.ACTION_SENDTO,uri);
+                Uri uri = AppHelper.getMailMessageUri(parentHomeActivity, userProfile, "", body);
+                Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
 
-                startActivity(Intent.createChooser(intent,"Send us email "));
+                startActivity(Intent.createChooser(intent, "Send us email "));
             }
 
             @Override
@@ -226,26 +215,8 @@ public class ProfileFragment extends BaseFragment {
 
             }
         });
-//        parentHomeActivity.getConfirmationDialog(dialogHelperPojo, new ConfirmationDialogListener2() {
-//            @Override
-//            public void onYesClick() {
-//                UserProfile.ProfileData profileData = getUserProfileGlobalData().getProfileData();
-//
-//                String body = "Hi I am  "+profileData.getName()+", my user id is "+profileData.getEmail()+" \n I have a doubt regarding ...";
-//
-//                Uri uri =  AppHelper.getMailMessageUri(parentHomeActivity,"",body);
-//                Intent intent = new Intent(Intent.ACTION_SENDTO,uri);
-//
-//                startActivity(Intent.createChooser(intent,"Send us email "));
-//            }
-//
-//            @Override
-//            public void onNoClick() {
-//
-//            }
-//        });
-    }
 
+    }
 
 
 }

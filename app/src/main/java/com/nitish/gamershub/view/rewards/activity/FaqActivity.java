@@ -67,7 +67,7 @@ public class FaqActivity extends BaseActivity {
                 "You can redeem your coins into your payment or upi account ." ));
 
         faqPojoArrayList.add(new FaqPojo("How much time it will take to complete a transaction request?",
-                AppHelper.getGamersHubDataGlobal().getMessage().getPayoutMessage()));
+                AppHelper.getPreferenceHelperInstance().getGamersHubData().getMessage().getPayoutMessage()));
 
         faqPojoArrayList.add(new FaqPojo("Do I need internet connection to play the game?",
                 "Yes , you need a proper internet connection to play the games. " ));

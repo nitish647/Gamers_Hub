@@ -8,12 +8,14 @@ import android.webkit.WebResourceResponse;
 
 import androidx.annotation.WorkerThread;
 
+import com.squareup.okhttp.HttpUrl;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
-import okhttp3.HttpUrl;
+
 import okio.BufferedSource;
 import okio.Okio;
 

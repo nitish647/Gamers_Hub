@@ -1,8 +1,6 @@
 package com.nitish.gamershub.view.gamePlay;
 
 
-import static com.nitish.gamershub.utils.AppHelper.getGamersHubDataGlobal;
-import static com.nitish.gamershub.utils.AppHelper.getUserProfileGlobalData;
 import static com.nitish.gamershub.utils.AppHelper.setStatusBarColor;
 import static com.nitish.gamershub.utils.AppConstants.IntentData;
 
@@ -19,11 +17,12 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.nitish.gamershub.databinding.ActivityGameDetailBinding;
-import com.nitish.gamershub.model.local.AllGamesItems;
+import com.nitish.gamershub.model.gamersHubMaterData.GamesItems;
 import com.nitish.gamershub.model.firebase.GamePlayedStatus;
 import com.nitish.gamershub.model.firebase.UserProfile;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.model.local.DialogItems;
+import com.nitish.gamershub.utils.AppHelper;
 import com.nitish.gamershub.utils.NetworkResponse;
 import com.nitish.gamershub.utils.timeUtils.DateTimeHelper;
 import com.nitish.gamershub.utils.firebaseUtils.UserOperations;
@@ -46,35 +45,37 @@ public class GameDetailActivity2 extends BaseActivity {
 
     GamePlayFragment gamePlayFragment;
     boolean gamePlayVisibility = false;
-    AllGamesItems allGamesItems;
+    GamesItems gamesItems;
     FragmentManager fragmentManager;
     UserProfile userProfile;
     GamePlayedStatus gamePlayedStatus;
     private LoginSignUpViewModel viewModel;
 
 
-    String USAGE_UPDATE_TIMER_STATUS="USAGE_UPDATE_TIMER_STATUS";
-    String USAGE_UPDATE_GamePlayed_Status="USAGE_UPDATE_GamePlayed_Status";
+    String USAGE_UPDATE_TIMER_STATUS = "USAGE_UPDATE_TIMER_STATUS";
 
-    String USAGE_UPDATE_UserWallet="USAGE_UPDATE_UserWallet";
+    String USAGE_UPDATE_GamePlayed_Status = "USAGE_UPDATE_GamePlayed_Status";
+    String USAGE_UPDATE_UserWallet = "USAGE_UPDATE_UserWallet";
+
 
     ActivityGameDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this,R.layout.activity_game_detail);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_game_detail);
         Paper.init(GameDetailActivity2.this);
 
 //         allGamesItems = NewAndPopularGamesAdapter.SelectedGameObject;
-        allGamesItems = (AllGamesItems) getIntent().getSerializableExtra(IntentData);
+        gamesItems = (GamesItems) getIntent().getSerializableExtra(IntentData);
         viewModel = ViewModelProviders.of(this).get(LoginSignUpViewModel.class);
+
 
         bindObservers();
         fragmentManager = getSupportFragmentManager();
         loadInterstitialAdNew();
-        userProfile = getUserProfileGlobalData();
-        gamePlayedStatus = getUserProfileGlobalData().getGamePlayedStatus();
+        userProfile = getPreferencesMain().getUserProfile();
+        gamePlayedStatus = getPreferencesMain().getUserProfile().getGamePlayedStatus();
 
 //        showSnackBar("Sample snackbar",binding.frameLayout);
 
@@ -130,9 +131,11 @@ public class GameDetailActivity2 extends BaseActivity {
         }
         showHideFragment(gamePlayFragment, gamePlayFragment.getTag());
 
-        if (allGamesItems.getOrientation().toLowerCase().contains("hori")) {
+        if (gamesItems.getOrientation().toLowerCase().contains("hori")) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
         }
+
+        getPreferencesMain().saveRecentlyPlayedItemInList(gamesItems);
 
         gamePlayVisibility = true;
         gamePlayFragment.startTimer();
@@ -161,9 +164,10 @@ public class GameDetailActivity2 extends BaseActivity {
         previousFragment = fragment;
 
         if (fragment instanceof GamePlayFragment) {
-            setStatusBarColor(this, R.color.black);
+            setActivityStatusBarColor(R.color.black);
+
         } else {
-            setStatusBarColor(this, R.color.gamers_hub_theme);
+            setActivityStatusBarColor(R.color.gameDetails_screen_color);
         }
     }
 
@@ -177,6 +181,12 @@ public class GameDetailActivity2 extends BaseActivity {
         showConfirmationDialog2(dialogItems, new DialogListener() {
             @Override
             public void onYesClick() {
+
+                if (gameDetailsFragment != null) {
+                    gameDetailsFragment.onDestroy();
+
+                }
+
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 showInterstitialAdNew(interstitialAdListener(GameDetailsFragment.class.getSimpleName()));
             }
@@ -186,7 +196,6 @@ public class GameDetailActivity2 extends BaseActivity {
 
             }
         });
-
 
 
     }
@@ -215,7 +224,7 @@ public class GameDetailActivity2 extends BaseActivity {
             //"00:30"
 
 
-            int gamePlaySeconds = getGamersHubDataGlobal().getGamesData().getGamePlaySecs();
+            int gamePlaySeconds = getPreferencesMain().getGamersHubData().getGamesData().getGamePlaySecs();
 
             if (LocalTime.parse(gamePlayFragment.timerMinuteSecond).compareTo(LocalTime.parse(DateTimeHelper.formatTimeToMMSS(gamePlaySeconds))) > 0) {
 
@@ -246,7 +255,7 @@ public class GameDetailActivity2 extends BaseActivity {
             gamePlayedToday = gamePlayedToday + 1;
             gamePlayedStatus.setGamePlayedToday(gamePlayedToday);
 
-            if (gamePlayedStatus.getGamePlayedToday() > getGamersHubDataGlobal().gamesData.getDailyGamePlayLimit()) {
+            if (gamePlayedStatus.getGamePlayedToday() > getPreferencesMain().getGamersHubData().gamesData.getDailyGamePlayLimit()) {
                 // do something when the game play limit is over
 
                 updateGamePlayedStatus(gamePlayedStatus);
@@ -254,9 +263,9 @@ public class GameDetailActivity2 extends BaseActivity {
                 // increment the today game point
 
                 // reward the user
-                int amount = getGamersHubDataGlobal().getGamesData().getGamePlayReward();
+                int amount = getPreferencesMain().getGamersHubData().getGamesData().getGamePlayReward();
                 updateUserWallet(amount);
-                Toast.makeText(this, "you are rewarded " + amount + " coins", Toast.LENGTH_SHORT).show();
+                showSimpleToast("you are rewarded " + amount + " coins");
 
 
             }
@@ -284,7 +293,7 @@ public class GameDetailActivity2 extends BaseActivity {
     public void updateGamePlayedStatus(GamePlayedStatus gamePlayedStatus) {
         userProfile.setGamePlayedStatus(gamePlayedStatus);
 
-        callUpdateUser(userProfile,USAGE_UPDATE_GamePlayed_Status);
+        callUpdateUser(userProfile, USAGE_UPDATE_GamePlayed_Status);
 
     }
 
@@ -292,9 +301,7 @@ public class GameDetailActivity2 extends BaseActivity {
 
         userProfile.setProfileData(UserOperations.addCoinsToWallet(userProfile, amount));
         userProfile.setGamePlayedStatus(gamePlayedStatus);
-
-        callUpdateUser(userProfile,USAGE_UPDATE_UserWallet);
-
+        callUpdateUser(userProfile, USAGE_UPDATE_UserWallet);
 
 
     }
@@ -346,8 +353,8 @@ public class GameDetailActivity2 extends BaseActivity {
 
     }
 
-    private void callUpdateUser(UserProfile userProfile,String usage) {
+    private void callUpdateUser(UserProfile userProfile, String usage) {
 
-        viewModel.callUpdateUserProfile(userProfile,usage);
+        viewModel.callUpdateUserProfile(userProfile, usage);
     }
 }

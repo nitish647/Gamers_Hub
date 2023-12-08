@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="titleText"
+            type="String" />
+
+        <variable
+            name="actionText"
+            type="String" />
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <RelativeLayout
+            android:id="@+id/transactionHistoryRelative"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_marginHorizontal="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@drawable/round_corners"
+            android:elevation="@dimen/cardview_default_elevation"
+            android:padding="@dimen/_5sdp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:orientation="horizontal">
+
+                <ImageView
+
+
+                    style="@style/optionIcon2"
+
+                    android:src="@drawable/transaction_history">
+
+                </ImageView>
+
+                <TextView
+
+                    style="@style/semi_bold_textview"
+
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/_15sdp"
+                    android:text="@{titleText}"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/textTitle"
+                    tools:text="Transactions History">
+
+                </TextView>
+            </LinearLayout>
+
+
+            <TextView
+                style="@style/regular_textview"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:background="@drawable/round_corner_10dp"
+                android:backgroundTint="@color/colorPrimary"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_15sdp"
+                android:paddingVertical="@dimen/_5sdp"
+                android:text="@{actionText}"
+                android:textColor="@color/white"
+                android:textSize="@dimen/textNormal"
+                tools:text="Open">
+
+            </TextView>
+        </RelativeLayout>
+    </RelativeLayout>
+</layout>

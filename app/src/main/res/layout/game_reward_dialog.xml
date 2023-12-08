@@ -35,15 +35,13 @@
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/gameCoinsImage"
-        android:layout_width="201dp"
-        android:layout_height="150dp"
-
+        android:layout_width="@dimen/_200sdp"
+        android:layout_height="@dimen/_150sdp"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/rupee_reward_box"
-
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/welcomeTextview">
@@ -55,7 +53,8 @@
            android:layout_height="wrap_content"
            android:layout_marginTop="10dp"
            android:gravity="center"
-           android:text="Congratulations"
+           style="@style/bold_arima_textview"
+           android:text="@string/congratulations"
            android:textColor="@android:color/black"
            android:textSize="35sp"
             >
@@ -64,7 +63,7 @@
 
        <RelativeLayout
            android:layout_width="match_parent"
-           android:layout_height="80dp"
+           android:layout_height="wrap_content"
            android:layout_marginTop="5dp"
            android:background="@drawable/round_corners"
            android:backgroundTint="#5341eb"
@@ -77,12 +76,11 @@
            <TextView
 
                android:id="@+id/earnedCoinsTextview"
-               android:layout_width="wrap_content"
-               android:layout_height="wrap_content"
+               style="@style/semi_bold_textview"
                android:layout_alignParentStart="true"
                android:layout_gravity="center_vertical"
-               android:layout_marginHorizontal="5dp"
-
+               android:layout_marginHorizontal="@dimen/_5sdp"
+               android:layout_marginVertical="@dimen/_10sdp"
                android:layout_centerVertical="true"
 
                android:layout_toStartOf="@+id/coinImage"
@@ -91,7 +89,7 @@
                android:gravity="center"
                android:text="Redeem request generated for 100 coins"
                android:textColor="@android:color/white"
-               android:textSize="17sp">
+               android:textSize="@dimen/textTitle">
 
            </TextView>
 

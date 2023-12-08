@@ -5,24 +5,44 @@
     <color name="colorAccent">#03DAC5</color>
 
     <color name="materialOrange">#F0740D</color>
-    <color name="gamers_hub_theme">#f58757</color>
+    <color name="gamers_hub_theme">#FF8C00</color>
 
     <color name="paytmLightBlue">#e6f9fe</color>
     <color name="paytmBlue">#08bbef</color>
 
     <color name="white">#FFFFFF</color>
 
+    <color name="yellow_material">#e6b000</color>
+    <color name="yellow_material2">#ffb115</color>
+
     <color name="darkRed">#fd1b1b</color>
+    <color name="material_red">#EC232C</color>
+    <color name="material_red_shade">#fbd3d5</color>
+
+
+    <color name="gameDetails_screen_color">@color/material_purple2</color>
+
     <color name="upiGreen">#00883a</color>
     <color name="light_green_material">#2bc48a</color>
+    <color name="light_green_material2">#4CB849</color>
+    <color name="light_green_material2_shade">#b7e3b6</color>
+
     <color name="upiGreenLight">#e5fff0</color>
 
     <color name="material_dark_blue">#0f70ff</color>
     <color name="material_dark_blue2">#0c46c3</color>
+
+    <color name="material_purple">#73469B</color>
+    <color name="material_purple2">#8f6baf</color>
+
     <color name="light_purple">#f4e7fe</color>
+
     <color name="material_light_grey">#f0f1f2</color>
     <color name="material_light_grey2">#eef1f7</color>
 
+
+    <color name="dark_1">#020014</color>
+    <color name="dark_2">#140900</color>
 
     <color name="black">#000000</color>
     <color name="greyPrimary">#898989</color>

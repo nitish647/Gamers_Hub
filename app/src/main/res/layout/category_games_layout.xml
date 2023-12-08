@@ -1,63 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_5sdp"
         android:background="@drawable/round_corners"
-        android:layout_margin="5dp"
-        android:paddingTop="5dp"
-        android:paddingStart="4dp"
-        android:layout_centerVertical="true"
-        android:elevation="5dp">
+        android:elevation="5dp"
+        android:paddingHorizontal="@dimen/_5sdp"
+        android:paddingVertical="@dimen/_5sdp">
 
-
-        <TextView
-            android:id="@+id/categoryNameTextview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#000000"
-            tools:text="Category Name"
-            android:layout_marginStart="5dp" />
 
         <LinearLayout
-            android:id="@+id/btnViewAllGames"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_alignTop="@+id/categoryNameTextview"
-            android:layout_alignBottom="@id/categoryNameTextview"
-            android:layout_alignParentEnd="true">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="View All"
-                android:textSize="16sp"
-                android:gravity="center_vertical"/>
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scaleX="0.8"
-                android:scaleY="0.8"
-                android:src="@drawable/ic_info"
-                android:layout_marginEnd="5dp"
-                />
-        </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/gamesRecyclerView"
-            android:layout_below="@+id/categoryNameTextview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clipToPadding="false"/>
+            android:orientation="vertical">
 
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <TextView
+                    android:id="@+id/categoryNameTextview"
+                    style="@style/extra_bold_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/textHeadingXXLarge"
+                    tools:text="Category Name" />
+
+                <LinearLayout
+                    android:id="@+id/btnViewAllGames"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/categoryNameTextview"
+                    android:layout_alignBottom="@id/categoryNameTextview"
+                    android:layout_alignParentEnd="true"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/regular_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:text="@string/view_all"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/textTitle" />
+
+                    <ImageView
+                        android:layout_width="@dimen/iconXXXSmall"
+                        android:layout_height="@dimen/iconXXXSmall"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:layout_marginEnd="5dp"
+                        android:scaleX="0.8"
+                        android:scaleY="0.8"
+                        android:src="@drawable/ic_arrow_forward" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/categoryImageview"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_140sdp"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/category_action_game"
+                app:shapeAppearance="@style/ShapeAppearanceOverlay.RoundCorners_10">
+
+            </com.google.android.material.imageview.ShapeableImageView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/gamesRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:clipToPadding="false" />
+        </LinearLayout>
     </RelativeLayout>
 </layout>

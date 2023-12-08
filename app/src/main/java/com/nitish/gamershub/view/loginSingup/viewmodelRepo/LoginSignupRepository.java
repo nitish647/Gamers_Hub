@@ -13,24 +13,25 @@ import com.nitish.gamershub.model.firebase.FirebaseDataPassingHelper;
 import com.nitish.gamershub.model.firebase.GamersHubData;
 import com.nitish.gamershub.model.firebase.RedeemCoins;
 import com.nitish.gamershub.model.firebase.UserProfile;
+import com.nitish.gamershub.model.bannerImagesData.ResponseBannerImages;
+import com.nitish.gamershub.model.gamersHubMaterData.AllGamesResponseItem;
 import com.nitish.gamershub.model.local.NetWorkTimerResult;
 import com.nitish.gamershub.utils.NetworkResponse;
 import com.nitish.gamershub.utils.firebaseUtils.FireBaseService;
 import com.nitish.gamershub.view.base.BaseRepository;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 public class LoginSignupRepository extends BaseRepository {
 
 
-    private MutableLiveData<NetworkResponse<UserProfile>> getLoginUserMLD = new MutableLiveData<>();
-    public LiveData<NetworkResponse<UserProfile>> getLoginUserLD = getLoginUserMLD;
 
 
-    public void callGetUserProfile() {
+    private MutableLiveData<NetworkResponse<UserProfile>> getUserProfileMLD = new MutableLiveData<>();
+    public LiveData<NetworkResponse<UserProfile>> getUserProfileLD = getUserProfileMLD;
 
-        getFireBaseDocumentReference(FireBaseService.getFirebaseUser(), getLoginUserMLD, UserProfile.class);
+
+    public void callGetUserProfile(String userMail) {
+
+        getFireBaseDocumentReference(FireBaseService.getFirebaseUser(userMail), getUserProfileMLD, UserProfile.class);
 
     }
 
@@ -42,7 +43,7 @@ public class LoginSignupRepository extends BaseRepository {
 
         FirebaseDataPassingHelper<Object> firebaseDataPassing = new FirebaseDataPassingHelper<>();
         firebaseDataPassing.setMutableLiveData(registerUserProfileMLD);
-        firebaseDataPassing.setDocumentReference(FireBaseService.getFirebaseUser());
+        firebaseDataPassing.setDocumentReference(FireBaseService.getFirebaseUser(userProfile.getProfileData().getEmail()));
         firebaseDataPassing.setDataObject(userProfile);
         firebaseDataPassing.setSetOptions(SetOptions.merge());
 
@@ -58,7 +59,7 @@ public class LoginSignupRepository extends BaseRepository {
 
         FirebaseDataPassingHelper<Object> firebaseDataPassing = new FirebaseDataPassingHelper<>();
         firebaseDataPassing.setMutableLiveData(updateUserProfileMLD);
-        firebaseDataPassing.setDocumentReference(FireBaseService.getFirebaseUser());
+        firebaseDataPassing.setDocumentReference(FireBaseService.getFirebaseUser(userProfile.getProfileData().getEmail()));
         firebaseDataPassing.setDataObject(userProfile);
         firebaseDataPassing.setMessage(message);
         firebaseDataPassing.setSetOptions(null);
@@ -106,28 +107,28 @@ public class LoginSignupRepository extends BaseRepository {
     public void callGetNetworkTime(Context context) {
 
 
-        callVolleyRequest(Request.Method.GET, getNetworkTimeMLD, context.getString(R.string.getCurrentTimeAsiaKolkata), NetWorkTimerResult.class);
+        callVolleyRequest(context,Request.Method.GET, getNetworkTimeMLD, context.getString(R.string.getCurrentTimeAsiaKolkata), NetWorkTimerResult.class);
 
     }
 
-    private MutableLiveData<NetworkResponse<JSONArray>> getGamersHubMaterDataMLD = new MutableLiveData<>();
-    public LiveData<NetworkResponse<JSONArray>> getGamersHubMaterDataLD = getGamersHubMaterDataMLD;
+    private MutableLiveData<NetworkResponse<AllGamesResponseItem>> getGamersHubMaterDataMLD = new MutableLiveData<>();
+    public LiveData<NetworkResponse<AllGamesResponseItem>> getGamersHubMaterDataLD = getGamersHubMaterDataMLD;
 
-    public void callGetGamersHubMaterData() {
+    public void callGetGamersHubMaterData(Context context) {
 
 
-        callVolleyRequest(Request.Method.GET, getGamersHubMaterDataMLD, ApiService.materJsonUrl, JSONArray.class);
+        callVolleyRequest(context,Request.Method.GET, getGamersHubMaterDataMLD, ApiService.materJsonUrl, AllGamesResponseItem.class);
 
     }
 
 
-    private MutableLiveData<NetworkResponse<JSONObject>> getBannerDataMLD = new MutableLiveData<>();
-    public LiveData<NetworkResponse<JSONObject>> getBannerDataLD = getBannerDataMLD;
+    private MutableLiveData<NetworkResponse<ResponseBannerImages>> getBannerDataMLD = new MutableLiveData<>();
+    public LiveData<NetworkResponse<ResponseBannerImages>> getBannerDataLD = getBannerDataMLD;
 
-    public void callGetBannerData() {
+    public void callGetBannerData(Context context) {
 
 
-        callVolleyRequest(Request.Method.GET, getBannerDataMLD, ApiService.bannerJsonUrl, JSONObject.class);
+        callVolleyRequest(context,Request.Method.GET, getBannerDataMLD, ApiService.bannerJsonUrl, ResponseBannerImages.class);
 
     }
 

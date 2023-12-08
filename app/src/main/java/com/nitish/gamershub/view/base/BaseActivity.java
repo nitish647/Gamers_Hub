@@ -1,15 +1,10 @@
 package com.nitish.gamershub.view.base;
 
 import static com.nitish.gamershub.utils.AppHelper.getAdViewedStatsGlobal;
-import static com.nitish.gamershub.utils.AppHelper.getUserProfileGlobalData;
+
 import static com.nitish.gamershub.utils.AppHelper.saveAdViewedStatsGlobal;
-import static com.nitish.gamershub.utils.AppHelper.saveUserProfileGlobal;
 import static com.nitish.gamershub.utils.AppHelper.setStatusBarColor;
 import static com.nitish.gamershub.utils.AppConstants.From;
-import static com.nitish.gamershub.utils.AppConstants.GamersHubDataGlobal;
-import static com.nitish.gamershub.utils.AppConstants.GamersHub_ParentCollection;
-import static com.nitish.gamershub.utils.AppConstants.GoogleSignInAccountUser;
-import static com.nitish.gamershub.utils.AppConstants.UserMail;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -36,34 +31,28 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.SetOptions;
 import com.nitish.gamershub.model.local.DialogItems;
 import com.nitish.gamershub.model.local.DialogLoadingItems;
+import com.nitish.gamershub.model.local.SnackBarItems;
 import com.nitish.gamershub.utils.PreferenceHelper;
 import com.nitish.gamershub.utils.adsUtils.AdmobAdsListener;
 import com.nitish.gamershub.utils.adsUtils.InterstitialUtilsAdmobAdUtil;
 import com.nitish.gamershub.utils.adsUtils.RewardedAdAdmobUtilUtils;
 import com.nitish.gamershub.view.dialogs.ConfirmationDialog;
-import com.nitish.gamershub.view.dialogs.CustomLoadingBar2;
 import com.nitish.gamershub.view.dialogs.DialogGamerReward;
 import com.nitish.gamershub.view.dialogs.DialogListener;
-import com.nitish.gamershub.view.dialogs.Loader;
 import com.nitish.gamershub.view.dialogs.LoadingBarDialog;
 import com.nitish.gamershub.view.dialogs.SnackBarCustom;
 import com.nitish.gamershub.view.dialogs.SuspensionDialog;
 import com.nitish.gamershub.view.homePage.activity.HomeActivity;
-import com.nitish.gamershub.view.dialogs.BottomSheetDialog;
+import com.nitish.gamershub.view.dialogs.RewardsBottomSheetDialog;
 import com.nitish.gamershub.utils.adsUtils.AdmobInterstitialAdListener;
 import com.nitish.gamershub.databinding.ShowWebviewDialogBinding;
 import com.nitish.gamershub.model.firebase.AdViewedStats;
-import com.nitish.gamershub.model.firebase.GamersHubData;
 import com.nitish.gamershub.model.firebase.TimerStatus;
 import com.nitish.gamershub.model.firebase.UserProfile;
 import com.nitish.gamershub.R;
@@ -91,13 +80,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
     static boolean isHomeActivityDestroyed = false;
-    BottomSheetDialog bottomSheetDialog;
+    RewardsBottomSheetDialog rewardsBottomSheetDialog;
     public static ProgressDialog progressDialog;
     GoogleSignInOptions gso;
-    AlertDialog logOutDialog;
-    AlertDialog confirmationDialog;
-    private UserProfile userProfileGlobal;
-    private GamersHubData gamersHubDataGlobal;
     PreferenceHelper preferenceHelper;
     static boolean bottomSheetDialogShown = false;
 
@@ -110,7 +95,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 //        setStatusBarColor();
 
-        setActivityStatusBarColor();
+
 
 
         Paper.init(this);
@@ -161,62 +146,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-    public void setUserProfile(UserProfile userProfile, SetUserDataOnCompleteListener setUserDataOnCompleteListener) {
-        if (!showNoInternetDialog())
-            return;
-
-
-        getFirebaseUser().set(userProfile, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                hideLoader();
-                if (task.isSuccessful() && task.isComplete()) {
-
-
-                    saveUserProfileGlobal(userProfile);
-
-                    setUserDataOnCompleteListener.onTaskSuccessful();
-
-
-                }
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                hideLoader();
-
-                DialogItems dialogItems = new DialogItems();
-                Log.d("pError", "error1123 in the update profile " + e);
-                dialogItems.setMessage("A server error occurred");
-
-
-                showConfirmationDialog2(dialogItems, new DialogListener() {
-                    @Override
-                    public void onYesClick() {
-
-                    }
-
-                    @Override
-                    public void onNoClick() {
-
-                    }
-                });
-            }
-        });
-    }
-
-
-    public interface SetUserDataOnCompleteListener {
-        public void onTaskSuccessful();
-    }
-
-
-    public static DocumentReference getFirebaseUser() {
-        return FirebaseFirestore.getInstance().collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail) + "");
-    }
-
-
     //------------------------- dialog boxes -------------------------------//
 
 
@@ -246,7 +175,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         DialogGamerReward dialogGamerReward = DialogGamerReward.newInstance(dialogItems, dialogListener);
 
 
-        showDialogfragment(dialogGamerReward, null);
+        showDialogFragment(dialogGamerReward, null);
 
 
     }
@@ -372,7 +301,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         AdViewedStats adViewedStats;
 
         if (getAdViewedStatsGlobal() == null) {
-            UserProfile userProfile = getUserProfileGlobalData();
+            UserProfile userProfile = getPreferencesMain().getUserProfile();
             adViewedStats = userProfile.getAdViewedStats();
         } else {
             adViewedStats = getAdViewedStatsGlobal();
@@ -398,7 +327,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         AdViewedStats adViewedStats;
 
         if (getAdViewedStatsGlobal() == null) {
-            UserProfile userProfile = getUserProfileGlobalData();
+            UserProfile userProfile = getPreferencesMain().getUserProfile();
             adViewedStats = userProfile.getAdViewedStats();
         } else {
             adViewedStats = getAdViewedStatsGlobal();
@@ -417,7 +346,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public GoogleSignInAccount getGoogleSignInAccount() {
 
-        return (GoogleSignInAccount) Paper.book().read(GoogleSignInAccountUser);
+        return getPreferencesMain().getGoogleSignInAccountUser();
     }
 
     public GoogleSignInClient getGoogleSignInClient() {
@@ -425,20 +354,27 @@ public abstract class BaseActivity extends AppCompatActivity {
         return GoogleSignIn.getClient(this, gso);
     }
 
+    public void performLogOut() {
+        googleSignOut();
+        getPreferencesMain().destroyAllPreferences();
+        startActivity(new Intent(BaseActivity.this, LoginActivity.class));
+        finish();
+    }
+
     public void googleSignOut() {
 
         if (!showNoInternetDialog()) {
             return;
         }
-        hideLoader();
+
         getGoogleSignInClient().signOut()
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        hideLoader();
+
                         AppHelper.destroyAllPaperData();
-                        startActivity(new Intent(BaseActivity.this, LoginActivity.class));
-                        finish();
+//                        startActivity(new Intent(BaseActivity.this, LoginActivity.class));
+//                        finish();
                     }
                 });
     }
@@ -448,15 +384,18 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onResume();
 
 
-        Log.d("onResume: Activity ", this.getClass().getName());
-        if (getSupportFragmentManager().findFragmentById(R.id.frameLayout) != null) {
-            List<Fragment> fragments = getSupportFragmentManager().getFragments();
-            for (Fragment f : fragments) {
-                if (f.isVisible()) {
-                    Log.d("onResume: Fragment ", f.getClass().getName());
-                }
-            }
+        printCurrentScreenName(true, this.getClass().getName());
+
+    }
+
+    public void printCurrentScreenName(Boolean isActivity, String activityOrFragment) {
+        String screenType = "Fragment";
+        if (isActivity) {
+            screenType = "Activity ";
         }
+        String screenName = screenType + " " + activityOrFragment;
+
+        Log.d("currentScreenName", screenName);
 
 
     }
@@ -471,7 +410,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
-        UserOperations.getFirestoreUser().addSnapshotListener(BaseActivity.this, new EventListener<DocumentSnapshot>() {
+        if (getPreferencesMain().getUserMail() == null)
+            return;
+        UserOperations.getFireStoreUser(getPreferencesMain().getUserMail()).addSnapshotListener(BaseActivity.this, new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error != null) {
@@ -482,12 +423,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                     try {
                         UserProfile userProfile = null;
                         userProfile = value.toObject(UserProfile.class);
-
-                        if (userProfile != null) {
-                            saveUserProfileGlobal(userProfile);
-
-
-                        }
 
 
                     } catch (Exception e) {
@@ -502,14 +437,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-
-    public void saveGamersHubDataGlobal(GamersHubData gamersHubData) {
-
-        gamersHubDataGlobal = gamersHubData;
-        Paper.book().write(GamersHubDataGlobal, gamersHubDataGlobal);
-
-
-    }
 
     public boolean isInternetAvailable() {
         String connectivityStatus = Connectivity.getConnectionStatus(BaseActivity.this);
@@ -527,21 +454,21 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (isHomeActivityDestroyed || bottomSheetDialogShown)
             return;
 
-        if (bottomSheetDialog == null) {
+        if (rewardsBottomSheetDialog == null) {
 
-//                    String timerDataString = DataPassingHelper.ConvertObjectToString(getUserProfileGlobalData().getTimerStatus());
+//                    String timerDataString = DataPassingHelper.ConvertObjectToString(getPreferencesMain().getUserProfile().getTimerStatus());
 
-            bottomSheetDialog = BottomSheetDialog.newInstance("");
+            rewardsBottomSheetDialog = RewardsBottomSheetDialog.newInstance("");
         }
 
 
         try {
             if (bottomSheetDialogShown) {
-                if (bottomSheetDialog.isAdded())
-                    bottomSheetDialog.dismiss();
+                if (rewardsBottomSheetDialog.isAdded())
+                    rewardsBottomSheetDialog.dismiss();
             }
 
-            showDialogfragment(bottomSheetDialog, "");
+            showDialogFragment(rewardsBottomSheetDialog, "");
 //            bottomSheetDialog.show(getSupportFragmentManager(), "");
 
             bottomSheetDialogShown = true;
@@ -552,28 +479,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
-
-    public ProgressDialog showProgressBar() {
-        try {
-            if (!BaseActivity.this.isFinishing())
-                progressDialog.show();
-
-        } catch (Exception e) {
-
-        }
-
-        return progressDialog;
-    }
-
-    public void dismissProgressBar() {
-        progressDialog.dismiss();
-    }
-
-    public void showLoader(DialogLoadingItems items) {
-        LoadingBarDialog.newInstance(this, items).showDialog();
-
-
-    }
 
     public void showLoader() {
 
@@ -612,10 +517,16 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void showSnackBar(String message, View rootLayout) {
-        SnackBarCustom.showCustomSnackBar(this, rootLayout, message, 3000);
+
+        SnackBarCustom.showCustomSnackBar(this, rootLayout, new SnackBarItems(message));
+    }
+    public void showSnackBar(View rootLayout, SnackBarItems snackBarItems) {
+
+        SnackBarCustom.showCustomSnackBar(this, rootLayout,snackBarItems);
     }
 
-    void showDialogfragment(DialogFragment dialog, String tag) {
+
+    void showDialogFragment(DialogFragment dialog, String tag) {
         if (!this.isFinishing()) {
             dialog.show(getSupportFragmentManager(), tag);
         }
@@ -624,17 +535,18 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     // will check if the ad view is changed
     public boolean adStatsChanged() {
-        if (getUserProfileGlobalData() == null)
+        if (getPreferencesMain().getUserProfile() == null)
             return false;
-        AdViewedStats adViewedStats = getUserProfileGlobalData().getAdViewedStats();
+        AdViewedStats adViewedStats = getPreferencesMain().getUserProfile().getAdViewedStats();
+        AdViewedStats getAdViewedStatsGlobal = getAdViewedStatsGlobal();
 
         if (getAdViewedStatsGlobal() == null)
             return false;
         else {
-            if (getAdViewedStatsGlobal().getAdMobRewardedAdViewed() > adViewedStats.getAdMobRewardedAdViewed()
-                    || getAdViewedStatsGlobal().getAdMobInterstitialAdViewed() > adViewedStats.getAdMobInterstitialAdViewed()
-                    || getAdViewedStatsGlobal().getFaceBookInterstitialAdViewed() > adViewedStats.getFaceBookInterstitialAdViewed()
-                    || getAdViewedStatsGlobal().getFaceBookRewardedAdViewed() > adViewedStats.getFaceBookRewardedAdViewed()) {
+            if (getAdViewedStatsGlobal.getAdMobRewardedAdViewed() > adViewedStats.getAdMobRewardedAdViewed()
+                    || getAdViewedStatsGlobal.getAdMobInterstitialAdViewed() > adViewedStats.getAdMobInterstitialAdViewed()
+                    || getAdViewedStatsGlobal.getFaceBookInterstitialAdViewed() > adViewedStats.getFaceBookInterstitialAdViewed()
+                    || getAdViewedStatsGlobal.getFaceBookRewardedAdViewed() > adViewedStats.getFaceBookRewardedAdViewed()) {
                 return true;
             } else
                 return false;
@@ -651,14 +563,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-    public void setActivityStatusBarColor() {
-        if (this.getClass().getName().equals(SplashScreen.class.getName())) {
-            setStatusBarColor(this, R.color.splash_screen);
-        } else if (this.getClass().getName().equals(LoginActivity.class.getName())) {
-            setStatusBarColor(this, R.color.login_page);
-        } else {
-            setStatusBarColor(this, R.color.gamers_hub_theme);
-        }
+    public void setActivityStatusBarColor(int color) {
+        setStatusBarColor(this,color);
 
     }
 

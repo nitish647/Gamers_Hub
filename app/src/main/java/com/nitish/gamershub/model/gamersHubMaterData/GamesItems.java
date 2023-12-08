@@ -1,8 +1,11 @@
-package com.nitish.gamershub.model.local;
+package com.nitish.gamershub.model.gamersHubMaterData;
+
 
 import java.io.Serializable;
+import java.util.Objects;
 
-public class AllGamesItemsSerializable implements Serializable {
+public class GamesItems implements Serializable {
+
     String img_file;
     String  orientation;
     String category;
@@ -10,10 +13,10 @@ public class AllGamesItemsSerializable implements Serializable {
     String description;
     String gameUrl;
 
-    public AllGamesItemsSerializable() {
+    public GamesItems() {
     }
 
-    public AllGamesItemsSerializable(String img_file, String orientation, String category, String name, String description, String gameUrl) {
+    public GamesItems(String img_file, String orientation, String category, String name, String description, String gameUrl) {
         this.img_file = img_file;
         this.orientation = orientation;
         this.category = category;
@@ -55,6 +58,10 @@ public class AllGamesItemsSerializable implements Serializable {
     }
 
     public String getDescription() {
+        if(description==null)
+        {
+            description = " Enjoy game "+getName()+" and complete all the levels";
+        }
         return description;
     }
 
@@ -69,4 +76,20 @@ public class AllGamesItemsSerializable implements Serializable {
     public void setGameUrl(String gameUrl) {
         this.gameUrl = gameUrl;
     }
+   
+   
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GamesItems that = (GamesItems) o;
+
+        return Objects.equals(getGameUrl(), that.getGameUrl());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getGameUrl());
+    }
+
 }

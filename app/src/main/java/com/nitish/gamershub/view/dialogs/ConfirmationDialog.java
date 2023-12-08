@@ -66,7 +66,7 @@ public class ConfirmationDialog extends DialogFragment {
         binding.dialogIcon.setImageResource(dialogItems.getDialogIcon());
 
         if (dialogItems.getSingleButton()) {
-            binding.yesButton.setText("Okay");
+            binding.yesButton.setText(getString(R.string.okay));
             binding.noButton.setVisibility(View.GONE);
         }
 

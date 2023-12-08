@@ -11,6 +11,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -21,18 +23,16 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.auth.FirebaseAuth;
 
-import com.nitish.gamershub.model.local.DialogItems;
-import com.nitish.gamershub.view.dialogs.DialogListener;
+import com.nitish.gamershub.model.gamersHubMaterData.AllGamesResponseItem;
+import com.nitish.gamershub.utils.NetworkResponse;
 import com.nitish.gamershub.view.homePage.activity.HomeActivity;
-import com.nitish.gamershub.utils.interfaces.ConfirmationDialogListener2;
 import com.nitish.gamershub.databinding.ActivitySplashScreenBinding;
-import com.nitish.gamershub.model.local.DialogHelperPojo;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.utils.NotificationHelper;
 import com.nitish.gamershub.view.base.BaseActivity;
+import com.nitish.gamershub.view.loginSingup.viewmodelRepo.LoginSignUpViewModel;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import io.paperdb.Paper;
 
@@ -48,12 +48,14 @@ public class SplashScreen extends BaseActivity {
     private Context context;
     public static String MaterData = "MasterData";
     private FirebaseAuth mAuth;
+    private LoginSignUpViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
+        viewModel = ViewModelProviders.of(this).get(LoginSignUpViewModel.class);
+        setActivityStatusBarColor( R.color.splash_screen);
         activitySplashScreenBinding = DataBindingUtil.setContentView(this, R.layout.activity_splash__screen);
         requestQueue = Volley.newRequestQueue(this);
         mAuth = FirebaseAuth.getInstance();
@@ -62,13 +64,44 @@ public class SplashScreen extends BaseActivity {
 
 
         handlerFunctions();
-
+        bindObservers();
 
     }
 
     @Override
     protected int getLayoutResourceId() {
         return R.layout.activity_splash__screen;
+    }
+
+    public void bindObservers() {
+
+        viewModel.getGamersHubMaterData.observe(this, new Observer<NetworkResponse<AllGamesResponseItem>>() {
+            @Override
+            public void onChanged(NetworkResponse<AllGamesResponseItem> response) {
+                if (response instanceof NetworkResponse.Success) {
+
+
+                    hideLoader();
+
+                    AllGamesResponseItem response1 = ((NetworkResponse.Success<AllGamesResponseItem>) response).getData();
+
+
+                    saveGamersMastersHubData();
+
+
+                } else if (response instanceof NetworkResponse.Error) {
+
+                    String message = ((NetworkResponse.Error<AllGamesResponseItem>) response).getMessage();
+
+                    hideLoader();
+                } else if (response instanceof NetworkResponse.Loading) {
+
+                    showLoader();
+                }
+            }
+        });
+
+
     }
 
 
@@ -79,7 +112,8 @@ public class SplashScreen extends BaseActivity {
             @Override
             public void run() {
 //                get_data();
-                SplashScreen.this.getMaterData();
+                callGetGamersHubMaterData();
+//                SplashScreen.this.getMaterData();
 
             }
         }, 1000);
@@ -98,94 +132,59 @@ public class SplashScreen extends BaseActivity {
         }, 11000);
     }
 
-    public void getMaterData() {
 
-        String url = getString(R.string.dbGitUrl) + "gamers_hub_data/masterData.json";
-
-        Log.d("url", url);
-
-        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+    private void saveGamersMastersHubData() {
 
 
-            @Override
-            public void onResponse(JSONArray response) {
-
-                Log.d("gResponse", "response json array of mater data " + response);
-
-                //    Toast.makeText(Splash_Screen.this, response+"", Toast.LENGTH_SHORT).show();
-                try {
-                    JSONObject jsonObject = response.getJSONObject(0);
-                    Log.d("gResponse", "response jsonObject of mater data " + jsonObject);
-                    Paper.book().write(SplashScreen.MaterData, jsonObject + "");
+        //      FirebaseUser currentUser = mAuth.getCurrentUser();
 
 
-                    //      FirebaseUser currentUser = mAuth.getCurrentUser();
+        // when not singed in
+        Intent intent;
+        if(!isUserLoggedIn())
+        {
+            intent = new Intent(SplashScreen.this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 
 
-                    // when not singed in
-                    Intent intent;
-                    if (getGoogleSignInAccount() == null) {
-                        intent = new Intent(SplashScreen.this, LoginActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        ;
-                    } else
-                    // when already  singed in
-                    {
-                        Toast.makeText(SplashScreen.this, "hello " + getGoogleSignInAccount().getEmail(), Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Bundle bundle = getIntent().getExtras();
+            if (bundle != null && bundle.containsKey("type")) {
+                intent = NotificationHelper.createNotificationIntent(bundle.getString("type"), context);
+                intent.putExtra(IntentData, bundle);
 
-                        Bundle bundle = getIntent().getExtras();
-                        if (bundle != null && bundle.containsKey("type")) {
-                            intent = NotificationHelper.createNotificationIntent(bundle.getString("type"), context);
-                            intent.putExtra(IntentData, bundle);
-
-                        } else {
-                            intent = new Intent(getApplicationContext(), HomeActivity.class);
-                        }
-                    }
-                    startIntentWithFlags(intent, SplashScreen.this);
-                    finish();
-
-                } catch (Exception e) {
-                    if (e.toString().toLowerCase().contains("connection")) {
-
-                        DialogItems dialogItems = new DialogItems();
-                        dialogItems.setMessage(getString(R.string.change_in_default_time_detected_please_set_the_time_to_default_network_time));
-
-
-                        showConfirmationDialog2(dialogItems, new DialogListener() {
-                            @Override
-                            public void onYesClick() {
-                                finish();
-                            }
-
-                            @Override
-                            public void onNoClick() {
-
-                            }
-                        });
-
-                    }
-                    Log.d("gError", "error in  mater data " + e.toString());
-                    e.printStackTrace();
-                }
-
-
+            } else {
+                intent = new Intent(getApplicationContext(), HomeActivity.class);
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("gError", "error in mater data " + error);
+        }
 
-            }
-        });
+//        if (getGoogleSignInAccount() == null) {
+//            intent = new Intent(SplashScreen.this, LoginActivity.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+//
+//        } else
+//        // when already  singed in
+//        {
+//            Toast.makeText(SplashScreen.this, "hello " + getGoogleSignInAccount().getEmail(), Toast.LENGTH_SHORT).show();
+//
+//
+//        }
+        startIntentWithFlags(intent, SplashScreen.this);
+        finish();
 
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(
-                6000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
-        requestQueue.add(jsonObjectRequest);
     }
 
+    private boolean isUserLoggedIn()
+    {
+        return  getPreferencesMain().isUserLoggedIn();
+    }
+
+    private void callGetGamersHubMaterData() {
+
+
+        viewModel.callGetGamersHubJson(this);
+    }
 
 }

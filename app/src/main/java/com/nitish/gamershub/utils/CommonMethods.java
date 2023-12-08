@@ -80,25 +80,6 @@ public class CommonMethods {
         });
 
     }
-    // common dialog box
-    public void addAccountDialog() {
-        LayoutInflater factory = LayoutInflater.from(context);
-
-        final View addBankAccLayout = factory.inflate(R.layout.activity_category, null);
-
-        final AlertDialog addAccountDialog = new AlertDialog.Builder(context).create();
-
-
-        addAccountDialog.setView(addBankAccLayout);
-
-        addAccountDialog.show();
-
-        EditText accNumberEditText = addBankAccLayout.findViewById(R.id.searchView);
-        Spinner accountTypeSpinner = addBankAccLayout.findViewById(R.id.webView);
-
-        TextView dismissDialogButton = addBankAccLayout.findViewById(R.id.playButton);
-    }
-
 
 
     // simple dialog

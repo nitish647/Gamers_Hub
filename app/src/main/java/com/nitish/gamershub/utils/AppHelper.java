@@ -2,11 +2,6 @@ package com.nitish.gamershub.utils;
 
 import static com.nitish.gamershub.utils.AppConstants.AdViewedStatsGlobal;
 import static com.nitish.gamershub.utils.AppConstants.FirebaseFCMToken;
-import static com.nitish.gamershub.utils.AppConstants.GamersHubDataGlobal;
-import static com.nitish.gamershub.utils.AppConstants.GoogleSignInAccountUser;
-import static com.nitish.gamershub.utils.AppConstants.GoogleSignInUserProfile;
-import static com.nitish.gamershub.utils.AppConstants.UserInfo;
-import static com.nitish.gamershub.utils.AppConstants.UserProfileGlobal;
 import static com.nitish.gamershub.utils.timeUtils.DateTimeHelper.TimeStampPattern;
 
 import android.app.Activity;
@@ -21,7 +16,8 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
-import android.os.Build;
+import android.os.Bundle;
+import android.os.Parcel;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -30,18 +26,22 @@ import androidx.core.content.ContextCompat;
 import androidx.palette.graphics.Palette;
 
 import com.google.android.datatransport.runtime.BuildConfig;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken;
 import com.nitish.gamershub.model.firebase.AdViewedStats;
-import com.nitish.gamershub.model.firebase.GamersHubData;
 import com.nitish.gamershub.model.firebase.UserProfile;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.model.gamersHubMaterData.GamesItems;
 import com.nitish.gamershub.utils.timeUtils.DateTimeHelper;
 import com.nitish.gamershub.view.base.AppClass;
 
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.Random;
+import java.util.Set;
 
 import io.paperdb.Paper;
 
@@ -49,19 +49,6 @@ public class AppHelper {
 
 
     //--------------------login page -----------------//
-    public static void saveGoogleSignInAccountUser(GoogleSignInAccount googleSignInAccount) {
-        Log.d("pResponse", "GoogleSignInUserProfile " + googleSignInAccount.getPhotoUrl());
-        Paper.book().write(GoogleSignInUserProfile, googleSignInAccount.getPhotoUrl() + "");
-        Paper.book().write(GoogleSignInAccountUser, googleSignInAccount);
-    }
-
-    public static GoogleSignInAccount getGoogleSignInAccountUser() {
-        return (GoogleSignInAccount) Paper.book().read(GoogleSignInAccountUser);
-    }
-
-    public static String getGoogleSignInUserProfile() {
-        return (String) Paper.book().read(GoogleSignInUserProfile);
-    }
 
 
     public static void saveFireBaseFcmToken(String fcmToken) {
@@ -77,14 +64,14 @@ public class AppHelper {
             return "";
     }
 
-
-    public static GamersHubData getGamersHubDataGlobal() {
-        return (GamersHubData) Paper.book().read(GamersHubDataGlobal);
+    public static PreferenceHelper getPreferenceHelperInstance() {
+        return new PreferenceHelper(AppClass.getInstance().getApplicationContext());
     }
 
 
     public static void saveAdViewedStatsGlobal(AdViewedStats adViewedStats) {
         Paper.book().write(AdViewedStatsGlobal, adViewedStats);
+
 
     }
 
@@ -93,27 +80,41 @@ public class AppHelper {
 
     }
 
-    public static void saveUserProfileGlobal(UserProfile userProfile) {
-        Paper.book().write(UserInfo, userProfile);
 
+    public static <K> Type getTypedTokenOfList(ArrayList<K> list) {
 
+        Type type = new TypeToken<ArrayList<K>>() {
+        }.getType();
+        return type;
     }
 
-    public static UserProfile getUserProfileGlobalData() {
-
-        Paper.init(AppClass.getInstance());
-
-        return (UserProfile) Paper.book().read(UserInfo);
-    }
 
     public static void destroyAllPaperData() {
         Paper.book().destroy();
     }
 
-    public static boolean isAppUpdated() {
+    public static ArrayList<GamesItems> removeDuplicatesFromGamesList(ArrayList<GamesItems> gamesItemsArrayList) {
+        Set<GamesItems> set = new LinkedHashSet<>();
+        set.addAll(gamesItemsArrayList);
+
+
+        ArrayList<GamesItems> nonDuplicateList = new ArrayList<>();
+        nonDuplicateList.addAll(set);
+        return nonDuplicateList;
+
+    }
+
+    public static boolean isNullOrEmpty(String string) {
+        if (string == null || string.isEmpty())
+            return true;
+        else
+            return false;
+    }
+
+    public static boolean isAppUpdated(UserProfile userProfile) {
         try {
-            float currentVersionName = Float.parseFloat(getUserProfileGlobalData().getProfileData().getVersionName());
-            float latestVersionName = Float.parseFloat(getGamersHubDataGlobal().getGamesData().getLatestVersionName());
+            float currentVersionName = Float.parseFloat(userProfile.getProfileData().getVersionName());
+            float latestVersionName = Float.parseFloat(AppHelper.getPreferenceHelperInstance().getGamersHubData().getGamesData().getLatestVersionName());
             return currentVersionName >= latestVersionName;
         } catch (Exception e) {
             return false;
@@ -133,6 +134,16 @@ public class AppHelper {
     }
 
     ////------------------------time helper-----------------------///
+
+    public static void checkBundleSize(Bundle bundle, String tag) {
+        Parcel parcel = Parcel.obtain();
+        parcel.writeValue(bundle);
+        byte[] bytes = parcel.marshall();
+        parcel.recycle();
+        double bundleSizeInKb = ((double) bytes.length) / 1000;
+        Log.d(tag, "bundleSizeInKb " + bundleSizeInKb + " kb");
+
+    }
 
     public static void saveCalenderData() {
         Date date = new Date();
@@ -171,19 +182,47 @@ public class AppHelper {
 
     }
 
-    public void getDominantGradient(ImageView imageView) {
+
+    public static  void getDominantGradient(ImageView imageView, OnPalleteColorGet onPalleteColorGet) {
         Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
 
 
         Palette.from(bitmap).generate(palette -> {
             assert palette != null;
             int vibrant = palette.getVibrantColor(0x003001); // <=== color you want
-            int vibrantLight = palette.getLightVibrantColor(0x00000);
+            onPalleteColorGet.getVibrantColor(vibrant);
+
+            int dominantColor = palette.getDominantColor(0x00000);
+            onPalleteColorGet.getDominantColor(dominantColor);
+
+
             int vibrantDark = palette.getDarkVibrantColor(0x000000);
+            onPalleteColorGet.getVibrantColorDark(vibrantDark);
+
             int muted = palette.getMutedColor(0x000000);
+            onPalleteColorGet.getMuted(muted);
+
             int mutedLight = palette.getLightMutedColor(0x000000);
+            onPalleteColorGet.getMutedLight(mutedLight);
+
             int mutedDark = palette.getDarkMutedColor(0x000000);
+            onPalleteColorGet.getMutedDark(mutedDark);
+
         });
+
+
+
+    }
+  public static  interface OnPalleteColorGet
+    {
+         void getDominantColor(int color);
+
+        default void getVibrantColor(int color){};
+        default void getVibrantColorDark(int color){};
+        default void getMutedDark(int color){};
+        default void getMutedLight(int color){};
+        default void getMuted(int color){};
+
     }
 
     public static void readCalenderData() {
@@ -200,11 +239,11 @@ public class AppHelper {
     /////---------------- Messages string --------------------////
 
 
-    public static Uri getMailMessageUri(Context context, String subject, String body) {
+    public static Uri getMailMessageUri(Context context, UserProfile userProfile, String subject, String body) {
 
 
         if (body.equals(""))
-            body = "Hi I am  " + AppHelper.getUserProfileGlobalData().getProfileData().getName() + ", my user name is " + AppHelper.getUserProfileGlobalData().getProfileData().getEmail() + " \n I have a doubt regarding ...";
+            body = "Hi I am  " + userProfile.getProfileData().getName() + ", my user name is " + userProfile.getProfileData().getEmail() + " \n I have a doubt regarding ...";
 
 
         String mailTo = "mailto:" + context.getString(R.string.contact_mail) +
@@ -249,11 +288,11 @@ public class AppHelper {
 
 
     public static void setStatusBarColor(Activity activityRef, int color) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            activityRef.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            activityRef.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            activityRef.getWindow().setStatusBarColor(ContextCompat.getColor(activityRef, color));
-        }
+
+        activityRef.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        activityRef.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        activityRef.getWindow().setStatusBarColor(ContextCompat.getColor(activityRef, color));
+
     }
 
 

@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
     <RelativeLayout
-        android:padding="10dp"
-        android:layout_margin="10dp"
-        android:backgroundTint="#f0f1f3"
-        android:background="@drawable/round_corners"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
 
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:padding="@dimen/_5sdp"
+        android:background="@color/fui_transparent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <RelativeLayout
+
+            android:background="@drawable/round_corners"
+            android:layout_margin="@dimen/_10sdp"
+            android:backgroundTint="@color/lightGrey1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -99,5 +106,6 @@
 
 
         </LinearLayout>
+        </RelativeLayout>
     </RelativeLayout>
 </layout>

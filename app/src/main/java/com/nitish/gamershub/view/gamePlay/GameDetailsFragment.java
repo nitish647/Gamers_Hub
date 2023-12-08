@@ -1,35 +1,31 @@
 package com.nitish.gamershub.view.gamePlay;
 
-import static com.nitish.gamershub.utils.AppHelper.getGamersHubDataGlobal;
-import static com.nitish.gamershub.utils.AppHelper.getUserProfileGlobalData;
-import static com.nitish.gamershub.utils.AppConstants.FavouriteList;
+
 import static com.nitish.gamershub.utils.AppConstants.IntentData;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
+import android.content.res.ColorStateList;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.databinding.DataBindingUtil;
-import androidx.palette.graphics.Palette;
 
 import com.nitish.gamershub.databinding.FragmentGameDetailsBinding;
 import com.nitish.gamershub.model.local.DialogItems;
-import com.nitish.gamershub.utils.interfaces.ConfirmationDialogListener2;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.model.firebase.GamePlayedStatus;
 import com.nitish.gamershub.model.firebase.UserProfile;
-import com.nitish.gamershub.model.local.AllGamesItems;
-import com.nitish.gamershub.model.local.DialogHelperPojo;
+import com.nitish.gamershub.model.gamersHubMaterData.GamesItems;
+import com.nitish.gamershub.model.local.GlideData;
+import com.nitish.gamershub.model.local.SnackBarItems;
 import com.nitish.gamershub.utils.AppHelper;
+import com.nitish.gamershub.utils.GlideHelper;
 import com.nitish.gamershub.view.base.BaseFragment;
 import com.nitish.gamershub.view.dialogs.DialogListener;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -41,12 +37,12 @@ public class GameDetailsFragment extends BaseFragment {
     GameDetailActivity2 parentActivity;
 
 
-    AllGamesItems allGamesItems;
-    ArrayList<AllGamesItems> favouriteArrayList;
+    GamesItems gamesItems;
 
     FragmentGameDetailsBinding binding;
     UserProfile userProfile;
     GamePlayedStatus gamePlayedStatus;
+
 
     public static GameDetailsFragment newInstance() {
         GameDetailsFragment fragment = new GameDetailsFragment();
@@ -63,19 +59,14 @@ public class GameDetailsFragment extends BaseFragment {
         Paper.init(binding.getRoot().getContext());
 
         parentActivity = (GameDetailActivity2) binding.getRoot().getContext();
+        gamesItems = (GamesItems) getActivity().getIntent().getSerializableExtra(IntentData);
 
-        favouriteArrayList = new ArrayList<>();
-//        allGamesItems = NewAndPopularGamesAdapter.SelectedGameObject;
-        allGamesItems = (AllGamesItems) getActivity().getIntent().getSerializableExtra(IntentData);
 
-        ArrayList<AllGamesItems> itemsArrayList = (ArrayList<AllGamesItems>) Paper.book().read(FavouriteList);
-        favouriteArrayList = itemsArrayList;
-        userProfile = getUserProfileGlobalData();
-        gamePlayedStatus = getUserProfileGlobalData().getGamePlayedStatus();
+        userProfile = getPreferencesMain().getUserProfile();
+        gamePlayedStatus = userProfile.getGamePlayedStatus();
+
 
         setOnClickListeners();
-
-
         setViews();
 
 
@@ -97,13 +88,14 @@ public class GameDetailsFragment extends BaseFragment {
                 // when it is in favourite then remove from favourites
 
 
-                if (checkInFavList(allGamesItems)) {
-                    deleteFromFavourite(allGamesItems);
+                if (isGameFav(gamesItems)) {
+
+                    deleteFromFavourite(gamesItems);
                     binding.favButton.setImageResource(R.drawable.fav_of2);
                 }
                 // when it is not in favourite then add in favourites
                 else {
-                    saveToFavourite(allGamesItems);
+                    saveToFavourite(gamesItems);
                     binding.favButton.setImageResource(R.drawable.fav_on2);
 
                 }
@@ -132,10 +124,14 @@ public class GameDetailsFragment extends BaseFragment {
         // TestCode: Anuraag
 //        allGamesItems = null;
 
-        binding.gameDescTextview.setText(allGamesItems.getDescription());
+        binding.gameCategoryTextview.setText(gamesItems.getCategory());
+        binding.gameDescTextview.setText(gamesItems.getDescription());
         binding.gameImageImageVIew.setClipToOutline(true);
-        binding.gameNameTextview.setText(allGamesItems.getName());
-        if (checkInFavList(allGamesItems)) {
+        binding.gameNameTextview.setText(gamesItems.getName());
+
+
+        if (isGameFav(gamesItems)) {
+
             binding.favButton.setImageResource(R.drawable.fav_on2);
 
         }
@@ -145,76 +141,104 @@ public class GameDetailsFragment extends BaseFragment {
 
         }
 
-        Picasso.get().load(allGamesItems.getImg_file()).into(binding.gameImageImageVIew, new com.squareup.picasso.Callback() {
-            @Override
-            public void onSuccess() {
 
-//                getDominantGradient(binding.gameImageImageVIew);
-//                binding.gameImageContainerRelative.setBackgroundColor(vibrant);
-            }
-
-            @Override
-            public void onError(Exception e) {
-
-            }
-
-        });
-
+        loadGameImage();
         setGamePlayInstructions();
 
 
-        binding.playButton.setBackground(AppHelper.setSingleColorRoundBackground("#F0740D", 15.0F));
+    }
+
+    private void loadGameImage() {
+        GlideData glideData = new GlideData();
+        glideData.setImageUrl(gamesItems.getImg_file());
+        glideData.setPlaceHolder(R.drawable.gamers_hub_icon15);
+        GlideHelper.loadGlideImage(binding.gameImageImageVIew, glideData, new GlideHelper.GlideListener() {
+            @Override
+            public void onImageLoadFailed() {
+
+            }
+
+            @Override
+            public void onImageLoaded(Drawable drawable) {
+
+
+//                AppHelper.getDominantGradient(binding.gameImageImageVIew, new AppHelper.OnPalleteColorGet() {
+//                    @Override
+//                    public void getDominantColor(int color) {
+//                        binding.gameImageContainerRelative.setBackgroundTintList(ColorStateList.valueOf(color));
+//
+//                    }
+//
+//                });
+
+
+            }
+        });
 
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        userProfile = getUserProfileGlobalData();
-        gamePlayedStatus = getUserProfileGlobalData().getGamePlayedStatus();
+
+        gamePlayedStatus = getPreferencesMain().getUserProfile().getGamePlayedStatus();
         setViews();
 
     }
 
     public void setGamePlayInstructions() {
-        if (gamePlayedStatus.getGamePlayedToday() >= getGamersHubDataGlobal().gamesData.getDailyGamePlayLimit()) {
+        if (gamePlayedStatus.getGamePlayedToday() >= getPreferencesMain().getGamersHubData().gamesData.getDailyGamePlayLimit()) {
             String text = getString(R.string.your_have_reached_the_daily_reward_limit_of) +
-                    getGamersHubDataGlobal().getGamesData().getDailyGamePlayLimit() + getString(R.string.games_come_back_tomorrow_to_get_more_rewards);
+                    getPreferencesMain().getGamersHubData().getGamesData().getDailyGamePlayLimit() + getString(R.string.games_come_back_tomorrow_to_get_more_rewards);
             binding.gamePlayTimeTextview.setText(text);
 
         } else {
-            int min = getGamersHubDataGlobal().gamesData.getGamePlaySecs() / 60;
+            int min = getPreferencesMain().getGamersHubData().gamesData.getGamePlaySecs() / 60;
             String text = getString(R.string.play_this_game_for) +
                     min + getString(R.string.minutes_to_get_rewarded) +
-                    getString(R.string.game_played_reward_left) + gamePlayedStatus.getGamePlayedToday() + "/" + getGamersHubDataGlobal().getGamesData().getDailyGamePlayLimit() + ")";
+                    getString(R.string.game_played_reward_left) + gamePlayedStatus.getGamePlayedToday() + "/" + getPreferencesMain().getGamersHubData().getGamesData().getDailyGamePlayLimit() + ")";
             binding.gamePlayTimeTextview.setText(text);
 
         }
     }
 
-    public void saveToFavourite(AllGamesItems allGamesItems) {
-        favouriteArrayList.add(allGamesItems);
-        Paper.book().write(FavouriteList, favouriteArrayList);
+    public void saveToFavourite(GamesItems gamesItems) {
+
+        getPreferencesMain().saveFavouriteItemInList(gamesItems);
+
+        showFavSnackBar(true);
+
     }
 
-    public void deleteFromFavourite(AllGamesItems allGamesItems) {
+    public void deleteFromFavourite(GamesItems gamesItems) {
 
-        for (int i = 0; i < favouriteArrayList.size(); i++)
-            if (favouriteArrayList.get(i).getGameUrl().equals(allGamesItems.getGameUrl())) {
-
-                favouriteArrayList.remove(i);
-                break;
-            }
-
-        Paper.book().write(FavouriteList, favouriteArrayList);
+        ArrayList<GamesItems> favouriteArrayList = getPreferencesMain().getSavedFavouriteList();
+        favouriteArrayList.removeIf(items -> items.getGameUrl().equals(gamesItems.getGameUrl()));
+        getPreferencesMain().saveFavouriteList(favouriteArrayList);
+        showFavSnackBar(false);
     }
 
-    public boolean checkInFavList(AllGamesItems allGamesItems) {
+    public void showFavSnackBar(boolean isFavAdded) {
+        String message = getString(R.string.added_to_favourites);
+
+        // when removed from favorites
+        if (!isFavAdded) {
+            message = getString(R.string.removed_from_favourites);
+        }
+
+        SnackBarItems snackBarItems = new SnackBarItems(message);
+        snackBarItems.setBackgroundColor(R.color.material_red);
+
+        parentActivity.showSnackBar(binding.getRoot(), snackBarItems);
+    }
+
+    public boolean isGameFav(GamesItems gamesItems) {
+        ArrayList<GamesItems> favouriteArrayList = getPreferencesMain().getSavedFavouriteList();
 
         boolean isInFavList = false;
 
         for (int i = 0; i < favouriteArrayList.size(); i++) {
-            if (favouriteArrayList.get(i).getGameUrl().equals(allGamesItems.getGameUrl())) {
+            if (favouriteArrayList.get(i).getGameUrl().equals(gamesItems.getGameUrl())) {
                 isInFavList = true;
 
                 break;
@@ -234,8 +258,8 @@ public class GameDetailsFragment extends BaseFragment {
         parentActivity.showConfirmationDialog2(dialogItems, new DialogListener() {
             @Override
             public void onYesClick() {
-                String subject = getString(R.string.issue_in_the_game) + allGamesItems.getName();
-                Uri uri = AppHelper.getMailMessageUri(parentActivity, subject, "");
+                String subject = getString(R.string.issue_in_the_game) + gamesItems.getName();
+                Uri uri = AppHelper.getMailMessageUri(parentActivity, userProfile, subject, "");
                 Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
 
                 startActivity(Intent.createChooser(intent, getString(R.string.send_us_email)));

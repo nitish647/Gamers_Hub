@@ -13,6 +13,8 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.nitish.gamershub.model.local.GlideData;
+import com.nitish.gamershub.utils.GlideHelper;
 import com.nitish.gamershub.view.rewards.activity.RedeemActivity;
 import com.nitish.gamershub.model.firebase.RedeemListItem;
 import com.nitish.gamershub.R;
@@ -43,7 +45,10 @@ public class RedeemRecyclerviewAdapter extends RecyclerView.Adapter<RedeemRecycl
 
         RedeemListItem redeemListItem = redeemListItemList.get(position);
 
-        Glide.with(context).load(redeemListItem.getImageUrl()).into( holder.redeemItemLayoutBinding.redeemImageview);
+        GlideData glideData = new GlideData();
+        glideData.setImageUrl(redeemListItem.getImageUrl());
+        GlideHelper.loadGlideImage(holder.redeemItemLayoutBinding.redeemImageview, glideData, null);
+
         String redeemType;
 
         if(redeemListItem.getName().toLowerCase().contains("paytm"))

@@ -2,6 +2,7 @@ package com.nitish.gamershub.view.loginSingup.activity;
 
 import static com.nitish.gamershub.utils.AppConstants.UserInfo;
 import static com.nitish.gamershub.utils.AppConstants.UserMail;
+import static com.nitish.gamershub.utils.AppHelper.setStatusBarColor;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -34,7 +35,6 @@ import com.nitish.gamershub.view.homePage.activity.HomeActivity;
 import com.nitish.gamershub.databinding.ActivityLoginPageBinding;
 import com.nitish.gamershub.model.firebase.UserProfile;
 import com.nitish.gamershub.R;
-import com.nitish.gamershub.utils.AppHelper;
 import com.nitish.gamershub.utils.timeUtils.DateTimeHelper;
 import com.nitish.gamershub.utils.DeviceHelper;
 import com.nitish.gamershub.view.base.BaseActivity;
@@ -61,6 +61,7 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login_page);
         Paper.init(this);
+        setActivityStatusBarColor( R.color.login_page);
         firestoreDb = FirebaseFirestore.getInstance();
         viewModel = ViewModelProviders.of(this).get(LoginSignUpViewModel.class);
 
@@ -79,11 +80,11 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
     }
 
     private void bindObservers() {
-        viewModel.loginUserLD.observe(this, new Observer<NetworkResponse<UserProfile>>() {
+        viewModel.getUerProfileLD.observe(this, new Observer<NetworkResponse<UserProfile>>() {
             @Override
             public void onChanged(NetworkResponse<UserProfile> response) {
                 if (response instanceof NetworkResponse.Success) {
-                    hideLoader();
+//                    hideLoader();
 
 
                     UserProfile userProfile = ((NetworkResponse.Success<UserProfile>) response).getData();
@@ -91,13 +92,15 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
                     profileData.setLastLogin(DateTimeHelper.getDatePojo().getGetCurrentDateString());
                     userProfile.setProfileData(profileData);
                     callUpdateUser(userProfile);
-
+                    getPreferencesMain().saveUserLoggedIn();
 
                 } else if (response instanceof NetworkResponse.Error) {
 
                     String message = ((NetworkResponse.Error<UserProfile>) response).getMessage();
                     if (message.equals(FireBaseService.FirebaseMessage.DOCUMENT_DOES_NOT_EXISTS.toString())) {
                         // for new users
+
+
                         ToastHelper.customToast(LoginActivity.this, "registering");
 
                         UserProfile userProfile = new UserProfile();
@@ -112,11 +115,13 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
                         profileData.setName(googleSignInAccount.getDisplayName());
                         userProfile.setProfileData(profileData);
                         callRegisterUser(userProfile);
+
+
                     }
-                    hideLoader();
+//                    hideLoader();
                 } else if (response instanceof NetworkResponse.Loading) {
 
-                    showLoader();
+//                    showLoader();
                 }
             }
         });
@@ -128,8 +133,8 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
                 if (response instanceof NetworkResponse.Success) {
 
                     Toast.makeText(LoginActivity.this, "Welcome User", Toast.LENGTH_SHORT).show();
-                    Paper.book().write(UserMail, googleSignInAccount.getEmail());
-                    Paper.book().write(UserInfo, registerUserProfile);
+                    getPreferencesMain().saveUserLoggedIn();
+
                     Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                     startActivity(intent);
                     finish();
@@ -192,8 +197,10 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
         binding.moreSignupButton.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+
+                getPreferencesMain().saveUserMail("nitish.kumar647@gmail.com");
                 Paper.book().write(UserMail, "nitish.kumar647@gmail.com");
-                getUserProfile();
+                callGetUserProfile();
                 return false;
             }
         });
@@ -234,95 +241,13 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
             if (googleSignInAccountUser != null && googleSignInAccountUser.getEmail() != null) {
 
                 googleSignInAccount = googleSignInAccountUser;
-                AppHelper.saveGoogleSignInAccountUser(googleSignInAccountUser);
 
+                getPreferencesMain().saveGoogleSignInAccountUser(googleSignInAccountUser);
+                getPreferencesMain().saveUserMail(googleSignInAccountUser.getEmail());
                 Paper.book().write(UserMail, googleSignInAccountUser.getEmail());
 
-                getUserProfile();
-//
-//                getUserProfileGlobal(new GetUserProfileDataListener() {
-//                    @Override
-//                    public void onTaskSuccessful(UserProfile userProfile) {
-//
-//                    }
-//                });
-//                firestoreDb.collection(GamersHub_ParentCollection).document(googleSignInAccountUser.getEmail()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                        DocumentSnapshot documentSnapshot = task.getResult();
-//                        if (task.isSuccessful()) {
-//
-//                            if (documentSnapshot.exists()) {
-//
-//                                // for existing users
-//
-//
-//                                UserProfile userProfile = documentSnapshot.toObject(UserProfile.class);
-//
-//
-//                                UserProfile.ProfileData profileData = userProfile.getProfileData();
-//
-//
-//                                profileData.setLastLogin(DateTimeHelper.getDatePojo().getGetCurrentDateString());
-//
-//
-//                                userProfile.setProfileData(profileData);
-//
-//
-//                                firestoreDb.collection(GamersHub_ParentCollection).document(googleSignInAccountUser.getEmail()).set(userProfile, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                    @Override
-//                                    public void onComplete(@NonNull Task<Void> task) {
-//
-//                                        Toast.makeText(LoginActivity.this, "Welcome Back", Toast.LENGTH_SHORT).show();
-//
-//                                        Paper.book().write(UserInfo, userProfile);
-//
-//
-//                                        startIntentForHome();
-//
-//                                    }
-//                                });
-//                            } else {
-//
-//
-//                                // for new users
-//
-//                                UserProfile userProfile = new UserProfile();
-//
-//                                UserProfile.ProfileData profileData = new UserProfile.ProfileData();
-//
-//                                // Find todays date
-//                                profileData.setLastLogin(DateTimeHelper.getDatePojo().getGetCurrentDateString());
-//                                profileData.setCreatedAt(DateTimeHelper.getDatePojo().getGetCurrentDateString());
-//                                profileData.setDeviceInfo(DeviceHelper.getDeviceNameAndVersion());
-//                                profileData.setEmail(googleSignInAccountUser.getEmail());
-//                                profileData.setName(googleSignInAccountUser.getDisplayName());
-//
-//                                userProfile.setProfileData(profileData);
-//                                firestoreDb.collection(GamersHub_ParentCollection).document(googleSignInAccountUser.getEmail()).set(userProfile).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                    @Override
-//                                    public void onComplete(@NonNull Task<Void> task) {
-//
-//                                        Toast.makeText(LoginActivity.this, "Welcome User", Toast.LENGTH_SHORT).show();
-//                                        Paper.book().write(UserInfo, userProfile);
-//
-//                                        AppHelper.saveGoogleSignInAccountUser(googleSignInAccountUser);
-//                                        startIntentForHome();
-//                                    }
-//                                });
-//
-//                            }
-//
-//                        }
-//
-//                    }
-//                }).addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Toast.makeText(LoginActivity.this, "failed " + e, Toast.LENGTH_SHORT).show();
-//
-//                    }
-//                });
+                callGetUserProfile();
+
             } else {
                 Toast.makeText(this, "user is null", Toast.LENGTH_SHORT).show();
             }
@@ -390,7 +315,7 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
         } else {
 
 
-            Toast.makeText(this, "Login Failed " + result.getIdpResponse() + " " + result.getResultCode(), Toast.LENGTH_SHORT).show();
+            showSimpleToast("Login Failed " + result.getIdpResponse() + " " + result.getResultCode());
 
 
         }
@@ -405,7 +330,7 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
     }
 
 
-    private void getUserProfile() {
+    private void callGetUserProfile() {
         viewModel.callGetUserProfile();
     }
 

@@ -21,7 +21,7 @@ import com.nitish.gamershub.model.firebase.TimerStatus;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.utils.AppHelper;
 
-public class BottomSheetDialog extends BottomSheetDialogFragment {
+public class RewardsBottomSheetDialog extends BottomSheetDialogFragment {
 
     BottomDialogSheetBinding binding;
 
@@ -30,13 +30,13 @@ public class BottomSheetDialog extends BottomSheetDialogFragment {
     HomeActivity parentActivity;
     TimerStatus timerStatus;
 
-    public static BottomSheetDialog newInstance(String param1) {
+    public static RewardsBottomSheetDialog newInstance(String param1) {
 
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog();
+        RewardsBottomSheetDialog rewardsBottomSheetDialog = new RewardsBottomSheetDialog();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
-        bottomSheetDialog.setArguments(args);
-        return bottomSheetDialog;
+        rewardsBottomSheetDialog.setArguments(args);
+        return rewardsBottomSheetDialog;
     }
     @Nullable
     @Override
@@ -44,7 +44,7 @@ public class BottomSheetDialog extends BottomSheetDialogFragment {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.bottom_dialog_sheet,container,false);
         parentActivity =(HomeActivity) unwrap(binding.getRoot().getContext());
-        timerStatus = AppHelper.getUserProfileGlobalData().getTimerStatus();
+        timerStatus = AppHelper.getPreferenceHelperInstance().getUserProfile().getTimerStatus();
         setViews();
         setOnClickListeners();
         return binding.getRoot();

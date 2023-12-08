@@ -1,7 +1,6 @@
 package com.nitish.gamershub.view.rewards.activity;
 
-import static com.nitish.gamershub.utils.AppHelper.getGamersHubDataGlobal;
-import static com.nitish.gamershub.utils.AppHelper.getUserProfileGlobalData;
+
 import static com.nitish.gamershub.utils.AppConstants.timerHourMinuteSecond;
 
 import androidx.databinding.DataBindingUtil;
@@ -135,10 +134,10 @@ public class RewardsActivity extends BaseActivity {
 
                     if (usage.equals(Usage_Update_Daily_Reward)) {
 
-                        mShowRewardDialog(successDailyCheckRewardBonusMessage, usage);
+                        showRewardDialog(successDailyCheckRewardBonusMessage, usage);
 
                     } else if (usage.equals(Usage_Update_watchViewReward)) {
-                        mShowRewardDialog(successUpdateWatchViewRewardMessage, usage);
+                        showRewardDialog(successUpdateWatchViewRewardMessage, usage);
 
 
                         timerForRewardVideo();
@@ -166,7 +165,7 @@ public class RewardsActivity extends BaseActivity {
 
     public void getProfileData() {
 
-        RewardsActivity.this.userProfile = getUserProfileGlobalData();
+        RewardsActivity.this.userProfile = getPreferencesMain().getUserProfile();
         updateViews(userProfile);
 
 
@@ -212,7 +211,7 @@ public class RewardsActivity extends BaseActivity {
                 dailyBonus.setLastResetDateTime(DateTimeHelper.resetDateToATime(currentDate, DateTimeHelper.time_7_am));
                 dailyBonus.setClaimedDate(currentDate);
                 userProfile.getTimerStatus().setDailyBonus(dailyBonus);
-                int getDailyCheckReward = getGamersHubDataGlobal().getGamesData().getDailyCheckReward();
+                int getDailyCheckReward = getPreferencesMain().getGamersHubData().getGamesData().getDailyCheckReward();
                 userProfile.getProfileData().setGameCoins(userProfile.getProfileData().getGameCoins() + getDailyCheckReward);
 
 
@@ -267,7 +266,7 @@ public class RewardsActivity extends BaseActivity {
     }
 
     public void setWatchVideoRewardAfterVideo() {
-        WatchViewReward watchViewReward = getUserProfileGlobalData().getTimerStatus().getWatchViewReward();
+        WatchViewReward watchViewReward = getPreferencesMain().getUserProfile().getTimerStatus().getWatchViewReward();
 
         // increment 1 hour in the current date
         Calendar cal = Calendar.getInstance();// creates calendar
@@ -281,7 +280,7 @@ public class RewardsActivity extends BaseActivity {
         binding.watchVideoTextview.setText("watched");
         int coins = userProfile.getProfileData().getGameCoins();
 
-        int getWatchVideoReward = getGamersHubDataGlobal().getGamesData().getWatchVideoReward();
+        int getWatchVideoReward = getPreferencesMain().getGamersHubData().getGamesData().getWatchVideoReward();
         int totalCoins = coins + getWatchVideoReward;
         userProfile.getProfileData().setGameCoins(totalCoins);
         userProfile.getTimerStatus().setWatchViewReward(watchViewReward);
@@ -315,7 +314,7 @@ public class RewardsActivity extends BaseActivity {
         };
     }
 
-    public void mShowRewardDialog(String message, String usage) {
+    public void showRewardDialog(String message, String usage) {
         DialogItems dialogItems = new DialogItems();
         dialogItems.setRawAnimation(R.raw.rupee_piggy_bank_award);
         dialogItems.setMessage(message);
@@ -405,7 +404,7 @@ public class RewardsActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        userProfile = getUserProfileGlobalData();
+        userProfile = getPreferencesMain().getUserProfile();
         if (userProfile.getTimerStatus() != null)
             updateViews(userProfile);
     }

@@ -37,26 +37,26 @@
     </string>
 
     // production live ads
-<!--    <string name="admob_inter">-->
-<!--                ca-app-pub-5584279718709862/1146858340-->
-<!--            </string>-->
-<!--    <string name="admob_banner">-->
-<!--                ca-app-pub-5584279718709862/7324226210-->
-<!--            </string>-->
-<!--    <string name="admob_reward">-->
-<!--                ca-app-pub-5584279718709862/4033478773-->
-<!--            </string>-->
+    <!--    <string name="admob_inter">-->
+    <!--                ca-app-pub-5584279718709862/1146858340-->
+    <!--            </string>-->
+    <!--    <string name="admob_banner">-->
+    <!--                ca-app-pub-5584279718709862/7324226210-->
+    <!--            </string>-->
+    <!--    <string name="admob_reward">-->
+    <!--                ca-app-pub-5584279718709862/4033478773-->
+    <!--            </string>-->
 
 
     // test2 ads
 
-        <string name="admob_inter">
+    <string name="admob_inter">
             ca-app-pub-3940256099942544/1033173712
         </string>
-        <string name="admob_banner">
+    <string name="admob_banner">
             ca-app-pub-3940256099942544/6300978111
         </string>
-        <string name="admob_reward">
+    <string name="admob_reward">
             	ca-app-pub-3940256099942544/5224354917
         </string>
 
@@ -84,9 +84,7 @@
     </string>
 
 
-
-
-          <!--                 Rewards bottom dialog               -->
+    <!--                 Rewards bottom dialog               -->
 
 
     <string name="watch_an_Ad_and_Earn">Watch an Ad and Earn</string>
@@ -97,25 +95,34 @@
     <string name="rewards">Rewards</string>
 
 
-
-<!--    Dialog    -->
+    <!--    Dialog    -->
 
     <string name="this_is_a_test_snackBar">This is a test SnackBar</string>
-
 
 
     <string name="request_raised_successfully">Request Raised successfully</string>
     <string name="congratulations_redeem_request_generated_for">Congratulations , Redeem request generated for ₹</string>
 
-                <!--    Home Page    -->
+    <!--    Home Page    -->
 
 
     <string name="a_new_update_of_the_app_has_been_released_please_update">"A new update of the app has been released , please update "</string>
     <string name="pending_update">Pending Update</string>
     <string name="update">Update</string>
+    <string name="search_games">Search Games</string>
 
     <string name="confirmation">Confirmation</string>
     <string name="do_you_want_to_log_out">Do you want to log out?</string>
+
+    <string name="view_all">View All</string>
+    <string name="favourites">Favourites</string>
+    <string name="no_favourites_yet">No favourites yet</string>
+    <string name="recently_played">Recently Played</string>
+    <string name="all_games">All games</string>
+    <string name="no_recently_played_game">No game played yet</string>
+    <string name="added_to_favourites">Added to favourites</string>
+    <string name="removed_from_favourites">Removed from favourites</string>
+
 
     <!--    Redeem Page    -->
     <string name="enter_a_valid_upi_id">Enter a Valid upi id</string>
@@ -127,8 +134,8 @@
     <string name="do_you_want_to_exit_the_game">Do you want to exit the game?</string>
 
 
-
     <!--    Game Details Fragment    -->
+
     <string name="your_have_reached_the_daily_reward_limit_of">"Your have reached the daily reward limit of "</string>
     <string name="games_come_back_tomorrow_to_get_more_rewards">" games ,come back tomorrow to get more rewards"</string>
     <string name="play_this_game_for">" Play this game for "</string>
@@ -137,13 +144,39 @@
     <string name="send">Send</string>
     <string name="do_you_want_to_report_this_game">"Do you want to report this game? "</string>
     <string name="issue_in_the_game">"Issue in the game : "</string>
+    <string name="play">Play</string>
+
     <string name="send_us_email">"Send us email "</string>
+    <string name="game_description_sample">As you navigate through the vastness of the universe, uncover the mysteries of ancient artifacts and face formidable challenges. Upgrade your ship, forge alliances, and become the master of the galaxy in this immersive and visually stunning space exploration game.</string>
+
     <string name="something_went_wrong">"something went wrong "</string>
 
-<!--    Splash Screen-->
+    <!--    Splash Screen-->
     <string name="internet_is_slow">Internet is slow…</string>
-    <string name="please_check_your_internet_connection_and_try_again">PLease check your internet connection and try again</string>
+    <string name="please_check_your_internet_connection_and_try_again">Please check your internet connection and try again</string>
     <string name="change_in_default_time_detected_please_set_the_time_to_default_network_time">Change in default time detected , please set the time to default network time</string>
+    <string name="okay">Okay</string>
+    <string name="congratulations">Congratulations</string>
+
+
+    <!--    Rewards Screen -->
+    <string name="total_coins">Total Coins</string>
+    <string name="transactions_history">Transactions History</string>
+    <string name="daily_bonus">Daily Bonus</string>
+    <string name="claim">Claim</string>
+    <string name="open">Open</string>
+    <string name="redeem">Redeem</string>
+
+    <!--    Dialog Screen -->
+    <string name="warning">Warning</string>
+    <string name="alert">Alert</string>
+
+    <!--    Category Screen -->
+    <string name="no_favourites_added">No favourites added</string>
+    <string name="no_games_here">No Games here</string>
+    <string name="clear_list">Clear list</string>
+    <string name="clear_list_warning">Are you sure to clear all the list of this category?</string>
+    <string name="game_details">Game Details</string>
 
 
 </resources>

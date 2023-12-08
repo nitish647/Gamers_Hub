@@ -50,7 +50,9 @@
             android:id="@+id/categoryGamesRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"/>
+            tools:itemCount="2"
+            tools:listitem="@layout/rv_items_game_list_layout"
+            android:layout_margin="@dimen/_5sdp"/>
 
         </LinearLayout>
 

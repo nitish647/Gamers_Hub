@@ -1,214 +1,235 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
 
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".Fragments.GameDetailsFragment">
-    <com.google.android.material.appbar.AppBarLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:id="@+id/appBarLayout"
-        android:background="@color/gamers_hub_theme"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        tools:context="view.gamePlay.GameDetailsFragment">
 
-
-        <androidx.appcompat.widget.Toolbar
+        <LinearLayout
+            android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:id="@+id/backButton"
-                android:src="@drawable/back_icon2"
-                style="@style/backImageview"
-            >
+            android:layout_height="wrap_content"
+            android:background="@color/gameDetails_screen_color">
 
-            </ImageView>
-            <TextView
-                android:layout_marginStart="25dp"
-                android:text="Game Details"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                android:layout_width="wrap_content"
+
+            <androidx.appcompat.widget.Toolbar
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-            </TextView>
-        </androidx.appcompat.widget.Toolbar>
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <ScrollView
-
-        android:layout_above="@+id/bottomRelative"
-        android:layout_below="@+id/appBarLayout"
-        android:fillViewport="true"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-
-        <RelativeLayout
-
-            android:id="@+id/gameImageContainerRelative"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-
-
                 <ImageView
-
-                    android:id="@+id/gameImageImageVIew"
-                    android:layout_width="150dp"
-                    android:background="@drawable/round_corners"
-                    android:layout_height="150dp"
-
-                    android:layout_marginStart="50dp"
-                    android:layout_marginTop="10dp"
-                    android:scaleType="fitXY">
+                    android:id="@+id/backButton"
+                    style="@style/backImageview"
+                    android:src="@drawable/back_icon2">
 
                 </ImageView>
 
+                <TextView
+                    style="@style/semi_bold_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/game_details"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/textHeadingXXLarge">
 
+                </TextView>
 
-            <TextView
-                android:textStyle="bold"
-                android:id="@+id/gameNameTextview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="20dp"
-                android:layout_toEndOf="@+id/gameImageImageVIew"
-                android:text="Ninja Action">
+            </androidx.appcompat.widget.Toolbar>
 
-            </TextView>
-            <TextView
+        </LinearLayout>
 
-                android:layout_below="@+id/gameNameTextview"
-
-                android:id="@+id/gameCategoryTextview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_toEndOf="@+id/gameImageImageVIew"
-                android:text="Action">
-
-            </TextView>
-
-            <Button
-
-                android:id="@+id/playButton"
-
-                android:layout_width="120dp"
-                android:layout_height="40dp"
-                android:layout_below="@+id/gameCategoryTextview"
-                android:layout_gravity="center"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_toEndOf="@+id/gameImageImageVIew"
-                android:text="Play"
-                android:textColor="@android:color/white"
-                android:textSize="15sp">
-
-            </Button>
-
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/bottomRelative"
+            android:layout_below="@+id/appBarLayout">
 
             <LinearLayout
-                android:layout_below="@+id/playButton"
-                android:orientation="horizontal"
-                android:layout_toEndOf="@+id/gameImageImageVIew"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:id="@+id/favButton"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
+                <RelativeLayout
 
-                    android:src="@drawable/fav_of2">
+                    android:id="@+id/gameImageContainerRelative"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bottom_round_corners"
+                    android:backgroundTint="@color/gameDetails_screen_color"
+                    android:elevation="@dimen/cardview_default_radius"
+                    android:orientation="vertical"
+                    android:paddingVertical="@dimen/_10sdp">
 
-                </ImageView>
-                <ImageView
 
-                    android:id="@+id/reportButton"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    <com.google.android.material.imageview.ShapeableImageView
 
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
+                        android:id="@+id/gameImageImageVIew"
+                        android:layout_width="@dimen/_120sdp"
+                        android:layout_height="@dimen/_120sdp"
+                        android:layout_marginStart="50dp"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:elevation="@dimen/cardview_default_radius"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/gamers_hub_icon23"
+                        app:shapeAppearance="@style/ShapeAppearanceOverlay.RoundCorners_10">
 
-                    android:src="@drawable/report_icon">
+                    </com.google.android.material.imageview.ShapeableImageView>
 
-                </ImageView>
+
+                    <TextView
+                        android:id="@+id/gameNameTextview"
+                        style="@style/bold_arima_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_8sdp"
+                        android:layout_marginTop="@dimen/_15sdp"
+                        android:layout_toEndOf="@+id/gameImageImageVIew"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/textHeading"
+                        tools:text="Ninja Action">
+
+                    </TextView>
+
+                    <TextView
+
+                        android:id="@+id/gameCategoryTextview"
+                        style="@style/semi_bold_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/gameNameTextview"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_toEndOf="@+id/gameImageImageVIew"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/textHeading"
+                        tools:text="Action">
+
+                    </TextView>
+
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/gameCategoryTextview"
+                        android:layout_marginStart="@dimen/_8sdp"
+
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:layout_toEndOf="@+id/gameImageImageVIew"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/favButton"
+                            android:layout_width="@dimen/_30sdp"
+                            android:layout_height="@dimen/_30sdp"
+                            android:src="@drawable/fav_of2">
+
+                        </ImageView>
+
+                        <ImageView
+                            android:id="@+id/reportButton"
+                            android:layout_width="@dimen/_30sdp"
+                            android:layout_height="@dimen/_30sdp"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:src="@drawable/report_icon">
+
+                        </ImageView>
+                    </LinearLayout>
+
+
+                    <Button
+                        android:id="@+id/playButton"
+                        style="@style/extra_bold_textview"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_below="@+id/gameImageImageVIew"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="@dimen/_20sdp"
+                        android:layout_marginTop="@dimen/_20sdp"
+                        android:layout_marginEnd="@dimen/_20sdp"
+                        android:layout_marginBottom="@dimen/_10sdp"
+                        android:background="@drawable/round_corners"
+                        android:backgroundTint="@color/gamers_hub_theme"
+                        android:elevation="@dimen/cardview_default_radius"
+                        android:text="@string/play"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/textHeadingXLarge1">
+
+                    </Button>
+
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/gameDescTextview"
+                    style="@style/regular_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:text="@string/game_description_sample"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/textNormal">
+
+                </TextView>
             </LinearLayout>
 
 
-            <TextView
-                android:textColor="@android:color/black"
-                android:id="@+id/gameDescTextview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/gameImageImageVIew"
-                android:layout_marginHorizontal="40dp"
-                android:layout_marginTop="10dp">
-
-            </TextView>
-        </RelativeLayout>
-
-    </ScrollView>
-
-    <RelativeLayout
-        android:layout_marginHorizontal="5dp"
-        android:layout_marginBottom="50dp"
-        android:id="@+id/bottomRelative"
-        android:layout_alignParentBottom="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        </ScrollView>
 
         <RelativeLayout
-
+            android:id="@+id/bottomRelative"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/round_corners"
-            android:backgroundTint="@color/materialOrange"
-            android:elevation="@dimen/cardview_default_elevation"
-            android:gravity="center"
-            android:minHeight="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginHorizontal="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_20sdp">
 
-            android:orientation="horizontal"
+            <RelativeLayout
 
-            android:padding="5dp">
-
-            <TextView
-                android:id="@+id/gamePlayTimeTextview"
-                style="@style/contentTextview"
-                android:layout_alignParentStart="true"
-
-                android:layout_marginHorizontal="10dp"
-                android:layout_marginStart="50dp"
-                android:layout_toStartOf="@+id/gameCoinImage"
-                android:padding="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:background="@drawable/round_corners"
+                android:backgroundTint="@color/gamers_hub_theme"
+                android:elevation="@dimen/cardview_default_elevation"
                 android:gravity="center"
-                android:text="Play this game for 60 seconds to get rewarded"
-                android:textColor="@android:color/white"
-                android:textSize="14sp">
+                android:minHeight="@dimen/_40sdp"
+                android:orientation="horizontal"
+                android:padding="@dimen/_5sdp">
 
-            </TextView>
+                <TextView
+                    android:id="@+id/gamePlayTimeTextview"
+                    style="@style/semi_bold_textview"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginHorizontal="@dimen/_10sdp"
+                    android:layout_marginStart="@dimen/_50sdp"
+                    android:layout_toStartOf="@+id/gameCoinImage"
+                    android:gravity="center"
+                    android:padding="@dimen/_4sdp"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/textNormal"
+                    tools:text="Play this game for 60 seconds to get rewarded">
 
-            <ImageView
-                android:id="@+id/gameCoinImage"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="10dp"
-                android:src="@drawable/indian_coin">
+                </TextView>
 
-            </ImageView>
+                <ImageView
+                    android:id="@+id/gameCoinImage"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/indian_coin">
+
+                </ImageView>
+            </RelativeLayout>
         </RelativeLayout>
     </RelativeLayout>
-</RelativeLayout>
 </layout>

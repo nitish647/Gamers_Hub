@@ -24,8 +24,8 @@ public interface FireBaseService {
     public static DocumentReference getGamersHubRedeemCoinsList() {
         return FirebaseFirestore.getInstance().collection(GamersHub_DATA).document("redeemCoinsList");
     }
-    public static DocumentReference getFirebaseUser() {
-        return FirebaseFirestore.getInstance().collection(GamersHub_ParentCollection).document(Paper.book().read(UserMail) + "");
+    public static DocumentReference getFirebaseUser(String userMail) {
+        return FirebaseFirestore.getInstance().collection(GamersHub_ParentCollection).document(userMail);
     }
     public static DocumentReference checkIfUserExists(String userMail)
     {

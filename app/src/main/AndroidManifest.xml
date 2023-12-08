@@ -50,6 +50,7 @@
             android:name=".view.gamePlay.GameDetailActivity2"
             android:exported="false"
             android:configChanges="orientation|screenSize"
+
             />
 
         <activity

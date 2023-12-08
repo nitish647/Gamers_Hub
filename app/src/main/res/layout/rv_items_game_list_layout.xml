@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_4sdp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="@dimen/_5sdp">
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/game_img"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:elevation="@dimen/cardview_default_radius"
+            android:layout_marginHorizontal="@dimen/_5sdp"
+            android:background="@drawable/round_corners"
+            android:scaleType="fitXY"
+            android:src="@drawable/gamers_hub_icon16"
+            app:shapeAppearance="@style/ShapeAppearanceOverlay.Circle"
+            >
+
+        </com.google.android.material.imageview.ShapeableImageView>
+
+
+        <TextView
+            android:id="@+id/game_name"
+            style="@style/regular_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:text="@string/gamers_hub"
+            android:textColor="@color/black"
+            android:textSize="@dimen/textExtraSmall">
+
+        </TextView>
+
+
+    </LinearLayout>
+</layout>

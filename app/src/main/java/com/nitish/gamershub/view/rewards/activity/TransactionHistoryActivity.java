@@ -58,7 +58,7 @@ public class TransactionHistoryActivity extends BaseActivity {
     }
 
     private void bindObservers() {
-        viewModel.loginUserLD.observe(this, new Observer<NetworkResponse<UserProfile>>() {
+        viewModel.getUerProfileLD.observe(this, new Observer<NetworkResponse<UserProfile>>() {
             @Override
             public void onChanged(NetworkResponse<UserProfile> response) {
                 if (response instanceof NetworkResponse.Success) {

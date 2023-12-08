@@ -1,13 +1,13 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
         <!-- Customize your theme here. -->
 
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">#000000</item>
         <item name="colorAccent">@color/colorAccent</item>
         <!--        <item name="android:textColorSecondary">@android:color/white</item>-->
-        <!--        <item name="android:statusBarColor">@color/gamers_hub_theme</item>-->
+        <item name="android:statusBarColor">@color/gamers_hub_theme</item>
     </style>
 
 
@@ -59,7 +59,7 @@
 
     </style>
 
-<!--              Layouts               -->
+    <!--              Layouts               -->
 
     <style name="rewards_relative_layout">
         <item name="android:layout_width">25dp</item>
@@ -72,6 +72,26 @@
         <item name="android:layout_height">25dp</item>
 
     </style>
+
+    <style name="ShapeAppearanceOverlay.App.CornerSize50Percent" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.RoundCorners" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20%</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.RoundCorners_10" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">10%</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.Circle" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
 
     <style name="contentTextview">
         <item name="android:layout_width">wrap_content</item>

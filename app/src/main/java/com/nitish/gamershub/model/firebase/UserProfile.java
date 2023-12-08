@@ -1,5 +1,6 @@
 package com.nitish.gamershub.model.firebase;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.nitish.gamershub.BuildConfig;
 import com.nitish.gamershub.utils.AppHelper;
 import com.nitish.gamershub.utils.timeUtils.DateTimeHelper;
@@ -8,12 +9,12 @@ import com.nitish.gamershub.utils.DeviceHelper;
 public class UserProfile {
 
 
-    public  ProfileData profileData;
-    public  TimerStatus timerStatus;
-    public  UserTransactions userTransactions;
-    public  AdViewedStats adViewedStats;
-    public  UserAccountStatus userAccountStatus;
-    public GamePlayedStatus gamePlayedStatus;
+    private   ProfileData profileData;
+    private   TimerStatus timerStatus;
+    private   UserTransactions userTransactions;
+    private   AdViewedStats adViewedStats;
+    private   UserAccountStatus userAccountStatus;
+    private GamePlayedStatus gamePlayedStatus;
 
 
 
@@ -80,16 +81,18 @@ public class UserProfile {
     public static class ProfileData {
 
 
-        public String name =AppHelper.getGoogleSignInAccountUser()!=null? AppHelper.getGoogleSignInAccountUser().getDisplayName():"";
-        public String email=AppHelper.getGoogleSignInAccountUser()!=null? AppHelper.getGoogleSignInAccountUser().getEmail():"";
-        public String versionName = BuildConfig.VERSION_NAME+"";
-        public int gameCoins = 0;
+        GoogleSignInAccount googleSignInAccount = AppHelper.getPreferenceHelperInstance().getGoogleSignInAccountUser();
 
-        public String firebaseFcmToken;
-        public String lastLogin=DateTimeHelper.getDatePojo().getGetCurrentDateString();
-        public String lastOpened=DateTimeHelper.getDatePojo().getGetCurrentDateString();
-        public String deviceInfo= DeviceHelper.getDeviceNameAndVersion();
-        public String createdAt= DateTimeHelper.getDatePojo().getGetCurrentDateString();
+        private String name =googleSignInAccount!=null? googleSignInAccount.getDisplayName():"";
+        private String email=googleSignInAccount!=null? googleSignInAccount.getEmail():"";
+        private String versionName = BuildConfig.VERSION_NAME+"";
+        private int gameCoins = 0;
+
+        private String firebaseFcmToken;
+        private String lastLogin=DateTimeHelper.getDatePojo().getGetCurrentDateString();
+        private String lastOpened=DateTimeHelper.getDatePojo().getGetCurrentDateString();
+        private String deviceInfo= DeviceHelper.getDeviceNameAndVersion();
+        private String createdAt= DateTimeHelper.getDatePojo().getGetCurrentDateString();
 
         public  ProfileData() {
 

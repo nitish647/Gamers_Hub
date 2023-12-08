@@ -1,335 +1,341 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".view.rewards.activity.RewardsActivity">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
 
     <RelativeLayout
-
-        android:id="@+id/appBarLayoutRelative"
-        android:background="@color/gamers_hub_theme"
-        android:elevation="@dimen/cardview_default_elevation"
-        android:layout_width="match_parent"
-        android:layout_height="60dp">
-
-        <ImageView
-            android:id="@+id/backButton"
-            style="@style/backImageview"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="10dp">
-
-        </ImageView>
-
-        <TextView
-
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:layout_marginStart="15dp"
-            android:layout_toEndOf="@+id/backButton"
-            android:gravity="center_vertical"
-            android:text="Rewards"
-            android:textColor="@android:color/white"
-            android:textSize="25sp"
-            android:textStyle="bold">
-
-        </TextView>
-    </RelativeLayout>
-
-    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/appBarLayoutRelative"
-        android:fillViewport="true">
+        tools:context=".view.rewards.activity.RewardsActivity">
 
-        <LinearLayout
+
+        <RelativeLayout
+
+            android:id="@+id/appBarLayoutRelative"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@color/gamers_hub_theme"
+            android:elevation="@dimen/cardview_default_elevation">
+
+            <ImageView
+                android:id="@+id/backButton"
+                style="@style/backImageview"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp">
+
+            </ImageView>
+
+            <TextView
+
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="15dp"
+                android:layout_toEndOf="@+id/backButton"
+                android:gravity="center_vertical"
+                android:text="Rewards"
+                android:textColor="@android:color/white"
+                android:textSize="25sp"
+                android:textStyle="bold">
+
+            </TextView>
+        </RelativeLayout>
+
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="10dp">
+            android:layout_below="@+id/appBarLayoutRelative"
+            android:fillViewport="true">
 
-
-            <RelativeLayout
-
-
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="140dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="10dp">
 
-                android:background="@drawable/round_corners"
+                <RelativeLayout
 
-                android:elevation="@dimen/cardview_default_elevation">
+                    android:layout_width="match_parent"
+                    android:layout_height="140dp"
+                    android:layout_marginHorizontal="@dimen/_5sdp"
+                    android:background="@drawable/round_corners"
 
-                <LinearLayout
+                    android:elevation="@dimen/cardview_default_elevation">
 
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:orientation="vertical">
+                    <LinearLayout
 
-                    <TextView
-                        android:id="@+id/coinsTextview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="5000"
-                        android:textColor="#e6b000"
-                        android:textSize="35sp"
-                        android:textStyle="bold">
+                        android:layout_marginStart="@dimen/_15sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:orientation="vertical">
 
-                    </TextView>
+                        <TextView
+                            android:id="@+id/coinsTextview"
+                            style="@style/bold_arima_textview"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="00"
+                            android:textColor="@color/yellow_material"
+                            android:textSize="@dimen/textHeadingXXXLarge1"
+                            tools:text="5000">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="25dp"
-                        android:text="Total Coins"
-                        android:textColor="@android:color/black"
-                        android:textSize="30sp">
+                        </TextView>
 
-                    </TextView>
-                </LinearLayout>
+                        <TextView
+                            style="@style/extra_bold_textview"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_20sdp"
+                            android:text="@string/total_coins"
+                            android:textColor="@android:color/black"
+                            android:textSize="@dimen/textHeadingXXXLarge">
 
-                <ImageView
-                    android:layout_width="60dp"
+                        </TextView>
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="@dimen/_50sdp"
+                        android:layout_height="@dimen/_50sdp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="@dimen/_25sdp"
+                        android:src="@drawable/indian_coin">
+
+                    </ImageView>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/redeemCoinsRecycler"
+                    android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="10dp"
-                    android:src="@drawable/indian_coin">
-
-                </ImageView>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/redeemCoinsRecycler"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/round_corners"
-                android:elevation="@dimen/cardview_default_elevation"
-                android:padding="5dp"
-
-                android:textSize="16sp">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:orientation="horizontal">
-
-                    <ImageView
-
-                        style="@style/optionIcon2"
-                        android:src="@drawable/indian_rupee_icon">
-
-                    </ImageView>
-
-                    <TextView
-
-                        style="@style/contentTextview"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginStart="20dp"
-                        android:text="Redeem Coins"
-                        android:textColor="@android:color/black"
-                        android:textSize="16sp"
-
-
-                        >
-
-                    </TextView>
-                </LinearLayout>
-
-
-                <TextView
-                    style="@style/contentTextviewBlue"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="5dp"
-                    android:text="Redeem">
-
-                </TextView>
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/transactionHistoryRelative"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/round_corners"
-                android:elevation="@dimen/cardview_default_elevation"
-                android:padding="5dp"
-
-                android:textSize="16sp">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:orientation="horizontal">
-
-                    <ImageView
-
-
-                        style="@style/optionIcon2"
-
-                        android:src="@drawable/transaction_history">
-
-                    </ImageView>
-
-                    <TextView
-
-                        style="@style/contentTextview"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginStart="20dp"
-                        android:text="Transactions History"
-                        android:textColor="@android:color/black"
-                        android:textSize="16sp"
-
-
-                        >
-
-                    </TextView>
-                </LinearLayout>
-
-
-                <TextView
-                    style="@style/contentTextviewBlue"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="5dp"
-                    android:text="Open">
-
-                </TextView>
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/dailyBonusRelative"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/round_corners"
-                android:elevation="@dimen/cardview_default_elevation"
-                android:padding="5dp"
-
-                android:textSize="16sp">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:orientation="horizontal">
-
-                    <ImageView
-
-
-                        style="@style/optionIcon2"
-                        android:src="@drawable/reward">
-
-                    </ImageView>
-
-                    <TextView
-
-                        style="@style/contentTextview"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginStart="20dp"
-                        android:text="Daily Bonus"
-                        android:textColor="@android:color/black"
-                        android:textSize="16sp"
-
-
-                        >
-
-                    </TextView>
-
-                </LinearLayout>
-
-
-                <TextView
-                    android:id="@+id/claimTextview"
-                    style="@style/contentTextviewBlue"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="5dp"
-                    android:text="Claim">
-
-                </TextView>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/watchVideoRelative"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/round_corners"
-                android:elevation="@dimen/cardview_default_elevation"
-                android:padding="5dp"
-                android:minHeight="60dp"
-
-                >
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:orientation="horizontal">
-
-                    <ImageView
-
-
-                        style="@style/optionIcon2"
-                        android:src="@drawable/video_reward">
-
-                    </ImageView>
-
-                    <TextView
-
-                        style="@style/contentTextview"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginStart="20dp"
-                        android:text="Watch an Ad and Earn"
-                        android:textColor="@android:color/black"
-                        android:textSize="16sp"
-
-
-                        >
-
-                    </TextView>
-                </LinearLayout>
-
-
-                <TextView
-                    android:id="@+id/watchVideoTextview"
-                    style="@style/contentTextviewBlue"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="5dp"
-                    android:text="Watch">
-
-                </TextView>
-
-                <TextView
-
-                    android:id="@+id/timerTextview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/watchVideoTextview"
-                    android:layout_alignParentEnd="true"
-
-                    android:layout_marginTop="25dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="center"
+                    android:layout_marginHorizontal="@dimen/_5sdp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/round_corners"
+                    android:elevation="@dimen/cardview_default_elevation"
                     android:padding="5dp"
-                    android:paddingVertical="5dp"
-                    android:text="Watch">
 
-                </TextView>
-            </RelativeLayout>
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
-</RelativeLayout>
+                    android:textSize="16sp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:orientation="horizontal">
+
+                        <ImageView
+
+                            style="@style/optionIcon2"
+                            android:src="@drawable/indian_rupee_icon">
+
+                        </ImageView>
+
+                        <TextView
+
+                            style="@style/contentTextview"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="20dp"
+                            android:text="Redeem Coins"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp"
+
+
+                            >
+
+                        </TextView>
+                    </LinearLayout>
+
+
+                    <TextView
+                        style="@style/contentTextviewBlue"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="5dp"
+                        android:text="@string/redeem">
+
+                    </TextView>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/transactionHistoryRelative"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginHorizontal="@dimen/_5sdp"
+                    android:layout_marginTop="10dp"
+
+                    android:background="@drawable/round_corners"
+                    android:elevation="@dimen/cardview_default_elevation"
+                    android:padding="5dp"
+
+                    android:textSize="16sp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:orientation="horizontal">
+
+                        <ImageView
+
+
+                            style="@style/optionIcon2"
+
+                            android:src="@drawable/transaction_history">
+
+                        </ImageView>
+
+                        <TextView
+
+                            style="@style/contentTextview"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="20dp"
+                            android:text="@string/transactions_history"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp"
+
+
+                            >
+
+                        </TextView>
+                    </LinearLayout>
+
+
+                    <TextView
+                        style="@style/contentTextviewBlue"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="5dp"
+                        android:text="@string/open">
+
+                    </TextView>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/dailyBonusRelative"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginHorizontal="@dimen/_5sdp"
+
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/round_corners"
+                    android:elevation="@dimen/cardview_default_elevation"
+                    android:padding="5dp"
+
+                    android:textSize="16sp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:orientation="horizontal">
+
+                        <ImageView
+
+
+                            style="@style/optionIcon2"
+                            android:src="@drawable/reward">
+
+                        </ImageView>
+
+                        <TextView
+
+                            style="@style/contentTextview"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="20dp"
+                            android:text="@string/daily_bonus"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp"
+
+
+                            >
+
+                        </TextView>
+
+                    </LinearLayout>
+
+
+                    <TextView
+                        android:id="@+id/claimTextview"
+                        style="@style/contentTextviewBlue"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="5dp"
+                        android:text="@string/claim">
+
+                    </TextView>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/watchVideoRelative"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_5sdp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/round_corners"
+                    android:elevation="@dimen/cardview_default_elevation"
+                    android:minHeight="60dp"
+                    android:padding="5dp"
+
+                    >
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:orientation="horizontal">
+
+                        <ImageView
+
+
+                            style="@style/optionIcon2"
+                            android:src="@drawable/video_reward">
+
+                        </ImageView>
+
+                        <TextView
+
+                            style="@style/contentTextview"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginStart="20dp"
+                            android:text="@string/watch_an_Ad_and_Earn"
+                            android:textColor="@android:color/black"
+                            android:textSize="16sp"
+
+
+                            >
+
+                        </TextView>
+                    </LinearLayout>
+
+
+                    <TextView
+                        android:id="@+id/watchVideoTextview"
+                        style="@style/contentTextviewBlue"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="5dp"
+                        android:text="@string/watch">
+
+                    </TextView>
+
+                    <TextView
+
+                        android:id="@+id/timerTextview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/watchVideoTextview"
+                        android:layout_alignParentEnd="true"
+
+                        android:layout_marginTop="25dp"
+                        android:layout_marginEnd="10dp"
+                        android:gravity="center"
+                        android:padding="5dp"
+                        android:paddingVertical="5dp"
+                        android:text="Watch">
+
+                    </TextView>
+                </RelativeLayout>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </RelativeLayout>
 
 </layout>

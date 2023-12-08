@@ -12,7 +12,6 @@
             android:padding="@dimen/_10sdp">
 
             <LinearLayout
-                android:background="@color/darkRed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
