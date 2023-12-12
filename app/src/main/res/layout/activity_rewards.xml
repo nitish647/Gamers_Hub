@@ -14,7 +14,7 @@
 
             android:id="@+id/appBarLayoutRelative"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="@dimen/_50sdp"
             android:background="@color/gamers_hub_theme"
             android:elevation="@dimen/cardview_default_elevation">
 
@@ -28,15 +28,16 @@
 
             <TextView
 
+                style="@style/bold_arima_textview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
-                android:layout_marginStart="15dp"
+                android:layout_marginStart="@dimen/_15sdp"
                 android:layout_toEndOf="@+id/backButton"
                 android:gravity="center_vertical"
-                android:text="Rewards"
+                android:text="@string/rewards"
                 android:textColor="@android:color/white"
-                android:textSize="25sp"
+                android:textSize="@dimen/textHeadingXXLarge"
                 android:textStyle="bold">
 
             </TextView>

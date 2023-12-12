@@ -1,111 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
+
     <RelativeLayout
 
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:padding="@dimen/_5sdp"
-        android:background="@color/fui_transparent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/fui_transparent"
+        android:padding="@dimen/_5sdp">
 
         <RelativeLayout
 
-            android:background="@drawable/round_corners"
-            android:layout_margin="@dimen/_10sdp"
-            android:backgroundTint="@color/lightGrey1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-
-        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/dialogIcon"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="20dp"
-                android:src="@drawable/gamers_hub_icon15">
-
-            </de.hdodenhof.circleimageview.CircleImageView>
-
-            <TextView
-
-                android:id="@+id/titleTextview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:gravity="center"
-                android:text="Confirmation"
-                android:textColor="@android:color/black"
-                android:textSize="20sp"
-                android:textStyle="bold">
-
-            </TextView>
-
-            <TextView
-
-                android:id="@+id/messageTextview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:gravity="center"
-                android:padding="5dp"
-                android:text="This is a sample message"
-                android:textColor="@android:color/black"
-                android:textSize="16sp">
-
-            </TextView>
+            android:layout_margin="@dimen/_10sdp"
+            android:background="@drawable/round_corners"
+            android:backgroundTint="@color/lightGrey1"
+            android:paddingHorizontal="@dimen/_10sdp">
 
             <LinearLayout
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingBottom="15dp">
-
-                <Button
+                android:orientation="vertical">
 
 
-                    android:padding="@dimen/_5sdp"
-                    android:id="@+id/yesButton"
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/dialogIcon"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:src="@drawable/gamers_hub_icon15">
+
+                </de.hdodenhof.circleimageview.CircleImageView>
+
+                <TextView
+
+                    android:id="@+id/titleTextview"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginHorizontal="5dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/round_corners"
-                    android:layout_margin="@dimen/_10sdp"
-                    android:backgroundTint="@color/material_dark_blue"
-                    android:elevation="@dimen/cardview_default_elevation"
-                    android:text="Yes"
-                    android:textColor="@android:color/white">
+                    android:gravity="center"
+                    android:text="Confirmation"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold">
 
-                </Button>
+                </TextView>
 
-                <Button
-                    android:id="@+id/noButton"
+                <TextView
+
+                    android:id="@+id/messageTextview"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_margin="@dimen/_10sdp"
-                    android:layout_marginHorizontal="5dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:layout_weight="1"
-                    android:padding="@dimen/_5sdp"
-                    android:background="@drawable/round_corners"
-                    android:elevation="@dimen/cardview_default_elevation"
-                    android:text="No"
-                    android:textColor="@color/material_dark_blue">
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="This is a sample message"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp">
 
-                </Button>
+                </TextView>
+
+                <LinearLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="15dp">
+
+                    <Button
+
+
+                        android:id="@+id/yesButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_margin="@dimen/_10sdp"
+                        android:layout_marginHorizontal="5dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/round_corners"
+                        android:backgroundTint="@color/material_dark_blue"
+                        android:elevation="@dimen/cardview_default_elevation"
+                        android:padding="@dimen/_5sdp"
+                        android:text="Yes"
+                        android:textColor="@android:color/white">
+
+                    </Button>
+
+                    <Button
+                        android:id="@+id/noButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_margin="@dimen/_10sdp"
+                        android:layout_marginHorizontal="5dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/round_corners"
+                        android:elevation="@dimen/cardview_default_elevation"
+                        android:padding="@dimen/_5sdp"
+                        android:text="No"
+                        android:textColor="@color/material_dark_blue">
+
+                    </Button>
+                </LinearLayout>
+
+
             </LinearLayout>
-
-
-        </LinearLayout>
         </RelativeLayout>
     </RelativeLayout>
 </layout>

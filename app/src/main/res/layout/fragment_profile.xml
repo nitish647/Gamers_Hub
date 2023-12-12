@@ -50,8 +50,9 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profileIcon"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
+                    android:layout_width="@dimen/_60sdp"
+                    android:layout_height="@dimen/_60sdp"
+                    android:elevation="@dimen/cardview_default_radius"
                     android:layout_centerHorizontal="true"
                     android:layout_gravity="center"
 
@@ -96,10 +97,11 @@
                 android:layout_marginBottom="20dp"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:backgroundTint="#fee8a9"
-                android:padding="5dp"
+                android:backgroundTint="@color/light_yellow"
+                android:padding="@dimen/_5sdp"
+                android:elevation="@dimen/cardview_default_radius"
                 android:background="@drawable/round_corners"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="@dimen/_10sdp"
                 android:layout_gravity="center_horizontal"
                 android:id="@+id/redeemCoinsRecycler"
                 android:orientation="horizontal"
@@ -113,11 +115,14 @@
 
                 </ImageView>
                 <TextView
+
                     android:id="@+id/redeemCoinsTextview"
                     android:layout_marginStart="5dp"
-                    android:text=" 5000 coins"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    tools:text=" 5000 coins"
                     android:textStyle="bold"
-                    android:textSize="16sp"
+                    style="@style/semi_bold_textview"
+                    android:textSize="@dimen/textHeading"
                     android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">

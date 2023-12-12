@@ -177,6 +177,7 @@
     <string name="clear_list">Clear list</string>
     <string name="clear_list_warning">Are you sure to clear all the list of this category?</string>
     <string name="game_details">Game Details</string>
+    <string name="privacy_policy">Privacy Policy</string>
 
 
 </resources>

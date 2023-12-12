@@ -13,11 +13,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#2091eb"
-
+        style="@style/bold_arima_textview"
         android:gravity="center"
         android:padding="10dp"
-        android:textSize="17dp"
-        android:text="Privacy Policy"
+        android:textSize="@dimen/textHeading"
+        android:text="@string/privacy_policy"
         android:textColor="@android:color/white"
         android:textStyle="bold">
 

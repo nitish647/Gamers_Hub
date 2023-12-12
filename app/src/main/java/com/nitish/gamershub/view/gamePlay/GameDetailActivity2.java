@@ -188,6 +188,13 @@ public class GameDetailActivity2 extends BaseActivity {
                 }
 
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+                }
+
                 showInterstitialAdNew(interstitialAdListener(GameDetailsFragment.class.getSimpleName()));
             }
 
@@ -203,8 +210,6 @@ public class GameDetailActivity2 extends BaseActivity {
     @Override
     public void onBackPressed() {
         if (previousFragment == gamePlayFragment) {
-
-
             exitGameDialog();
         } else
             super.onBackPressed();
@@ -220,25 +225,23 @@ public class GameDetailActivity2 extends BaseActivity {
         }
         showHideFragment(gameDetailsFragment, gameDetailsFragment.getTag());
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            //"00:30"
+
+        //"00:30"
 
 
-            int gamePlaySeconds = getPreferencesMain().getGamersHubData().getGamesData().getGamePlaySecs();
+        int gamePlaySeconds = getPreferencesMain().getGamersHubData().getGamesData().getGamePlaySecs();
 
-            if (LocalTime.parse(gamePlayFragment.timerMinuteSecond).compareTo(LocalTime.parse(DateTimeHelper.formatTimeToMMSS(gamePlaySeconds))) > 0) {
-
-
-                updateGamePlayedStatus();
-//                int amount = getGamersHubDataGlobal().getGamesData().getGamePlayReward();
+//            if (LocalTime.parse(gamePlayFragment.timerMinuteSecond).compareTo(LocalTime.parse(DateTimeHelper.formatTimeToMMSS(gamePlaySeconds))) > 0) {
 //
-//                updateUserWallet(amount);
+//                updateGamePlayedStatus();
 //
-//                Toast.makeText(this, "you are rewarded "+amount+" coins", Toast.LENGTH_SHORT).show();
-
-            }
-            gamePlayFragment = null;
+//            }
+        if (DateTimeHelper.compareLocaleSeconds(gamePlayFragment.timerMinuteSecond, gamePlaySeconds) > 0) {
+            updateGamePlayedStatus();
         }
+
+        gamePlayFragment = null;
+
 
     }
 

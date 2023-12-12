@@ -37,7 +37,7 @@ public class TransactionHistoryActivity extends BaseActivity {
 
         binding.transactionRecycler.setLayoutManager(new LinearLayoutManager(this));
         getTransactionHistory();
-        onClickListeners();
+        setOnClickListeners();
         bindObservers();
     }
 
@@ -48,16 +48,20 @@ public class TransactionHistoryActivity extends BaseActivity {
     }
 
 
-    public void onClickListeners() {
+    public void setOnClickListeners() {
+
         binding.backImageview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onBackPressed();
             }
         });
+
     }
 
     private void bindObservers() {
+
+
         viewModel.getUerProfileLD.observe(this, new Observer<NetworkResponse<UserProfile>>() {
             @Override
             public void onChanged(NetworkResponse<UserProfile> response) {
@@ -81,7 +85,7 @@ public class TransactionHistoryActivity extends BaseActivity {
                     hideLoader();
                 } else if (response instanceof NetworkResponse.Loading) {
 
-                    hideLoader();
+                    showLoader();
                 }
             }
         });
@@ -93,7 +97,7 @@ public class TransactionHistoryActivity extends BaseActivity {
     public void getTransactionHistory() {
 
 //        showProgressBar().setMessage("Loading transaction");
-        showLoader();
+//        showLoader();
 
 
         callLoginUser();
@@ -103,10 +107,7 @@ public class TransactionHistoryActivity extends BaseActivity {
 
     public void getUserTransactionList(ArrayList<UserTransactions.TransactionRequest> mTransactionRequestList) {
 
-
         this.transactionRequestList = mTransactionRequestList;
-
-
         if (transactionRequestList.size() == 0) {
             binding.noTransactionRelative.setVisibility(View.VISIBLE);
 

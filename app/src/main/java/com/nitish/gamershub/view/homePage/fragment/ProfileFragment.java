@@ -186,10 +186,6 @@ public class ProfileFragment extends BaseFragment {
     }
 
     public void showContactConfirmDialog() {
-        DialogHelperPojo dialogHelperPojo = new DialogHelperPojo();
-        dialogHelperPojo.setYesButton("Send");
-        dialogHelperPojo.setTitle("Confirmation");
-        dialogHelperPojo.setMessage("You can contact us on or email <b>" + getString(R.string.contact_mail) + "</b> in case of any doubt or issue. We will try to reach you out as soon as we can.");
 
         DialogItems dialogItems = new DialogItems();
         dialogItems.setYesTitle("Send");

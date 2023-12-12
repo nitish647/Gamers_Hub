@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.util.Log;
 
 import com.instacart.library.truetime.TrueTime;
@@ -11,6 +12,7 @@ import com.instacart.library.truetime.TrueTime;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -18,56 +20,52 @@ import java.util.TimeZone;
 
 import io.tempo.Tempo;
 
-public  class DateTimeHelper extends Application {
+public class DateTimeHelper extends Application {
 
-    public static Context context ;
-    public   static String time_7_am = "07:00:00";
-    public static String simpleDateFormatPattern ="yyyy-MM-dd HH:mm:ss";
+    public static Context context;
+    public static String time_7_am = "07:00:00";
+    public static String simpleDateFormatPattern = "yyyy-MM-dd HH:mm:ss";
 
-    public static String simpleDateFormatPattern_MMMddYYYY ="MMM d, yyyy - HH:mm a";
-    public static String simpleDateFormatPattern_yyyyMMdd ="yyyyMMdd";
-    public static String TimeStampPattern ="HHmmss";
+    public static String simpleDateFormatPattern_MMMddYYYY = "MMM d, yyyy - HH:mm a";
+    public static String simpleDateFormatPattern_yyyyMMdd = "yyyyMMdd";
+    public static String TimeStampPattern = "HHmmss";
+
     @Override
     public void onCreate() {
         super.onCreate();
-        context= getApplicationContext();
+        context = getApplicationContext();
     }
 
-    public static DatePojo getDatePojo()
-    {
+    public static DatePojo getDatePojo() {
 
         DatePojo datePojo = new DatePojo();
-
-
 
 
         try {
 
 
-            if(TrueTime.isInitialized()) {
+            if (TrueTime.isInitialized()) {
                 datePojo.setGetCurrentDateString(getSimpleDateFormat().format(TrueTime.now()));
                 datePojo.setGetCurrentDate(TrueTime.now());
-            }
-            else {
-                 AsyncTask.execute(new Runnable() {
-                     @Override
-                     public void run() {
-                         try {
+            } else {
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
 
-                             TrueTime.build().initialize();
-                         } catch (IOException e) {
-                             Log.d("pError","error in time114 "+e);
-                             e.printStackTrace();
-                         }
-                     }
-                 });
+                            TrueTime.build().initialize();
+                        } catch (IOException e) {
+                            Log.d("pError", "error in time114 " + e);
+                            e.printStackTrace();
+                        }
+                    }
+                });
 
-                if(Tempo.isInitialized()) {
+                if (Tempo.isInitialized()) {
 
                     datePojo.setGetCurrentDateString(getSimpleDateFormat().format(new Date(Tempo.nowOrNull())));
                     datePojo.setGetCurrentDate(new Date(Tempo.nowOrNull()));
-                }
-                else {
+                } else {
                     datePojo.setGetCurrentDateString(getSimpleDateFormat().format(new Date()));
                     datePojo.setGetCurrentDate(new Date());
                     AsyncTask.execute(new Runnable() {
@@ -76,7 +74,7 @@ public  class DateTimeHelper extends Application {
                             try {
                                 Tempo.initialize(((Activity) context).getApplication());
                             } catch (Exception e) {
-                                Log.d("pError","error in time112 "+e);
+                                Log.d("pError", "error in time112 " + e);
 
                                 datePojo.setGetCurrentDateString(getSimpleDateFormat().format(new Date()));
                                 datePojo.setGetCurrentDate(new Date());
@@ -87,12 +85,11 @@ public  class DateTimeHelper extends Application {
                     });
                 }
             }
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
             datePojo.setGetCurrentDateString(getSimpleDateFormat().format(new Date()));
             datePojo.setGetCurrentDate(new Date());
 
-            Log.d("pError","error in time113 "+e);
+            Log.d("pError", "error in time113 " + e);
         }
 
 
@@ -104,28 +101,37 @@ public  class DateTimeHelper extends Application {
         return datePojo;
 
 
-
     }
-    public static Integer compareDate(Date date1, Date date2)
+    public static int compareLocaleSeconds(String localeTime,int gamePlaySeconds)
     {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            return LocalTime.parse(localeTime).compareTo(LocalTime.parse(formatTimeToMMSS(gamePlaySeconds) ));
 
-        date1=   convertIntoAnotherTimeFormat(date1,simpleDateFormatPattern_yyyyMMdd);
-        date2=   convertIntoAnotherTimeFormat(date2,simpleDateFormatPattern_yyyyMMdd);
+        }
+        else {
+
+            throw new RuntimeException("Version Not Supported : version number: "+Build.VERSION.SDK_INT);
+        }
+    }
+    public static Integer compareDate(Date date1, Date date2) {
+
+        date1 = convertIntoAnotherTimeFormat(date1, simpleDateFormatPattern_yyyyMMdd);
+        date2 = convertIntoAnotherTimeFormat(date2, simpleDateFormatPattern_yyyyMMdd);
         return date1.compareTo(date2);
 
     }
-    public static Integer compareDate(String date1Sting, String date2String)
-    {
-        Date date1 = convertIntoAnotherTimeFormat(date1Sting,simpleDateFormatPattern_yyyyMMdd);
-        Date date2 = convertIntoAnotherTimeFormat(date2String,simpleDateFormatPattern_yyyyMMdd);
+
+    public static Integer compareDate(String date1Sting, String date2String) {
+        Date date1 = convertIntoAnotherTimeFormat(date1Sting, simpleDateFormatPattern_yyyyMMdd);
+        Date date2 = convertIntoAnotherTimeFormat(date2String, simpleDateFormatPattern_yyyyMMdd);
         return date1.compareTo(date2);
 
 
     }
-    public static boolean isDateCorrect(String date)
-    {
+
+    public static boolean isDateCorrect(String date) {
         // checking if the date is correct and is parsable
-        boolean isDateCorrect ;
+        boolean isDateCorrect;
         try {
             getSimpleDateFormat().parse(date);
             isDateCorrect = true;
@@ -135,58 +141,54 @@ public  class DateTimeHelper extends Application {
         }
         return isDateCorrect;
     }
-    public static  SimpleDateFormat getSimpleDateFormat()
-    {
+
+    public static SimpleDateFormat getSimpleDateFormat() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(simpleDateFormatPattern);
         simpleDateFormat.setTimeZone(TimeZone.getDefault());
         return simpleDateFormat;
 
     }
 
-    public static String formatTimeToMMSS(int minutes , int seconds)
-    {
+    public static String formatTimeToMMSS(int minutes, int seconds) {
 
-        return String.format(Locale.getDefault(),"%02d:%02d",  minutes,seconds);
-    }
-    public static String formatTimeToMMSS( int seconds)
-    {
-
-        return String.format(Locale.getDefault(),"%02d:%02d",  (seconds / 60) % 60, seconds % 60);
+        return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
     }
 
-    public float convertSecondsToMinute(int seconds)
-    {
+    public static String formatTimeToMMSS(int seconds) {
 
-        return  (float) seconds/60;
-    }
-    public static String  convertDateToString(Date date)
-    {
-
-        return  DateTimeHelper.getDatePojo().getSimpleDateFormat().format(date);
+        return String.format(Locale.getDefault(), "%02d:%02d", (seconds / 60) % 60, seconds % 60);
     }
 
-    public static Date convertStringIntoDate(String dateString)
-    {
-        Date date1 =new Date();
+    public float convertSecondsToMinute(int seconds) {
+
+        return (float) seconds / 60;
+    }
+
+    public static String convertDateToString(Date date) {
+
+        return DateTimeHelper.getDatePojo().getSimpleDateFormat().format(date);
+    }
+
+    public static Date convertStringIntoDate(String dateString) {
+        Date date1 = new Date();
 
         try {
             date1 = new SimpleDateFormat(simpleDateFormatPattern).parse(dateString);
         } catch (ParseException e) {
 
-            Log.d("gError","error in parsing time 11234: "+e);
+            Log.d("gError", "error in parsing time 11234: " + e);
             e.printStackTrace();
         }
         return date1;
     }
 
-    public static Date convertIntoAnotherTimeFormat(String dateString,String toDateFormatPattern)
-    {
+    public static Date convertIntoAnotherTimeFormat(String dateString, String toDateFormatPattern) {
         Date date1 = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(toDateFormatPattern);
         try {
-            date1 =   simpleDateFormat.parse(simpleDateFormat.format(getSimpleDateFormat().parse(dateString)));
+            date1 = simpleDateFormat.parse(simpleDateFormat.format(getSimpleDateFormat().parse(dateString)));
         } catch (Exception e) {
-            Log.d("gError","error in parsing time 11234: "+e);
+            Log.d("gError", "error in parsing time 11234: " + e);
             e.printStackTrace();
         }
 
@@ -194,47 +196,42 @@ public  class DateTimeHelper extends Application {
         return date1;
     }
 
-    public static Date convertIntoAnotherTimeFormat(Date date,String dateFormatPattern)
-    {
-        Date date1 =new Date();
-      SimpleDateFormat simpleDateFormat =  new SimpleDateFormat(dateFormatPattern);
+    public static Date convertIntoAnotherTimeFormat(Date date, String dateFormatPattern) {
+        Date date1 = new Date();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormatPattern);
 
         try {
-            date1 =  simpleDateFormat.parse(simpleDateFormat.format(date));
+            date1 = simpleDateFormat.parse(simpleDateFormat.format(date));
         } catch (ParseException e) {
 
-            Log.d("gError","error in parsing time 11234: "+e);
+            Log.d("gError", "error in parsing time 11234: " + e);
             e.printStackTrace();
         }
         return date1;
     }
+
     // with this function will reset the time of a date to a given time
-    public static String resetDateToATime(Object dateObj, String time)
-    {
-        Log.d("pDate","reset date object "+dateObj);
+    public static String resetDateToATime(Object dateObj, String time) {
+        Log.d("pDate", "reset date object " + dateObj);
 
-        Date date=null;
+        Date date = null;
 
-        if(dateObj instanceof String)
-        {
-            date = convertStringIntoDate(dateObj+"");
-        }
-        else
-        if(dateObj instanceof Date)
-        {
+        if (dateObj instanceof String) {
+            date = convertStringIntoDate(dateObj + "");
+        } else if (dateObj instanceof Date) {
             date = (Date) dateObj;
         }
         Calendar cal = Calendar.getInstance();
 
         cal.setTime(date);
         int mYear = cal.get(Calendar.YEAR); // current year
-        int mMonth = cal.get(Calendar.MONTH)+1; //fixing the month starts from 0 issue
+        int mMonth = cal.get(Calendar.MONTH) + 1; //fixing the month starts from 0 issue
         int mDay = cal.get(Calendar.DAY_OF_MONTH); // current day
 
 
-        String timeToReset =""+ mYear+"-"+mMonth +"-"+mDay;
+        String timeToReset = "" + mYear + "-" + mMonth + "-" + mDay;
 
-        timeToReset = timeToReset+" "+time;
+        timeToReset = timeToReset + " " + time;
 
         return timeToReset;
 
@@ -257,16 +254,11 @@ public  class DateTimeHelper extends Application {
         return finalDate;
     }
 
-    public static class DatePojo{
-        String getCurrentDateString;
-        Date getCurrentDate;
-
-        SimpleDateFormat simpleDateFormat;
-        String resetDateToATime = time_7_am;
-
-
-
-
+    public static class DatePojo {
+        private String getCurrentDateString;
+        private Date getCurrentDate;
+        private SimpleDateFormat simpleDateFormat;
+        private String resetDateToATime = time_7_am;
 
 
         public DatePojo() {
