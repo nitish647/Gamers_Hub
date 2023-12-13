@@ -12,16 +12,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.nitish.gamershub.model.firebase.GamersHubData;
-import com.nitish.gamershub.model.firebase.UserProfile;
+import com.nitish.gamershub.model.firebase.userProfile.UserProfile;
 import com.nitish.gamershub.model.gamersHubMaterData.GamesItems;
 import com.nitish.gamershub.model.gamersHubMaterData.AllGamesResponseItem;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 public class PreferenceHelper {
 
@@ -52,6 +49,7 @@ public class PreferenceHelper {
     }
 
     public void destroyAllPreferences() {
+
         editor.clear().apply();
     }
 
@@ -136,8 +134,7 @@ public class PreferenceHelper {
     public GamersHubData getGamersHubData() {
         String gamersHubDataString = getString(AppConstants.PrefGamersHubData, "");
 
-        GamersHubData gamersHubData = new Gson().fromJson(gamersHubDataString, GamersHubData.class);
-        return gamersHubData;
+        return new Gson().fromJson(gamersHubDataString, GamersHubData.class);
 
     }
 

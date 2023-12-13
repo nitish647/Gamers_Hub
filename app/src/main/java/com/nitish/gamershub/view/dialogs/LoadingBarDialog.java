@@ -109,9 +109,9 @@ public class LoadingBarDialog {
             }
 
             // Start the animation after the dialog is shown
-            if (binding.lottieAnimationLoading != null) {
+
                 binding.lottieAnimationLoading.playAnimation();
-            }
+
         }
 
     }

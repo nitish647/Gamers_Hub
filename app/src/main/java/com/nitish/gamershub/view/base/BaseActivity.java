@@ -22,7 +22,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.rewarded.RewardedAd;
@@ -35,6 +34,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.nitish.gamershub.model.firebase.timerStatus.DailyBonus;
 import com.nitish.gamershub.model.local.DialogItems;
 import com.nitish.gamershub.model.local.DialogLoadingItems;
 import com.nitish.gamershub.model.local.SnackBarItems;
@@ -52,9 +52,9 @@ import com.nitish.gamershub.view.homePage.activity.HomeActivity;
 import com.nitish.gamershub.view.dialogs.RewardsBottomSheetDialog;
 import com.nitish.gamershub.utils.adsUtils.AdmobInterstitialAdListener;
 import com.nitish.gamershub.databinding.ShowWebviewDialogBinding;
-import com.nitish.gamershub.model.firebase.AdViewedStats;
-import com.nitish.gamershub.model.firebase.TimerStatus;
-import com.nitish.gamershub.model.firebase.UserProfile;
+import com.nitish.gamershub.model.firebase.adviewStatus.AdViewedStats;
+import com.nitish.gamershub.model.firebase.timerStatus.TimerStatus;
+import com.nitish.gamershub.model.firebase.userProfile.UserProfile;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.utils.AppHelper;
 import com.nitish.gamershub.utils.Connectivity;
@@ -62,9 +62,6 @@ import com.nitish.gamershub.utils.AppConstants;
 import com.nitish.gamershub.utils.ProgressBarHelper;
 import com.nitish.gamershub.utils.firebaseUtils.UserOperations;
 import com.nitish.gamershub.view.loginSingup.activity.LoginActivity;
-import com.nitish.gamershub.view.loginSingup.activity.SplashScreen;
-
-import java.util.List;
 
 import io.paperdb.Paper;
 
@@ -81,7 +78,6 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     static boolean isHomeActivityDestroyed = false;
     RewardsBottomSheetDialog rewardsBottomSheetDialog;
-    public static ProgressDialog progressDialog;
     GoogleSignInOptions gso;
     PreferenceHelper preferenceHelper;
     static boolean bottomSheetDialogShown = false;
@@ -96,10 +92,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 //        setStatusBarColor();
 
 
-
-
         Paper.init(this);
-        progressDialog = ProgressBarHelper.setProgressBarDialog(BaseActivity.this);
         preferenceHelper = new PreferenceHelper(this);
 
         initialiseAds();
@@ -113,7 +106,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     //----------------- Intent------------///
 
-    public void startActivityIntent(Activity fromActivity, Class toActivity) {
+    public <K>void startActivityIntent(Activity fromActivity, Class<K> toActivity) {
         Intent intent = new Intent(this, toActivity);
         intent.putExtra(From, fromActivity.getClass().getSimpleName());
         startActivity(intent);
@@ -158,7 +151,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             dialogItems.setTitle("");
             dialogItems.setSingleButton(true);
             dialogItems.setDialogIcon(R.drawable.no_internet_icon);
-            dialogItems.setMessage("Connection problem, please check your internet connection and try again");
+            dialogItems.setMessage(getString(R.string.connection_problem_please_check_your_internet_connection_and_try_again));
             showConfirmationDialog2(dialogItems, null);
 
 
@@ -249,8 +242,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     //------------------------- dialog boxes -------------------------------//
 
 
-    public TimerStatus.DailyBonus getDailyBonusFromProfile(UserProfile userProfile) {
-        TimerStatus.DailyBonus dailyBonus;
+    public DailyBonus getDailyBonusFromProfile(UserProfile userProfile) {
+      DailyBonus dailyBonus;
         if (userProfile != null) {
             TimerStatus timerStatus = userProfile.getTimerStatus();
 

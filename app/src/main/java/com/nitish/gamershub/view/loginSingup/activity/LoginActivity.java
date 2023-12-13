@@ -2,7 +2,6 @@ package com.nitish.gamershub.view.loginSingup.activity;
 
 import static com.nitish.gamershub.utils.AppConstants.UserInfo;
 import static com.nitish.gamershub.utils.AppConstants.UserMail;
-import static com.nitish.gamershub.utils.AppHelper.setStatusBarColor;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -11,6 +10,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -28,12 +28,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.instacart.library.truetime.TrueTime;
+import com.nitish.gamershub.model.firebase.profileData.ProfileData;
 import com.nitish.gamershub.utils.NetworkResponse;
 import com.nitish.gamershub.utils.ToastHelper;
 import com.nitish.gamershub.utils.firebaseUtils.FireBaseService;
 import com.nitish.gamershub.view.homePage.activity.HomeActivity;
 import com.nitish.gamershub.databinding.ActivityLoginPageBinding;
-import com.nitish.gamershub.model.firebase.UserProfile;
+import com.nitish.gamershub.model.firebase.userProfile.UserProfile;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.utils.timeUtils.DateTimeHelper;
 import com.nitish.gamershub.utils.DeviceHelper;
@@ -88,7 +89,7 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
 
 
                     UserProfile userProfile = ((NetworkResponse.Success<UserProfile>) response).getData();
-                    UserProfile.ProfileData profileData = userProfile.getProfileData();
+                    ProfileData profileData = userProfile.getProfileData();
                     profileData.setLastLogin(DateTimeHelper.getDatePojo().getGetCurrentDateString());
                     userProfile.setProfileData(profileData);
                     callUpdateUser(userProfile);
@@ -99,20 +100,10 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
                     String message = ((NetworkResponse.Error<UserProfile>) response).getMessage();
                     if (message.equals(FireBaseService.FirebaseMessage.DOCUMENT_DOES_NOT_EXISTS.toString())) {
                         // for new users
-
-
                         ToastHelper.customToast(LoginActivity.this, "registering");
 
                         UserProfile userProfile = new UserProfile();
-
-                        UserProfile.ProfileData profileData = new UserProfile.ProfileData();
-
-                        // Find todays date
-                        profileData.setLastLogin(DateTimeHelper.getDatePojo().getGetCurrentDateString());
-                        profileData.setCreatedAt(DateTimeHelper.getDatePojo().getGetCurrentDateString());
-                        profileData.setDeviceInfo(DeviceHelper.getDeviceNameAndVersion());
-                        profileData.setEmail(googleSignInAccount.getEmail());
-                        profileData.setName(googleSignInAccount.getDisplayName());
+                        ProfileData profileData = new ProfileData(googleSignInAccount);
                         userProfile.setProfileData(profileData);
                         callRegisterUser(userProfile);
 
@@ -135,9 +126,7 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
                     Toast.makeText(LoginActivity.this, "Welcome User", Toast.LENGTH_SHORT).show();
                     getPreferencesMain().saveUserLoggedIn();
 
-                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    startActivity(intent);
-                    finish();
+                    startIntent(LoginActivity.class,true);
 
                     hideLoader();
                 } else if (response instanceof NetworkResponse.Error) {
@@ -165,9 +154,9 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
                     if (googleSignInAccount != null && googleSignInAccount.getEmail() != null)
                         Paper.book().write(UserMail, googleSignInAccount.getEmail());
 
-                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    startActivity(intent);
-                    finish();
+
+                    startIntent(HomeActivity.class,true);
+
 
                 } else if (response instanceof NetworkResponse.Error) {
 
@@ -182,6 +171,16 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
         });
 
 
+    }
+
+    private <T> void  startIntent(Class<T> destinationActivity,boolean doFinish)
+    {
+        Intent intent = new Intent(LoginActivity.this,destinationActivity);
+        startActivity(intent);
+        if(doFinish)
+        {
+            finish();
+        }
     }
 
     public void setonClickListeners() {
@@ -291,12 +290,7 @@ public class LoginActivity extends BaseActivity implements ActivityResultCallbac
         }
     }
 
-    public void startIntentForHome() {
 
-
-        startActivityIntent(LoginActivity.this, HomeActivity.class);
-        finish();
-    }
 
     private void signIn() {
         Intent signInIntent = getGoogleSignInClient().getSignInIntent();

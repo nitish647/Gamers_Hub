@@ -17,7 +17,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.nitish.gamershub.databinding.BottomDialogSheetBinding;
 import com.nitish.gamershub.view.homePage.activity.HomeActivity;
 import com.nitish.gamershub.view.rewards.activity.RewardsActivity;
-import com.nitish.gamershub.model.firebase.TimerStatus;
+import com.nitish.gamershub.model.firebase.timerStatus.TimerStatus;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.utils.AppHelper;
 

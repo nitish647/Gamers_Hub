@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.nitish.gamershub.databinding.UserTransactionListLayoutBinding;
 import com.nitish.gamershub.model.local.DialogItems;
 import com.nitish.gamershub.view.rewards.activity.TransactionHistoryActivity;
-import com.nitish.gamershub.model.firebase.UserTransactions;
+import com.nitish.gamershub.model.firebase.userTransaction.UserTransactions;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.utils.AppHelper;
 import com.nitish.gamershub.utils.timeUtils.DateTimeHelper;

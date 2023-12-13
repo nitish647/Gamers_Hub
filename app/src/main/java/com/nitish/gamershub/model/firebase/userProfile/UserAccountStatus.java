@@ -1,13 +1,14 @@
-package com.nitish.gamershub.model.firebase;
+package com.nitish.gamershub.model.firebase.userProfile;
 
 public class UserAccountStatus {
 
 
-    int accountStatus =0;
-    String suspendedDate="";
-    String suspensionMessage;
-    String suspensionInfo ="";
-    int anyTransactionsPending =0;
+  private int accountStatus =0;
+  private String suspendedDate="";
+  private String suspensionMessage;
+  private String suspensionInfo ="";
+  private int anyTransactionsPending =0;
+
 
     public int getAnyTransactionsPending() {
         return anyTransactionsPending;

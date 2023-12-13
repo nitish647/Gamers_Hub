@@ -25,7 +25,7 @@
                     app:lottie_autoPlay="true"
                     app:lottie_loop="true"
                     app:lottie_rawRes="@raw/lottile_gaming_loading_anim"
-                    app:lottie_speed="2">
+                    app:lottie_speed="3">
 
                 </com.airbnb.lottie.LottieAnimationView>
 

@@ -1,4 +1,4 @@
-package com.nitish.gamershub.model.firebase;
+package com.nitish.gamershub.model.firebase.userTransaction;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ public class UserTransactions implements Serializable {
 
 
 
-    ArrayList<TransactionRequest> transactionRequestArrayList;
+   private ArrayList<TransactionRequest> transactionRequestArrayList;
 
     public UserTransactions() {
 

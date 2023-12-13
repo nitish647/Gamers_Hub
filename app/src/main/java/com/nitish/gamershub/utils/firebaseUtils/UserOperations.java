@@ -4,7 +4,8 @@ import static com.nitish.gamershub.utils.AppConstants.GamersHub_ParentCollection
 
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.nitish.gamershub.model.firebase.UserProfile;
+import com.nitish.gamershub.model.firebase.profileData.ProfileData;
+import com.nitish.gamershub.model.firebase.userProfile.UserProfile;
 
 public class UserOperations {
 
@@ -19,10 +20,10 @@ public class UserOperations {
     }
 
 
-    public static UserProfile.ProfileData addCoinsToWallet(UserProfile userProfile, int amount) {
+    public static ProfileData addCoinsToWallet(UserProfile userProfile, int amount) {
 
 
-        UserProfile.ProfileData profileData = userProfile.getProfileData();
+        ProfileData profileData = userProfile.getProfileData();
 
         int totalCoins = profileData.getGameCoins() + amount;
 

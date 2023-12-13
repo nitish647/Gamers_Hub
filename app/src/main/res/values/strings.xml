@@ -91,6 +91,7 @@
     <string name="daily_Bonus">Daily Bonus</string>
     <string name="daily">Daily</string>
     <string name="watch">Watch</string>
+    <string name="watched">Watched</string>
 
     <string name="rewards">Rewards</string>
 
@@ -164,12 +165,16 @@
     <string name="transactions_history">Transactions History</string>
     <string name="daily_bonus">Daily Bonus</string>
     <string name="claim">Claim</string>
+    <string name="claimed">Claimed</string>
+
     <string name="open">Open</string>
     <string name="redeem">Redeem</string>
 
     <!--    Dialog Screen -->
     <string name="warning">Warning</string>
     <string name="alert">Alert</string>
+    <string name="connection_problem_please_check_your_internet_connection_and_try_again">Connection problem, please check your internet connection and try again</string>
+
 
     <!--    Category Screen -->
     <string name="no_favourites_added">No favourites added</string>
@@ -178,6 +183,10 @@
     <string name="clear_list_warning">Are you sure to clear all the list of this category?</string>
     <string name="game_details">Game Details</string>
     <string name="privacy_policy">Privacy Policy</string>
+    <string name="welcome">Welcome</string>
+
+
+
 
 
 </resources>

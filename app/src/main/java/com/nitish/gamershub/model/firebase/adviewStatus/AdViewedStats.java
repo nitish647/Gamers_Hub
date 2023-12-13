@@ -1,4 +1,4 @@
-package com.nitish.gamershub.model.firebase;
+package com.nitish.gamershub.model.firebase.adviewStatus;
 
 
 

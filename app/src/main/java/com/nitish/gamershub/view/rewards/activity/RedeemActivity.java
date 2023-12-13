@@ -24,13 +24,14 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.nitish.gamershub.databinding.ActivityReddeemBinding;
 import com.nitish.gamershub.databinding.PaytmUpiNumberLayoutBinding;
+import com.nitish.gamershub.model.firebase.profileData.ProfileData;
 import com.nitish.gamershub.utils.NetworkResponse;
 import com.nitish.gamershub.view.loginSingup.viewmodelRepo.LoginSignUpViewModel;
 import com.nitish.gamershub.view.rewards.adapter.RedeemRecyclerviewAdapter;
 import com.nitish.gamershub.model.firebase.RedeemCoins;
-import com.nitish.gamershub.model.firebase.UserTransactions;
+import com.nitish.gamershub.model.firebase.userTransaction.UserTransactions;
 import com.nitish.gamershub.model.firebase.RedeemListItem;
-import com.nitish.gamershub.model.firebase.UserProfile;
+import com.nitish.gamershub.model.firebase.userProfile.UserProfile;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.utils.AppHelper;
 import com.nitish.gamershub.utils.CommonMethods;
@@ -406,7 +407,7 @@ public class RedeemActivity extends BaseActivity {
     public UserProfile updateUserWalletForTransaction(int amount, UserTransactions userTransactions) {
 
         UserProfile userProfile = getPreferencesMain().getUserProfile();
-        UserProfile.ProfileData profileData = userProfile.getProfileData();
+        ProfileData profileData = userProfile.getProfileData();
         int gameCoins = profileData.getGameCoins();
         int totalCoins = gameCoins + amount;
         profileData.setGameCoins(totalCoins);

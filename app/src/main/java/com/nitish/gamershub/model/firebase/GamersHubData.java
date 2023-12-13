@@ -2,9 +2,8 @@ package com.nitish.gamershub.model.firebase;
 
 public class GamersHubData {
 
-    public GamesData gamesData;
-    public Messages message;
-
+    private GamesData gamesData;
+    private Messages message;
 
 
     public GamersHubData() {
@@ -27,18 +26,17 @@ public class GamersHubData {
     }
 
 
-
-
     public static class GamesData {
-        int dailyCheckReward=0;
-        int gamePlaySecs =0;
-        int gamePlayReward=0;
-        int watchVideoReward =0;
-        int dailyGamePlayLimit =0;
+        int dailyCheckReward = 0;
+        int gamePlaySecs = 0;
+        int gamePlayReward = 0;
+        int watchVideoReward = 0;
+        int dailyGamePlayLimit = 0;
         boolean forceUpdate = false;
         String latestVersionName;
 
         String firebaseFcmToken;
+
         public GamesData() {
         }
 

@@ -7,18 +7,19 @@
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFC300"
+    android:background="@color/splash_screen"
     android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Welcome"
+        android:text="@string/welcome"
         android:layout_gravity="center"
-        android:layout_marginTop="150dp"
-        android:textColor="#FFFFFF"
-        android:textSize="50sp"
+        android:layout_marginTop="@dimen/_80sdp"
+        style="@style/extra_bold_textview"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textHeadingXXXLarge3"
         android:textStyle="bold">
 
     </TextView>
@@ -29,17 +30,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp">
+        tools:text="Internet is not working"
+        android:textColor="@color/white"
+        style="@style/semi_bold_textview"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:textSize="@dimen/textHeadingXXLarge">
 
     </TextView>
 
     <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/splash3"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:id="@+id/lottieAnimationLoading"
+        android:layout_width="@dimen/_180sdp"
+        android:layout_height="@dimen/_180sdp"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="@dimen/_15sdp"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/splash_anim4"

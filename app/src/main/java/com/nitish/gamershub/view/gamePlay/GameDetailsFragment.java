@@ -4,7 +4,6 @@ package com.nitish.gamershub.view.gamePlay;
 import static com.nitish.gamershub.utils.AppConstants.IntentData;
 
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,8 +16,8 @@ import androidx.databinding.DataBindingUtil;
 import com.nitish.gamershub.databinding.FragmentGameDetailsBinding;
 import com.nitish.gamershub.model.local.DialogItems;
 import com.nitish.gamershub.R;
-import com.nitish.gamershub.model.firebase.GamePlayedStatus;
-import com.nitish.gamershub.model.firebase.UserProfile;
+import com.nitish.gamershub.model.firebase.gamePlayed.GamePlayedStatus;
+import com.nitish.gamershub.model.firebase.userProfile.UserProfile;
 import com.nitish.gamershub.model.gamersHubMaterData.GamesItems;
 import com.nitish.gamershub.model.local.GlideData;
 import com.nitish.gamershub.model.local.SnackBarItems;
@@ -187,13 +186,13 @@ public class GameDetailsFragment extends BaseFragment {
     }
 
     public void setGamePlayInstructions() {
-        if (gamePlayedStatus.getGamePlayedToday() >= getPreferencesMain().getGamersHubData().gamesData.getDailyGamePlayLimit()) {
+        if (gamePlayedStatus.getGamePlayedToday() >= getPreferencesMain().getGamersHubData().getGamesData().getDailyGamePlayLimit()) {
             String text = getString(R.string.your_have_reached_the_daily_reward_limit_of) +
                     getPreferencesMain().getGamersHubData().getGamesData().getDailyGamePlayLimit() + getString(R.string.games_come_back_tomorrow_to_get_more_rewards);
             binding.gamePlayTimeTextview.setText(text);
 
         } else {
-            int min = getPreferencesMain().getGamersHubData().gamesData.getGamePlaySecs() / 60;
+            int min = getPreferencesMain().getGamersHubData().getGamesData().getGamePlaySecs() / 60;
             String text = getString(R.string.play_this_game_for) +
                     min + getString(R.string.minutes_to_get_rewarded) +
                     getString(R.string.game_played_reward_left) + gamePlayedStatus.getGamePlayedToday() + "/" + getPreferencesMain().getGamersHubData().getGamesData().getDailyGamePlayLimit() + ")";

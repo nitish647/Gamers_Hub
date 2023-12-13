@@ -14,12 +14,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.nitish.gamershub.model.firebase.profileData.ProfileData;
+import com.nitish.gamershub.model.firebase.timerStatus.DailyBonus;
 import com.nitish.gamershub.model.local.DialogItems;
 import com.nitish.gamershub.utils.NetworkResponse;
 import com.nitish.gamershub.utils.adsUtils.AdmobInterstitialAdListener;
-import com.nitish.gamershub.model.firebase.TimerStatus;
-import com.nitish.gamershub.model.firebase.UserProfile;
-import com.nitish.gamershub.model.firebase.WatchViewReward;
+import com.nitish.gamershub.model.firebase.timerStatus.TimerStatus;
+import com.nitish.gamershub.model.firebase.userProfile.UserProfile;
+import com.nitish.gamershub.model.firebase.timerStatus.WatchViewReward;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.utils.timeUtils.DateTimeHelper;
 import com.nitish.gamershub.databinding.ActivityRewardsBinding;
@@ -48,6 +50,8 @@ public class RewardsActivity extends BaseActivity {
     String successDailyCheckRewardBonusMessage;
     String successUpdateWatchViewRewardMessage;
 
+    Handler handler
+            = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,24 +177,24 @@ public class RewardsActivity extends BaseActivity {
 
 
     public void updateViews(UserProfile userProfile) {
-        UserProfile.ProfileData profileData = userProfile.getProfileData();
+        ProfileData profileData = userProfile.getProfileData();
         TimerStatus timerStatus = userProfile.getTimerStatus();
-        TimerStatus.DailyBonus dailyBonus = timerStatus.getDailyBonus();
+        DailyBonus dailyBonus = timerStatus.getDailyBonus();
 
 
         binding.coinsTextview.setText(profileData.getGameCoins() + "");
 
         if (dailyBonus.getClaimed()) {
-            binding.claimTextview.setText("claimed");
+            binding.claimTextview.setText(getString(R.string.claimed));
 
         } else {
-            binding.claimTextview.setText("claim");
+            binding.claimTextview.setText(getString(R.string.claim));
             //    binding.timerTextview.setVisibility(View.GONE);
 
         }
         WatchViewReward watchViewReward = timerStatus.getWatchViewReward();
         if (!watchViewReward.isClaimed()) {
-            binding.watchVideoTextview.setText("Watch");
+            binding.watchVideoTextview.setText(getString(R.string.watch));
             binding.timerTextview.setVisibility(View.GONE);
         } else {
             timerForRewardVideo();
@@ -201,7 +205,7 @@ public class RewardsActivity extends BaseActivity {
 
     public void setDailyBonus() {
         if (userProfile != null) {
-            TimerStatus.DailyBonus dailyBonus = getDailyBonusFromProfile(userProfile);
+            DailyBonus dailyBonus = getDailyBonusFromProfile(userProfile);
             if (dailyBonus.getClaimed()) {
                 Toast.makeText(RewardsActivity.this, "You have already claimed the daily bonus , please come tomorrow", Toast.LENGTH_LONG).show();
 
@@ -277,7 +281,7 @@ public class RewardsActivity extends BaseActivity {
         watchViewReward.setClaimedTime(DateTimeHelper.convertDateToString(cal.getTime()));
         watchViewReward.setClaimed(true);
 
-        binding.watchVideoTextview.setText("watched");
+        binding.watchVideoTextview.setText(getString(R.string.watched));
         int coins = userProfile.getProfileData().getGameCoins();
 
         int getWatchVideoReward = getPreferencesMain().getGamersHubData().getGamesData().getWatchVideoReward();
@@ -326,8 +330,9 @@ public class RewardsActivity extends BaseActivity {
     public void timerForRewardVideo() {
 
         // Creates a new Handler
-        final Handler handler
-                = new Handler();
+
+        handler.removeCallbacksAndMessages(null);
+
         handler.post(new Runnable() {
                          @Override
                          public void run() {
@@ -371,7 +376,7 @@ public class RewardsActivity extends BaseActivity {
                                  if (hours >= 1) {
                                      if (!userProfile.getTimerStatus().getWatchViewReward().isClaimed())
                                          return;
-                                     binding.watchVideoTextview.setText("Watch");
+                                     binding.watchVideoTextview.setText(getString(R.string.watch));
                                      binding.timerTextview.setVisibility(View.GONE);
                                      userProfile.getTimerStatus().getWatchViewReward().setClaimed(false);
 
@@ -380,7 +385,7 @@ public class RewardsActivity extends BaseActivity {
                                      return;
 
                                  } else {
-                                     binding.watchVideoTextview.setText("Watched");
+                                     binding.watchVideoTextview.setText(getString(R.string.watched));
                                      binding.timerTextview.setVisibility(View.VISIBLE);
                                      binding.timerTextview.setText(claimText);
 
@@ -409,6 +414,14 @@ public class RewardsActivity extends BaseActivity {
             updateViews(userProfile);
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (handler != null)
+            handler.removeCallbacksAndMessages(null);
+    }
 
     private void callUpdateUser(UserProfile userProfile, String usage) {
 

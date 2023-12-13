@@ -27,8 +27,8 @@ import androidx.palette.graphics.Palette;
 
 import com.google.android.datatransport.runtime.BuildConfig;
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.reflect.TypeToken;
-import com.nitish.gamershub.model.firebase.AdViewedStats;
-import com.nitish.gamershub.model.firebase.UserProfile;
+import com.nitish.gamershub.model.firebase.adviewStatus.AdViewedStats;
+import com.nitish.gamershub.model.firebase.userProfile.UserProfile;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.model.gamersHubMaterData.GamesItems;
 import com.nitish.gamershub.utils.timeUtils.DateTimeHelper;
@@ -122,6 +122,11 @@ public class AppHelper {
 
 
     }
+    public static Boolean checkIfHorizontal(GamesItems gamesItems)
+    {
+        return gamesItems.getOrientation().toLowerCase().contains("hori");
+
+    }
 
 
     ////-----------------Dialog Helper --------------------//
@@ -145,18 +150,7 @@ public class AppHelper {
 
     }
 
-    public static void saveCalenderData() {
-        Date date = new Date();
-        Calendar cal = Calendar.getInstance();
 
-        cal.setTime(date);
-        cal.set(Calendar.SECOND, 0);
-
-        Log.d("savedTime", DateTimeHelper.convertDateToString(cal.getTime()));
-        Paper.book().write("TimeHelperCalender", cal);
-
-
-    }
 
     public static GradientDrawable setSingleColorRoundBackground(String color1, Float radius) {
         int[] colors = {Color.parseColor(color1)};

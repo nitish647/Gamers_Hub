@@ -122,11 +122,6 @@ public class HomeFragment extends BaseFragment {
 
                     hideLoader();
 
-                    AllGamesResponseItem response1 = ((NetworkResponse.Success<AllGamesResponseItem>) response).getData();
-
-//                    mainGamesItemArrayList = new ArrayList<>(response1.getMainGamesList());
-//                    newAndPopularGamesAdapter.updateGamesList(mainGamesItemArrayList);
-
                 } else if (response instanceof NetworkResponse.Error) {
 
                     String message = ((NetworkResponse.Error<AllGamesResponseItem>) response).getMessage();
@@ -148,7 +143,8 @@ public class HomeFragment extends BaseFragment {
 //                    hideLoader();
 
                     ResponseBannerImages responseBannerImages = ((NetworkResponse.Success<ResponseBannerImages>) response).getData();
-                    setImageSlider(responseBannerImages.getBannerImages());
+
+//                    setImageSlider(responseBannerImages.getBannerImages());
 
 
                 } else if (response instanceof NetworkResponse.Error) {

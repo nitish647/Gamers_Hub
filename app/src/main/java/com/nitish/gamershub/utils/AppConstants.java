@@ -71,11 +71,17 @@ public class AppConstants {
 
     public static String upiImageLink = "https://i.ibb.co/JB3b9fc/upi-icon-1.png";
     public static String paytmImageLink = "https://i.ibb.co/C9VzmMx/paytm-icom.png";
+
+
+
     public static String PrefGamersHubMasterData = "PrefGamersHubMasterData";
+
+    public static enum StringEnum {
+
+    }
     public static String PrefGamersHubMain = "PrefGamersHubMain";
     public static String PrefUserProfile = "PrefUserProfile";
     public static String PrefUserMail = "PrefUserMail";
-
     public static String PrefGamersHubData = "PrefGamersHubData";
     public static String PrefFavList = "PrefFavList";
     public static String PrefRecentlyPlayedList = "PrefRecentlyPlayedList";

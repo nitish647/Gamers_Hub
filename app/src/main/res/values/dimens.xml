@@ -19,6 +19,7 @@
     <dimen name="textHeadingXXXLarge">@dimen/_22sdp</dimen>
     <dimen name="textHeadingXXXLarge1">@dimen/_25sdp</dimen>
     <dimen name="textHeadingXXXLarge2">@dimen/_30sdp</dimen>
+    <dimen name="textHeadingXXXLarge3">@dimen/_40sdp</dimen>
 
     <dimen name="parentPaddingStart">@dimen/_20sdp</dimen>
     <dimen name="parentPaddingTop">@dimen/_30sdp</dimen>

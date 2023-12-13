@@ -1,7 +1,6 @@
 package com.nitish.gamershub.view.gamePlay;
 
 
-import static com.nitish.gamershub.utils.AppHelper.setStatusBarColor;
 import static com.nitish.gamershub.utils.AppConstants.IntentData;
 
 import androidx.databinding.DataBindingUtil;
@@ -12,14 +11,12 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.pm.ActivityInfo;
-import android.os.Build;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.nitish.gamershub.databinding.ActivityGameDetailBinding;
 import com.nitish.gamershub.model.gamersHubMaterData.GamesItems;
-import com.nitish.gamershub.model.firebase.GamePlayedStatus;
-import com.nitish.gamershub.model.firebase.UserProfile;
+import com.nitish.gamershub.model.firebase.gamePlayed.GamePlayedStatus;
+import com.nitish.gamershub.model.firebase.userProfile.UserProfile;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.model.local.DialogItems;
 import com.nitish.gamershub.utils.AppHelper;
@@ -30,8 +27,6 @@ import com.nitish.gamershub.utils.adsUtils.AdmobInterstitialAdListener;
 import com.nitish.gamershub.view.base.BaseActivity;
 import com.nitish.gamershub.view.dialogs.DialogListener;
 import com.nitish.gamershub.view.loginSingup.viewmodelRepo.LoginSignUpViewModel;
-
-import java.time.LocalTime;
 
 import io.paperdb.Paper;
 
@@ -131,7 +126,9 @@ public class GameDetailActivity2 extends BaseActivity {
         }
         showHideFragment(gamePlayFragment, gamePlayFragment.getTag());
 
-        if (gamesItems.getOrientation().toLowerCase().contains("hori")) {
+
+        if (AppHelper.checkIfHorizontal(gamesItems)) {
+
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
         }
 
@@ -258,7 +255,7 @@ public class GameDetailActivity2 extends BaseActivity {
             gamePlayedToday = gamePlayedToday + 1;
             gamePlayedStatus.setGamePlayedToday(gamePlayedToday);
 
-            if (gamePlayedStatus.getGamePlayedToday() > getPreferencesMain().getGamersHubData().gamesData.getDailyGamePlayLimit()) {
+            if (gamePlayedStatus.getGamePlayedToday() > getPreferencesMain().getGamersHubData().getGamesData().getDailyGamePlayLimit()) {
                 // do something when the game play limit is over
 
                 updateGamePlayedStatus(gamePlayedStatus);

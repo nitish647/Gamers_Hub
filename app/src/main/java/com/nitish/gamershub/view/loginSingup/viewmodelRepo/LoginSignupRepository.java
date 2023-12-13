@@ -12,7 +12,7 @@ import com.nitish.gamershub.apiUtils.ApiService;
 import com.nitish.gamershub.model.firebase.FirebaseDataPassingHelper;
 import com.nitish.gamershub.model.firebase.GamersHubData;
 import com.nitish.gamershub.model.firebase.RedeemCoins;
-import com.nitish.gamershub.model.firebase.UserProfile;
+import com.nitish.gamershub.model.firebase.userProfile.UserProfile;
 import com.nitish.gamershub.model.bannerImagesData.ResponseBannerImages;
 import com.nitish.gamershub.model.gamersHubMaterData.AllGamesResponseItem;
 import com.nitish.gamershub.model.local.NetWorkTimerResult;

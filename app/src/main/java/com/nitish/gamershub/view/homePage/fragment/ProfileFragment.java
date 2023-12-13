@@ -1,8 +1,6 @@
 package com.nitish.gamershub.view.homePage.fragment;
 
 
-import static com.nitish.gamershub.utils.AppConstants.UserInfo;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,6 +15,7 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.auth.FirebaseAuth;
+import com.nitish.gamershub.model.firebase.profileData.ProfileData;
 import com.nitish.gamershub.model.local.DialogItems;
 import com.nitish.gamershub.model.local.GlideData;
 import com.nitish.gamershub.utils.GlideHelper;
@@ -25,8 +24,7 @@ import com.nitish.gamershub.view.dialogs.DialogListener;
 import com.nitish.gamershub.view.homePage.activity.HomeActivity;
 import com.nitish.gamershub.view.rewards.activity.FaqActivity;
 import com.nitish.gamershub.view.rewards.activity.RewardsActivity;
-import com.nitish.gamershub.model.local.DialogHelperPojo;
-import com.nitish.gamershub.model.firebase.UserProfile;
+import com.nitish.gamershub.model.firebase.userProfile.UserProfile;
 import com.nitish.gamershub.R;
 import com.nitish.gamershub.utils.AppHelper;
 import com.nitish.gamershub.databinding.FragmentProfileBinding;
@@ -196,7 +194,7 @@ public class ProfileFragment extends BaseFragment {
         parentHomeActivity.showConfirmationDialog2(dialogItems, new DialogListener() {
             @Override
             public void onYesClick() {
-                UserProfile.ProfileData profileData = getPreferencesMain().getUserProfile().getProfileData();
+                ProfileData profileData = getPreferencesMain().getUserProfile().getProfileData();
 
                 String body = "Hi I am  " + profileData.getName() + ", my user id is " + profileData.getEmail() + " \n I have a doubt regarding ...";
 

@@ -7,19 +7,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -32,12 +25,10 @@ import com.nitish.gamershub.utils.NotificationHelper;
 import com.nitish.gamershub.view.base.BaseActivity;
 import com.nitish.gamershub.view.loginSingup.viewmodelRepo.LoginSignUpViewModel;
 
-import org.json.JSONArray;
-
 import io.paperdb.Paper;
 
 public class SplashScreen extends BaseActivity {
-    ActivitySplashScreenBinding activitySplashScreenBinding;
+    ActivitySplashScreenBinding binding;
 
     SharedPreferences sh;
     SharedPreferences.Editor editor;
@@ -56,7 +47,7 @@ public class SplashScreen extends BaseActivity {
         super.onCreate(savedInstanceState);
         viewModel = ViewModelProviders.of(this).get(LoginSignUpViewModel.class);
         setActivityStatusBarColor( R.color.splash_screen);
-        activitySplashScreenBinding = DataBindingUtil.setContentView(this, R.layout.activity_splash__screen);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_splash__screen);
         requestQueue = Volley.newRequestQueue(this);
         mAuth = FirebaseAuth.getInstance();
         context = SplashScreen.this;
@@ -121,13 +112,14 @@ public class SplashScreen extends BaseActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                activitySplashScreenBinding.warning.setText(R.string.internet_is_slow);
+                binding.warning.setText(R.string.internet_is_slow);
             }
         }, 7000);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                activitySplashScreenBinding.warning.setText(R.string.please_check_your_internet_connection_and_try_again);
+                binding.lottieAnimationLoading.pauseAnimation();
+                binding.warning.setText(R.string.please_check_your_internet_connection_and_try_again);
             }
         }, 11000);
     }
