@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
 
@@ -7,6 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/fui_transparent"
+        tools:context=".view.dialogs.ConfirmationDialog"
         android:padding="@dimen/_5sdp">
 
         <RelativeLayout
@@ -26,10 +27,10 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/dialogIcon"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="@dimen/_50sdp"
+                    android:layout_height="@dimen/_50sdp"
                     android:layout_gravity="center"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="@dimen/_15sdp"
                     android:src="@drawable/gamers_hub_icon15">
 
                 </de.hdodenhof.circleimageview.CircleImageView>
@@ -39,12 +40,12 @@
                     android:id="@+id/titleTextview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="@dimen/_5sdp"
                     android:gravity="center"
                     android:text="Confirmation"
                     android:textColor="@android:color/black"
-                    android:textSize="20sp"
-                    android:textStyle="bold">
+                    android:textSize="@dimen/textHeadingXLarge"
+                    style="@style/bold_arima_textview">
 
                 </TextView>
 
@@ -53,12 +54,12 @@
                     android:id="@+id/messageTextview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
                     android:gravity="center"
-                    android:padding="5dp"
-                    android:text="This is a sample message"
+                    android:padding="@dimen/_4sdp"
+                    style="@style/regular_textview"
+                    tools:text="This is a sample message"
                     android:textColor="@android:color/black"
-                    android:textSize="16sp">
+                    android:textSize="@dimen/textHeading">
 
                 </TextView>
 
@@ -74,10 +75,10 @@
 
                         android:id="@+id/yesButton"
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
+                        android:layout_height="@dimen/_40sdp"
                         android:layout_margin="@dimen/_10sdp"
                         android:layout_marginHorizontal="5dp"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="@dimen/_10sdp"
                         android:layout_weight="1"
                         android:background="@drawable/round_corners"
                         android:backgroundTint="@color/material_dark_blue"
@@ -91,7 +92,7 @@
                     <Button
                         android:id="@+id/noButton"
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
+                        android:layout_height="@dimen/_40sdp"
                         android:layout_margin="@dimen/_10sdp"
                         android:layout_marginHorizontal="5dp"
                         android:layout_marginTop="10dp"

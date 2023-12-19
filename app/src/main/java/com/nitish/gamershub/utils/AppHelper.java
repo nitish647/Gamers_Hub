@@ -9,6 +9,7 @@ import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -16,6 +17,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.util.Log;
@@ -75,7 +77,9 @@ public class AppHelper {
 
     }
 
+
     public static AdViewedStats getAdViewedStatsGlobal() {
+
         return (AdViewedStats) Paper.book().read(AdViewedStatsGlobal);
 
     }
@@ -207,7 +211,22 @@ public class AppHelper {
 
 
     }
-  public static  interface OnPalleteColorGet
+    public static void openNotificationSettings(Context context) {
+        Intent intent = new Intent();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            intent.setAction(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+            intent.putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, context.getPackageName());
+        } else {
+            intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+            intent.putExtra("app_package", context.getPackageName());
+            intent.putExtra("app_uid", context.getApplicationInfo().uid);
+        }
+
+        context.startActivity(intent);
+    }
+
+    public static  interface OnPalleteColorGet
     {
          void getDominantColor(int color);
 

@@ -12,6 +12,7 @@ import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.nitish.gamershub.R;
+import com.nitish.gamershub.view.base.BaseActivity;
 
 public class InterstitialUtilsAdmobAdUtil extends AdmobAdsUtilsBase {
 
@@ -50,8 +51,10 @@ public class InterstitialUtilsAdmobAdUtil extends AdmobAdsUtilsBase {
                         @Override
                         public void onAdShowedFullScreenContent() {
                             // Called when fullscreen content is shown.
+
                             Log.d("gInterstitialAd", "The ad was shown.");
-//                            incrementInterstitialAdAdCount();
+                            ((BaseActivity) activity).incrementRewardAdCount();
+
                             interstitialAdListener.onAdShown();
                         }
                     });

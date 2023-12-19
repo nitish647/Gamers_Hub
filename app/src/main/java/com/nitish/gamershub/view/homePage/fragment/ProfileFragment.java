@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,10 +19,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.nitish.gamershub.model.firebase.profileData.ProfileData;
 import com.nitish.gamershub.model.local.DialogItems;
 import com.nitish.gamershub.model.local.GlideData;
+import com.nitish.gamershub.model.local.ProfileListItems;
 import com.nitish.gamershub.utils.GlideHelper;
 import com.nitish.gamershub.view.base.BaseFragment;
 import com.nitish.gamershub.view.dialogs.DialogListener;
 import com.nitish.gamershub.view.homePage.activity.HomeActivity;
+import com.nitish.gamershub.view.homePage.adapter.ProfileListAdapter;
 import com.nitish.gamershub.view.rewards.activity.FaqActivity;
 import com.nitish.gamershub.view.rewards.activity.RewardsActivity;
 import com.nitish.gamershub.model.firebase.userProfile.UserProfile;
@@ -29,6 +32,8 @@ import com.nitish.gamershub.R;
 import com.nitish.gamershub.utils.AppHelper;
 import com.nitish.gamershub.databinding.FragmentProfileBinding;
 
+
+import java.util.ArrayList;
 
 import io.paperdb.Paper;
 
@@ -45,6 +50,7 @@ public class ProfileFragment extends BaseFragment {
     FirebaseAuth firebaseAuth;
     UserProfile userProfile;
     HomeActivity parentHomeActivity;
+    ProfileListAdapter profileListAdapter;
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -88,7 +94,7 @@ public class ProfileFragment extends BaseFragment {
         userProfile = getPreferencesMain().getUserProfile();
 
         setViews();
-        setonClickListeners();
+        setOnClickListeners();
 
         return binding.getRoot();
     }
@@ -123,62 +129,69 @@ public class ProfileFragment extends BaseFragment {
 
             }
 
+        setProfileListRecyclerview();
 
         binding.redeemCoinsTextview.setText(getPreferencesMain().getUserProfile().getProfileData().getGameCoins() + " coins");
 
     }
 
-    public void setonClickListeners() {
 
+    private ArrayList<ProfileListItems> getProfileItemList() {
+        ArrayList<ProfileListItems> profileListItemsArrayList = new ArrayList<>();
+        profileListItemsArrayList.add(new ProfileListItems(getString(R.string.rewards), R.drawable.ic_money_bag));
+        profileListItemsArrayList.add(new ProfileListItems(getString(R.string.privacy_policy), R.drawable.ic_privacy_policy));
+        profileListItemsArrayList.add(new ProfileListItems(getString(R.string.about_us), R.drawable.about_us_2));
+        profileListItemsArrayList.add(new ProfileListItems(getString(R.string.rate_us), R.drawable.ic_google_play));
+        profileListItemsArrayList.add(new ProfileListItems(getString(R.string.faq), R.drawable.ic_faq));
+        profileListItemsArrayList.add(new ProfileListItems(getString(R.string.contact_us), R.drawable.ic_contact_us));
+        profileListItemsArrayList.add(new ProfileListItems(getString(R.string.log_out), R.drawable.ic_logout));
 
-        binding.rewardsRelative.setOnClickListener(new View.OnClickListener() {
+        return profileListItemsArrayList;
+    }
+
+    private void setProfileListRecyclerview() {
+        profileListAdapter = new ProfileListAdapter(requireContext(), getProfileItemList(), new ProfileListAdapter.ProfileListListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(parentHomeActivity, RewardsActivity.class);
-                startActivity(intent);
+            public void onItemClick(ProfileListItems profileListItems) {
+                handleLisItemClick(profileListItems);
             }
         });
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.recyclerView.setAdapter(profileListAdapter);
+    }
+
+    private void handleLisItemClick(ProfileListItems profileListItems) {
+
+        Intent intent;
+        if (profileListItems.getTitle().equals(getString(R.string.rewards))) {
+            intent = new Intent(parentHomeActivity, RewardsActivity.class);
+            startActivity(intent);
+        }
+        if (profileListItems.getTitle().equals(getString(R.string.privacy_policy))) {
+            parentHomeActivity.showPrivacyPolicyDialog();
+        }
+        if (profileListItems.getTitle().equals(getString(R.string.about_us))) {
+            parentHomeActivity.showAboutUsDialog();
+        }
+        if (profileListItems.getTitle().equals(getString(R.string.rate_us))) {
+            parentHomeActivity.openPlayStore();
+        }
+        if (profileListItems.getTitle().equals(getString(R.string.faq))) {
+            intent = new Intent(parentHomeActivity, FaqActivity.class);
+            startActivity(intent);
+        }
+        if (profileListItems.getTitle().equals(getString(R.string.contact_us))) {
+            showContactConfirmDialog();
+        }
+        if (profileListItems.getTitle().equals(getString(R.string.log_out))) {
+            parentHomeActivity.showLogOutDialog();
+
+        }
 
 
-        binding.logOutRelative.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                parentHomeActivity.showLogOutDialog();
-            }
-        });
+    }
 
-
-        binding.rateUsRelative.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-
-                parentHomeActivity.openPlayStore();
-
-            }
-        });
-        binding.faqRelative.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(parentHomeActivity, FaqActivity.class);
-                startActivity(intent);
-            }
-        });
-        binding.privacyPolicy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                parentHomeActivity.showWebViewDialog();
-            }
-        });
-
-        binding.contactUsRelative.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                showContactConfirmDialog();
-
-            }
-        });
+    public void setOnClickListeners() {
 
 
     }

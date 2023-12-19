@@ -8,6 +8,7 @@ import android.os.Build;
 import android.util.Log;
 
 import com.instacart.library.truetime.TrueTime;
+import com.nitish.gamershub.view.base.AppClass;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -22,7 +23,7 @@ import io.tempo.Tempo;
 
 public class DateTimeHelper extends Application {
 
-    public static Context context;
+    public static Application context;
     public static String time_7_am = "07:00:00";
     public static String simpleDateFormatPattern = "yyyy-MM-dd HH:mm:ss";
 
@@ -33,7 +34,7 @@ public class DateTimeHelper extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        context = getApplicationContext();
+        context = AppClass.getInstance();
     }
 
     public static DatePojo getDatePojo() {
@@ -72,7 +73,7 @@ public class DateTimeHelper extends Application {
                         @Override
                         public void run() {
                             try {
-                                Tempo.initialize(((Activity) context).getApplication());
+                                Tempo.initialize(context);
                             } catch (Exception e) {
                                 Log.d("pError", "error in time112 " + e);
 

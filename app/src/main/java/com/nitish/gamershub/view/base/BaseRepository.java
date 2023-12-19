@@ -27,6 +27,7 @@ import com.nitish.gamershub.model.firebase.FirebaseDataPassingHelper;
 import com.nitish.gamershub.model.firebase.GamersHubData;
 import com.nitish.gamershub.model.firebase.userProfile.UserProfile;
 import com.nitish.gamershub.model.gamersHubMaterData.AllGamesResponseItem;
+import com.nitish.gamershub.utils.MyExecutorService;
 import com.nitish.gamershub.utils.NetworkResponse;
 import com.nitish.gamershub.utils.PreferenceHelper;
 import com.nitish.gamershub.utils.firebaseUtils.FireBaseService;
@@ -50,99 +51,77 @@ abstract public class BaseRepository {
 
         mutableLiveData.postValue(new NetworkResponse.Loading<>());
 
-
-        callGetFireBaseDocumentReference(documentReference, new FireBaseDocReferenceListener() {
-
-
+        new MyExecutorService().runExecutorService(new MyExecutorService.ExecutorServiceListener() {
             @Override
-            public void documentExists(Boolean documentExists, DocumentSnapshot documentSnapshot) {
-                if (documentExists) {
+            public void backgroundTask() {
 
-                    JSONObject jsonObject = new JSONObject(documentSnapshot.getData());
+                callGetFireBaseDocumentReference(documentReference, new FireBaseDocReferenceListener() {
 
+                    @Override
+                    public void documentExists(Boolean documentExists, DocumentSnapshot documentSnapshot) {
+                        if (documentExists) {
 
-                    Object obj = new Gson().fromJson(jsonObject.toString(), responseType);
-
-                    saveData(obj);
-
-
-                    mutableLiveData.postValue(new NetworkResponse.Success<>((K) obj));
+                            JSONObject jsonObject = new JSONObject(documentSnapshot.getData());
 
 
-                } else {
+                            Object obj = new Gson().fromJson(jsonObject.toString(), responseType);
+
+                            saveData(obj);
 
 
-                    mutableLiveData.postValue(new NetworkResponse.Error<>(FireBaseService.FirebaseMessage.DOCUMENT_DOES_NOT_EXISTS.toString()));
+                            mutableLiveData.postValue(new NetworkResponse.Success<>((K) obj));
 
 
-                }
+                        } else {
+
+
+                            mutableLiveData.postValue(new NetworkResponse.Error<>(FireBaseService.FirebaseMessage.DOCUMENT_DOES_NOT_EXISTS.toString()));
+
+
+                        }
+                    }
+
+                    @Override
+                    public void OnFailure(Exception e) {
+                        mutableLiveData.postValue(new NetworkResponse.Error<>(e.toString()));
+
+                    }
+
+                    @Override
+                    public void onTaskNotSuccessFull() {
+
+                    }
+                });
+
+
             }
 
             @Override
-            public void OnFailure(Exception e) {
-                mutableLiveData.postValue(new NetworkResponse.Error<>(e.toString()));
-
-            }
-
-            @Override
-            public void onTaskNotSuccessFull() {
+            public void uiThreadTask() {
 
             }
         });
 
 
-//        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//
-//                if (task.isSuccessful()) {
-//                    DocumentSnapshot documentSnapshot = task.getResult();
-//
-//
-//                    if (documentSnapshot.exists()) {
-//
-//
-//                        try {
-//                            JSONObject jsonObject = new JSONObject(documentSnapshot.getData());
-//
-//
-//                            Object obj = new Gson().fromJson(jsonObject.toString(), responseType);
-//
-//
-//                            mutableLiveData.postValue(new NetworkResponse.Success<>((K) obj));
-//
-//                        } catch (Exception e) {
-//
-//                            Log.d("pError", "Error in converting data into objects  : " + e);
-//
-//                            mutableLiveData.postValue(new NetworkResponse.Error<>(e.toString()));
-//
-//                        }
-//
-//
-//                    } else {
-//
-//
-//                        mutableLiveData.postValue(new NetworkResponse.Error<>("document does not exist"));
-//
-//
-//                    }
-//                }
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//
-//                mutableLiveData.postValue(new NetworkResponse.Error<>(e.toString()));
-//
-//
-//            }
-//        });
 
     }
 
     public <K> void setFirebaseDocumentReference(FirebaseDataPassingHelper<K> firebaseDocumentReference) {
 
+     new MyExecutorService().runExecutorService(new MyExecutorService.ExecutorServiceListener() {
+         @Override
+         public void backgroundTask() {
+             setFirebaseDocumentReferenceInternal(firebaseDocumentReference);
+         }
+
+         @Override
+         public void uiThreadTask() {
+
+         }
+     });
+    }
+    private <K> void setFirebaseDocumentReferenceInternal(FirebaseDataPassingHelper<K> firebaseDocumentReference)
+    {
         SetOptions setOptions = firebaseDocumentReference.getSetOptions();
         DocumentReference documentReference = firebaseDocumentReference.getDocumentReference();
         Object dataObject = firebaseDocumentReference.getDataObject();
@@ -198,6 +177,7 @@ abstract public class BaseRepository {
     }
 
     private void callGetFireBaseDocumentReference(DocumentReference documentReference, FireBaseDocReferenceListener fireBaseDocReferenceListener) {
+
 
         documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override

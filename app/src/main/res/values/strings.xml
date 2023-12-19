@@ -114,6 +114,7 @@
 
     <string name="confirmation">Confirmation</string>
     <string name="do_you_want_to_log_out">Do you want to log out?</string>
+    <string name="log_out">LogOut</string>
 
     <string name="view_all">View All</string>
     <string name="favourites">Favourites</string>
@@ -134,6 +135,7 @@
     <!--    Game Details Activity    -->
     <string name="do_you_want_to_exit_the_game">Do you want to exit the game?</string>
 
+    <string name="notification_permission_message">Please allow the notifications from the settings screen to get the latest updates. Click Yes to go to the settings.</string>
 
     <!--    Game Details Fragment    -->
 
@@ -184,9 +186,10 @@
     <string name="game_details">Game Details</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="welcome">Welcome</string>
-
-
-
+    <string name="rate_us">Rate Us</string>
+    <string name="faq">Faq</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="about_us">About us</string>
 
 
 </resources>

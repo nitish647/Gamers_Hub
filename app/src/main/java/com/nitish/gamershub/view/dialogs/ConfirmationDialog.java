@@ -59,8 +59,16 @@ public class ConfirmationDialog extends DialogFragment {
     private void initViews() {
 
 
-        binding.titleTextview.setText(dialogItems.getTitle());
-        binding.messageTextview.setText(Html.fromHtml(dialogItems.getMessage()));
+        if (dialogItems.getTitle() != null) {
+            binding.titleTextview.setText(dialogItems.getTitle());
+        } else {
+            binding.titleTextview.setVisibility(View.GONE);
+        }
+
+        if (dialogItems.getMessage() != null) {
+            binding.messageTextview.setText(Html.fromHtml(dialogItems.getMessage()));
+        }
+
         binding.yesButton.setText(dialogItems.getYesTitle());
         binding.noButton.setText(dialogItems.getNoTitle());
         binding.dialogIcon.setImageResource(dialogItems.getDialogIcon());

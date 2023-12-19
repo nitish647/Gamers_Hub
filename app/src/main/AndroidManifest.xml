@@ -10,6 +10,10 @@
         android:icon="@mipmap/vector_icon2"
         android:label="@string/app_name"
         android:largeHeap="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:usesCleartextTraffic="true"
+        android:supportsRtl="true"
         android:roundIcon="@mipmap/vector_icon2"
         android:theme="@style/AppTheme">
         <activity

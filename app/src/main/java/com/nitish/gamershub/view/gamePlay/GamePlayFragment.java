@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +48,7 @@ public class GamePlayFragment extends BaseFragment {
 
     String loddnormallist = "0"; //if you want to use a filterlist without "::::" at the beginning. please change to 1
 
+    public static String tag= GamePlayFragment.class.getSimpleName();
 
     public int seconds = 0;
 
@@ -90,7 +92,7 @@ public class GamePlayFragment extends BaseFragment {
         binding.webView.setWebViewClient(new Browser_home());
 
         binding.webView.loadUrl(gamesItems.getGameUrl());
-
+        Log.d(tag,"game url: "+gamesItems.getGameUrl());
 
         binding.webView.getSettings().setJavaScriptEnabled(true);
 

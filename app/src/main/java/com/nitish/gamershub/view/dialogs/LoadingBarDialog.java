@@ -63,9 +63,10 @@ public class LoadingBarDialog {
 
 
         if (instance == null)
-            synchronized (LoadingBarDialog.class) {
-                instance = new LoadingBarDialog(context, dialogItems);
-            }
+//            synchronized (LoadingBarDialog.class) {
+//                instance = new LoadingBarDialog(context, dialogItems);
+//            }
+            instance = new LoadingBarDialog(context, dialogItems);
 
 
         return instance;
@@ -110,7 +111,7 @@ public class LoadingBarDialog {
 
             // Start the animation after the dialog is shown
 
-                binding.lottieAnimationLoading.playAnimation();
+            binding.lottieAnimationLoading.playAnimation();
 
         }
 

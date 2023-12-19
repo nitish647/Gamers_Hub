@@ -32,6 +32,7 @@ import com.nitish.gamershub.model.firebase.timerStatus.TimerStatusHelper;
 import com.nitish.gamershub.model.firebase.userProfile.UserProfileHelper;
 import com.nitish.gamershub.model.firebase.userTransaction.UserTransactionHelper;
 import com.nitish.gamershub.model.local.DialogItems;
+import com.nitish.gamershub.utils.MyExecutorService;
 import com.nitish.gamershub.utils.NetworkResponse;
 import com.nitish.gamershub.utils.adsUtils.AdmobInterstitialAdListener;
 import com.nitish.gamershub.model.gamersHubMaterData.GamesItems;
@@ -45,6 +46,8 @@ import com.nitish.gamershub.R;
 import com.nitish.gamershub.utils.AppHelper;
 import com.nitish.gamershub.utils.AppConstants;
 import com.nitish.gamershub.utils.NotificationHelper;
+import com.nitish.gamershub.utils.permissionUtils.PermissionConstants;
+import com.nitish.gamershub.utils.permissionUtils.PermissionHelper;
 import com.nitish.gamershub.view.base.BaseActivity;
 import com.nitish.gamershub.view.dialogs.DialogListener;
 import com.nitish.gamershub.view.gamePlay.GameDetailActivity2;
@@ -56,12 +59,12 @@ import com.nitish.gamershub.view.loginSingup.viewmodelRepo.LoginSignUpViewModel;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class HomeActivity extends BaseActivity {
 
     // the whole game data
-   ActivityHomeBinding binding;
-
+    ActivityHomeBinding binding;
 
 
     HomeFragment homeFragment;
@@ -99,7 +102,7 @@ public class HomeActivity extends BaseActivity {
         NotificationHelper.generateFcmToken();
 
         setViews();
-
+        handleNotificationPermission();
         callGetUserProfile();
 
         bindObservers();
@@ -133,7 +136,7 @@ public class HomeActivity extends BaseActivity {
                 if (response instanceof NetworkResponse.Success) {
 //                    hideLoader();
 
-                    updateUserProfileData(getPreferencesMain().getUserProfile());
+                    updateData(getPreferencesMain().getUserProfile());
 
                 } else if (response instanceof NetworkResponse.Error) {
 
@@ -152,12 +155,12 @@ public class HomeActivity extends BaseActivity {
                 if (response instanceof NetworkResponse.Success) {
 
 
-                    hideLoader();
+//                    hideLoader();
 
                     String usage = ((NetworkResponse.Success<Object>) response).getMessage();
                     if (usage.equals(USAGE_UPDATE_USER_PROFILE)) {
                         callGetGamersHubData();
-                        checkAndShowRewardBottomDialog();
+
                     }
 
                 } else if (response instanceof NetworkResponse.Error) {
@@ -228,12 +231,64 @@ public class HomeActivity extends BaseActivity {
 
 
     private void checkAndShowRewardBottomDialog() {
+
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         TimerStatus timerStatus = getPreferencesMain().getUserProfile().getTimerStatus();
         if (!timerStatus.getDailyBonus().getClaimed() || !timerStatus.getWatchViewReward().isClaimed()) {
             showBonusBottomSheet();
         }
     }
 
+    private void handleNotificationPermission() {
+        ArrayList<String> notificationPermList = PermissionConstants.getNotificationPermission();
+
+        PermissionHelper.checkAndRequestPermissions(HomeActivity.this, notificationPermList, PermissionConstants.NotificationREQ_CODE);
+
+    }
+
+    private PermissionHelper.PermissionResultCallback notificationPermissionResultCallback = new PermissionHelper.PermissionResultCallback() {
+        @Override
+        public void onPermissionGranted(int request_code) {
+
+        }
+
+
+        @Override
+        public void onPermissionDenied(int requestCode, List<String> deniedPermissions, boolean neverAskAgain) {
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    showNotificationSettingsDialog();
+//                }
+//            });
+
+            showNotificationSettingsDialog();
+        }
+    };
+
+    private void showNotificationSettingsDialog()
+    {
+        DialogItems dialogItems = new DialogItems();
+        dialogItems.setTitle(getString(R.string.alert));
+        dialogItems.setMessage(getString(R.string.notification_permission_message));
+        showConfirmationDialog2(dialogItems, new DialogListener() {
+            @Override
+            public void onYesClick() {
+
+                AppHelper.openNotificationSettings(HomeActivity.this);
+            }
+
+            @Override
+            public void onNoClick() {
+
+            }
+        });
+    }
     public AdmobInterstitialAdListener interstitialAdListener() {
         return new AdmobInterstitialAdListener() {
             @Override
@@ -330,18 +385,49 @@ public class HomeActivity extends BaseActivity {
         previousFragment = fragment;
     }
 
+    private void updateData(UserProfile userProfile) {
+
+
+
+//        myCusttomDialog();
+
+        new MyExecutorService(HomeActivity.this).runExecutorService(new MyExecutorService.ExecutorServiceListener() {
+            @Override
+            public void backgroundTask() {
+                updateUserProfileData(userProfile);
+
+//                checkAndShowRewardBottomDialog();
+
+            }
+
+            @Override
+            public void uiThreadTask() {
+                hideLoader();
+
+                UserProfileHelper.checkAndUpdateUserProfile(userProfile, new UserProfileHelper.UserProfileListener() {
+                    @Override
+                    public void showSuspendedDialog(DialogItems dialogItems) {
+                        showSuspendDialog(dialogItems, null);
+                    }
+                });
+
+                checkAndShowRewardBottomDialog();
+
+                callUpdateUser(userProfile, USAGE_UPDATE_USER_PROFILE);
+
+
+            }
+        });
+
+
+
+    }
+
     private void updateUserProfileData(UserProfile userProfile) {
 
         TimerStatusHelper.checkAndUpdateTimerStatus(userProfile);
 
         GamePlayedHelper.setGamePlayedStatus(userProfile);
-
-        UserProfileHelper.checkAndUpdateUserProfile(userProfile, new UserProfileHelper.UserProfileListener() {
-            @Override
-            public void showSuspendedDialog(DialogItems dialogItems) {
-                showSuspendDialog(dialogItems, null);
-            }
-        });
 
 
         AdViewStatusHelper.checkAndUpdateAdViewStatus(userProfile);
@@ -350,7 +436,9 @@ public class HomeActivity extends BaseActivity {
 
         ProfileDataHelper.updateProfileData(userProfile);
 
-        callUpdateUser(userProfile, USAGE_UPDATE_USER_PROFILE);
+        getPreferencesMain().saveUserProfile(userProfile);
+
+
     }
 
 
@@ -372,15 +460,17 @@ public class HomeActivity extends BaseActivity {
     public void onDestroy() {
         super.onDestroy();
 
-        UserProfile userProfile = getPreferencesMain().getUserProfile();
-        // upload the ad viewed status when exiting from the app
-        if (adStatsChanged()) {
+//        UserProfile userProfile = getPreferencesMain().getUserProfile();
+//        // upload the ad viewed status when exiting from the app
+//        if (adStatsChanged()) {
+//
+//
+//            userProfile.setAdViewedStats(getAdViewedStatsGlobal());
+//            callUpdateUser(userProfile, "");
+//
+//        }
+    //    callUpdateUser(getPreferencesMain().getUserProfile(), "");
 
-
-            userProfile.setAdViewedStats(getAdViewedStatsGlobal());
-            callUpdateUser(userProfile, "");
-
-        }
 
     }
 
@@ -462,6 +552,7 @@ public class HomeActivity extends BaseActivity {
             openPlayStore();
         }
 
+
         @Override
         public void onNoClick() {
 
@@ -489,6 +580,11 @@ public class HomeActivity extends BaseActivity {
     }
 
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        PermissionHelper.onRequestPermissionsResult(HomeActivity.this, PermissionConstants.NotificationREQ_CODE, permissions, grantResults, notificationPermissionResultCallback);
+    }
 }
 
 

@@ -6,26 +6,19 @@
 
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+   android:background="@color/fui_transparent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/titleTextview"
+    <RelativeLayout
+        android:padding="@dimen/_10sdp"
+        android:background="@drawable/round_corner_10dp"
+        android:layout_margin="@dimen/_10sdp"
+        android:backgroundTint="@color/white"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#2091eb"
-        style="@style/bold_arima_textview"
-        android:gravity="center"
-        android:padding="10dp"
-        android:textSize="@dimen/textHeading"
-        android:text="@string/privacy_policy"
-        android:textColor="@android:color/white"
-        android:textStyle="bold">
-
-    </TextView>
+        android:layout_height="match_parent">
 
     <LinearLayout
 
-        android:layout_below="@+id/titleTextview"
         android:layout_above="@+id/okButton"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -38,14 +31,20 @@
     </LinearLayout>
 
     <Button
-
+        android:elevation="@dimen/cardview_default_radius"
         android:id="@+id/okButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="#2091eb"
-        android:text="Okay"
-        android:textSize="17dp"
+        android:gravity="center"
+        android:height="@dimen/_40sdp"
+        android:textAllCaps="false"
+        android:backgroundTint="@color/material_dark_blue"
+        android:background="@drawable/round_corner_10dp"
+        android:layout_margin="@dimen/_10sdp"
+        style="@style/bold_arima_textview"
+        android:text="@string/okay"
+        android:textSize="@dimen/textHeadingXLarge"
         android:textColor="@android:color/white">
 
     </Button>
@@ -53,4 +52,5 @@
 </RelativeLayout>
 
 
+</RelativeLayout>
 </layout>

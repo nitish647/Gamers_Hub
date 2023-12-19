@@ -111,6 +111,7 @@ public class RewardedAdAdmobUtilUtils extends AdmobAdsUtilsBase {
                     @Override
                     public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
                         // Handle the reward.
+
                         ((BaseActivity) activity).incrementRewardAdCount();
 
                         rewardedAdListener.onRewardGrantedListener();

@@ -48,6 +48,7 @@ import com.nitish.gamershub.view.dialogs.DialogListener;
 import com.nitish.gamershub.view.dialogs.LoadingBarDialog;
 import com.nitish.gamershub.view.dialogs.SnackBarCustom;
 import com.nitish.gamershub.view.dialogs.SuspensionDialog;
+import com.nitish.gamershub.view.dialogs.WebViewDialog;
 import com.nitish.gamershub.view.homePage.activity.HomeActivity;
 import com.nitish.gamershub.view.dialogs.RewardsBottomSheetDialog;
 import com.nitish.gamershub.utils.adsUtils.AdmobInterstitialAdListener;
@@ -185,30 +186,20 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-    public void showWebViewDialog() {
-        ShowWebviewDialogBinding showWebviewDialogBinding;
-        LayoutInflater factory = LayoutInflater.from(BaseActivity.this);
+    public void showPrivacyPolicyDialog()
+    {
 
-        showWebviewDialogBinding = DataBindingUtil.inflate(factory, R.layout.show_webview_dialog, null, false);
+        showWebViewDialog(WebViewDialog.USAGE_PRIVACY_POLICY);
+    }
+    public void showAboutUsDialog()
+    {
 
-        final AlertDialog showWebviewDialog = new AlertDialog.Builder(BaseActivity.this).create();
+        showWebViewDialog(WebViewDialog.USAGE_ABOUT_US);
+    }
 
-
-        showWebviewDialog.getWindow().getDecorView().setBackgroundColor(getResources().getColor(android.R.color.transparent));
-        showWebviewDialog.setView(showWebviewDialogBinding.getRoot());
-
-        showWebviewDialog.show();
-
-        showWebviewDialogBinding.webView.loadUrl("file:///android_asset/policy.html");
-
-
-        showWebviewDialogBinding.okButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showWebviewDialog.dismiss();
-            }
-        });
-
+    public void showWebViewDialog(String usage) {
+        WebViewDialog webViewDialog = new WebViewDialog(BaseActivity.this,usage);
+        webViewDialog.showDialog();
 
     }
 
@@ -293,17 +284,20 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         AdViewedStats adViewedStats;
 
-        if (getAdViewedStatsGlobal() == null) {
+
             UserProfile userProfile = getPreferencesMain().getUserProfile();
             adViewedStats = userProfile.getAdViewedStats();
-        } else {
-            adViewedStats = getAdViewedStatsGlobal();
-        }
+
         int interstitialAdCount = adViewedStats.getAdMobInterstitialAdViewed();
         interstitialAdCount++;
 
         adViewedStats.setAdMobInterstitialAdViewed(interstitialAdCount);
-        saveAdViewedStatsGlobal(adViewedStats);
+
+
+        userProfile.setAdViewedStats(adViewedStats);
+        getPreferencesMain().saveUserProfile(userProfile);
+
+//        saveAdViewedStatsGlobal(adViewedStats);
 
 
     }
@@ -319,17 +313,19 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         AdViewedStats adViewedStats;
 
-        if (getAdViewedStatsGlobal() == null) {
-            UserProfile userProfile = getPreferencesMain().getUserProfile();
-            adViewedStats = userProfile.getAdViewedStats();
-        } else {
-            adViewedStats = getAdViewedStatsGlobal();
-        }
+      UserProfile userProfile = getPreferencesMain().getUserProfile();
+      adViewedStats = userProfile.getAdViewedStats();
+
         int rewardAdCount = adViewedStats.getAdMobRewardedAdViewed();
         rewardAdCount++;
 
         adViewedStats.setAdMobRewardedAdViewed(rewardAdCount);
-        saveAdViewedStatsGlobal(adViewedStats);
+
+        userProfile.setAdViewedStats(adViewedStats);
+
+        getPreferencesMain().saveUserProfile(userProfile);
+
+//        saveAdViewedStatsGlobal(adViewedStats);
 
 
     }
@@ -475,7 +471,13 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void showLoader() {
 
-        LoadingBarDialog.newInstance(this, new DialogLoadingItems()).showDialog();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                LoadingBarDialog.newInstance(BaseActivity.this, new DialogLoadingItems()).showDialog();
+
+            }
+        });
 
     }
 

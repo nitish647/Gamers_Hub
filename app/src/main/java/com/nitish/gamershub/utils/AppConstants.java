@@ -68,6 +68,9 @@ public class AppConstants {
 
     }
 
+    public static String ASSETS_URL_PRIVACY_POLICY = "file:///android_asset/policy.html";
+    public static String ASSETS_URL_ABOUT_US = "file:///android_asset/about_us.html";
+
 
     public static String upiImageLink = "https://i.ibb.co/JB3b9fc/upi-icon-1.png";
     public static String paytmImageLink = "https://i.ibb.co/C9VzmMx/paytm-icom.png";
