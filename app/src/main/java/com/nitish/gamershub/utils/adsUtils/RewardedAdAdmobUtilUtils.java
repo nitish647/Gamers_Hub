@@ -23,8 +23,7 @@ public class RewardedAdAdmobUtilUtils extends AdmobAdsUtilsBase {
     private RewardedAd rewardedAd;
    private Activity activity;
 
-    public RewardedAdAdmobUtilUtils(RewardedAd rewardedAd, Activity activity) {
-        this.rewardedAd = rewardedAd;
+    public RewardedAdAdmobUtilUtils( Activity activity) {
         this.activity = activity;
     }
 
@@ -64,6 +63,7 @@ public class RewardedAdAdmobUtilUtils extends AdmobAdsUtilsBase {
     public void showRewardedAd(AdmobAdsListener.RewardedAdListener rewardedAdListener)
     {
         if (rewardedAd == null) {
+
             Toast.makeText(activity, "The ad is not loaded yet , try again", Toast.LENGTH_SHORT).show();
             Log.d("TAG", "The rewarded ad wasn't ready yet.");
             return;
@@ -117,9 +117,10 @@ public class RewardedAdAdmobUtilUtils extends AdmobAdsUtilsBase {
                         rewardedAdListener.onRewardGrantedListener();
 
 
-                        AppConstants.ShowAds = false;
                         int rewardAmount = rewardItem.getAmount();
                         String rewardType = rewardItem.getType();
+
+
                     }
                 });
     }

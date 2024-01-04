@@ -39,6 +39,7 @@ import com.nitish.gamershub.model.local.DialogItems;
 import com.nitish.gamershub.model.local.DialogLoadingItems;
 import com.nitish.gamershub.model.local.SnackBarItems;
 import com.nitish.gamershub.utils.PreferenceHelper;
+import com.nitish.gamershub.utils.adsUtils.AdUtils;
 import com.nitish.gamershub.utils.adsUtils.AdmobAdsListener;
 import com.nitish.gamershub.utils.adsUtils.InterstitialUtilsAdmobAdUtil;
 import com.nitish.gamershub.utils.adsUtils.RewardedAdAdmobUtilUtils;
@@ -69,11 +70,8 @@ import io.paperdb.Paper;
 public abstract class BaseActivity extends AppCompatActivity {
 
 
-    // google ads
-    private InterstitialAd interstitialAd;
-    private InterstitialUtilsAdmobAdUtil interstitialAdmobAdUtil;
-    private RewardedAd rewardedAd;
-    private RewardedAdAdmobUtilUtils rewardedAdAdmobUtil;
+
+    AdUtils adUtils;
     static boolean isLoading;
 
 
@@ -254,10 +252,13 @@ public abstract class BaseActivity extends AppCompatActivity {
 
 
     public void initialiseAds() {
-        interstitialAdmobAdUtil = new InterstitialUtilsAdmobAdUtil(BaseActivity.this, interstitialAd);
+        adUtils = new AdUtils(BaseActivity.this);
+
+
+//        interstitialAdmobAdUtil = new InterstitialUtilsAdmobAdUtil(BaseActivity.this);
 //        interstitialAdmobAdUtil.loadInterstitialAd();
 
-        rewardedAdAdmobUtil = new RewardedAdAdmobUtilUtils(rewardedAd, BaseActivity.this);
+//        rewardedAdAdmobUtil = new RewardedAdAdmobUtilUtils( BaseActivity.this);
 //        rewardedAdAdmobUtil.loadRewardedAdmobAd();
 
     }
@@ -265,19 +266,26 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void showInterstitialAdNew(AdmobInterstitialAdListener interstitialAdListener) {
 
-        interstitialAdmobAdUtil.showInterstitialAdNew(interstitialAdListener);
+        adUtils.showAdMobInterstitialAd(interstitialAdListener);
+//        interstitialAdmobAdUtil.showInterstitialAdNew(interstitialAdListener);
 
     }
 
-    public InterstitialAd loadInterstitialAdNew() {
+    public void loadInterstitialAdNew() {
 
 
-        return interstitialAdmobAdUtil.loadInterstitialAd();
+//        return interstitialAdmobAdUtil.loadInterstitialAd();
+        adUtils.loadAdMobInterstitialAd();
 
     }
 
     public void loadRewardedVideoAd() {
-        rewardedAdAdmobUtil.loadRewardedAdmobAd();
+        adUtils.loadRewardedAdmobAd();
+    }
+    public void showRewardedVideo3(AdmobAdsListener.RewardedAdListener rewardedAdListener) {
+
+//        rewardedAdAdmobUtil.showRewardedAd(rewardedAdListener);
+        adUtils.showRewardedAdmobAd(rewardedAdListener);
     }
 
     public void incrementInterstitialAdAdCount() {
@@ -303,10 +311,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-    public void showRewardedVideo3(AdmobAdsListener.RewardedAdListener rewardedAdListener) {
-
-        rewardedAdAdmobUtil.showRewardedAd(rewardedAdListener);
-    }
 
 
     public void incrementRewardAdCount() {

@@ -72,6 +72,12 @@ public class CommonMethods {
     {
         Activity activity = (Activity) context;
         ImageView backButton =activity.findViewById(R.id.backButton);
+
+        if(backButton==null)
+        {
+            return;
+        }
+
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

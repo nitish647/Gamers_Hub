@@ -6,7 +6,6 @@ public class AdmobAdsListener {
 
         public void onRewardGrantedListener();
 
-
     }
 
 

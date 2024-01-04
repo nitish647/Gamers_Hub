@@ -242,6 +242,15 @@ public class PreferenceHelper {
         saveUserLoginStatus(AppConstants.PrefLoginStatus_LoggedOUT);
     }
 
+    public void saveFcmToken(String fcmToken)
+    {
+        saveString(AppConstants.Pref_FCM_TOKEN,fcmToken);
+    }
+    public String getFcmToken()
+    {
+      return   getString(AppConstants.Pref_FCM_TOKEN,"");
+    }
+
 
     public void saveGoogleSignInAccountUser(GoogleSignInAccount googleSignInAccountUser) {
 

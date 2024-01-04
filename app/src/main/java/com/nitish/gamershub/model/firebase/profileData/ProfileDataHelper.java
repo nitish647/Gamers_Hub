@@ -26,7 +26,7 @@ public class ProfileDataHelper {
                 profileData.setEmail(ProfileData.getProfileData().getEmail());
             }
             profileData.setVersionName(AppHelper.getAppVersionName(AppClass.getInstance()));
-            profileData.setFirebaseFcmToken(AppHelper.getFireBaseFcmToken());
+            profileData.setFirebaseFcmToken(AppHelper.getPreferenceHelperInstance().getFcmToken());
             profileData.setLastOpened(DateTimeHelper.getDatePojo().getGetCurrentDateString());
             profileData.setDeviceInfo(DeviceHelper.getDeviceNameAndVersion());
 

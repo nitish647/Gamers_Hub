@@ -18,6 +18,54 @@ public class InterstitialUtilsAdmobAdUtil extends AdmobAdsUtilsBase {
 
     InterstitialAd interstitialAd;
     Activity activity;
+
+
+    public InterstitialUtilsAdmobAdUtil(Activity activity) {
+
+        this.activity = activity;
+
+    }
+    public InterstitialAd loadInterstitialAd()
+    {
+
+        AdRequest adRequest = new AdRequest.Builder().build();
+        InterstitialAd.load(
+                activity,
+                activity.getString(R.string.admob_inter),
+                adRequest,
+                new InterstitialAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                        // The mInterstitialAd reference will be null until
+                        // an ad is loaded.
+//                        BaseActivity.this.interstitialAd = interstitialAd;
+                        Log.i("gInterstitialAd", "onAdLoaded");
+
+                        InterstitialUtilsAdmobAdUtil.this.interstitialAd = interstitialAd;
+
+
+                    }
+
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                        // Handle the error
+                        Log.i("gInterstitialAd", "ad loading failed : " + loadAdError.getMessage());
+
+                        interstitialAd = null;
+
+                        String error = String.format(
+                                "domain: %s, code: %d, message: %s",
+                                loadAdError.getDomain(), loadAdError.getCode(), loadAdError.getMessage());
+
+                        Log.d("gInterstitialAd", "Ad loading failed : " + error);
+                    }
+                });
+
+        return interstitialAd;
+
+    }
+
     public void showInterstitialAdNew( AdmobInterstitialAdListener interstitialAdListener) {
 
 
@@ -66,50 +114,6 @@ public class InterstitialUtilsAdmobAdUtil extends AdmobAdsUtilsBase {
         }
     }
 
-    public InterstitialUtilsAdmobAdUtil(Activity activity, InterstitialAd interstitialAd) {
-        this.interstitialAd = interstitialAd;
-        this.activity = activity;
-
-    }
-
-    public InterstitialAd loadInterstitialAd()
-    {
-
-        AdRequest adRequest = new AdRequest.Builder().build();
-        InterstitialAd.load(
-                activity,
-                activity.getString(R.string.admob_inter),
-                adRequest,
-                new InterstitialAdLoadCallback() {
-                    @Override
-                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                        // The mInterstitialAd reference will be null until
-                        // an ad is loaded.
-//                        BaseActivity.this.interstitialAd = interstitialAd;
-                        Log.i("gInterstitialAd", "onAdLoaded");
-
-                         InterstitialUtilsAdmobAdUtil.this.interstitialAd = interstitialAd;
 
 
-                    }
-
-
-                    @Override
-                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        // Handle the error
-                        Log.i("gInterstitialAd", "ad loading failed : " + loadAdError.getMessage());
-
-                        interstitialAd = null;
-
-                        String error = String.format(
-                                "domain: %s, code: %d, message: %s",
-                                loadAdError.getDomain(), loadAdError.getCode(), loadAdError.getMessage());
-
-                        Log.d("gInterstitialAd", "Ad loading failed : " + error);
-                    }
-                });
-
-        return interstitialAd;
-
-    }
 }

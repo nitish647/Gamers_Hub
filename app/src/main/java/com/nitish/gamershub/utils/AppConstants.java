@@ -7,7 +7,6 @@ import java.util.ArrayList;
 
 public class AppConstants {
     public static String gameDataObject = "gameDataObject";
-    public static boolean ShowAds = true;
     public static String UserMail = "UserMail";
     public static String GamersHub_ParentCollection = "Gamers Hub";
 
@@ -90,6 +89,7 @@ public class AppConstants {
     public static String PrefRecentlyPlayedList = "PrefRecentlyPlayedList";
 
     public static String PrefGoogleSignInAccount = "PrefGoogleSignInAccount";
+    public static String Pref_FCM_TOKEN = "Pref_FCM_TOKEN";
 
 
     public static String PrefLoginStatus = "PrefLoginStatus";

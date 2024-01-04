@@ -29,6 +29,7 @@ public class NotificationHelper {
 
                     Log.d("fcmToken","fcmToken generated successfully "+fcmToken);
                   AppHelper.saveFireBaseFcmToken(fcmToken);
+//                    AppHelper.getPreferenceHelperInstance().saveFcmToken(fcmToken);
 
                 }
 
